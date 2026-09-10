@@ -607,7 +607,7 @@ await sock.cancelScheduledCall(jid, creationMsg.key)
 
 ### 📱 Mini App
 
-WhatsApp has no HTML-message protocol, so a Mini App is delivered as a native rich card + CTA button that opens your web-app URL (in-app webview when supported, else the browser):
+Two modes — pass `url`, `flow`, or both (two buttons):
 
 ```js
 import { sendMiniApp } from '@j.ap/baileys'
@@ -615,8 +615,14 @@ import { sendMiniApp } from '@j.ap/baileys'
 await sendMiniApp(sock, jid, {
     title: 'My Mini App',
     body: 'Tap the button to open the app 👇',
+    // 1) webview mode: rich card + CTA opening your web app
+    //    (in-app webview when supported, else the browser)
     url: 'https://myapp.example.com',
+    params: { ref: 'wa-bot' }, // → appended as ?ref=wa-bot
     buttonText: '🚀 Open App',
+    // 2) Flows mode: TRUE native in-chat mini app (forms/screens inside
+    //    WhatsApp, no browser). Needs a published Flow ID from Flows Manager.
+    flow: { id: '123456789', cta: '📝 Isi Form', screen: 'WELCOME' },
     thumbnail: 'https://myapp.example.com/icon.png' // url or Buffer
 })
 // or as a socket method: await sock.sendMiniApp(jid, { ... })
@@ -665,7 +671,28 @@ console.log('busy?', voip.isBusy(), '| active:', voip.getActiveCall()?.callId)
 await call.waitForEnd()
 ```
 
-> Inbound calls surface as `incoming-call` events (useful for logging / auto-reply), but **answering** them is not supported — the WASM build only exposes outbound `startVoipCall`/`endCall`.
+> Inbound calls surface as `incoming-call` events (useful for logging / auto-reply), but **answering** them is not supported — the WASM build only exposes outbound `startVoipCall`/`endCall`. Nobody has cracked this (same limitation in `baileys-caller` and `ourin-baileys` 9.0.21).
+
+**Handling inbound calls** — the standard socket path works (`call` event + `rejectCall`), plus VoIP-level conveniences:
+
+```js
+// standard Baileys path (no VoIP client needed)
+sock.ev.on('call', async (calls) => {
+    for (const c of calls) {
+        if (c.status === 'offer') await sock.rejectCall(c.id, c.from)
+    }
+})
+
+// ...or let the VoIP client do it:
+const voip = await attachVoip(sock, { autoReject: true, autoRejectText: 'Bot cannot take calls 🙏' })
+await voip.rejectCall(callId, callFrom) // manual reject + optional reply
+```
+
+**Refreshing the WASM stack** — if calls break after a WA Web update, re-fetch the official VoIP build from your own browser (Chrome with `--remote-debugging-port=9222` + web.whatsapp.com open):
+
+```bash
+npm run voip:fetch-wasm
+```
 
 ---
 

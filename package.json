@@ -17,6 +17,7 @@
   "scripts": {
     "preinstall": "node ./engine-requirements.js",
     "postinstall": "node ./postinstall-banner.js",
+    "voip:fetch-wasm": "node --experimental-websocket ./scripts/fetch-wasm-resources.mjs",
     "test": "node --test tests/"
   },
   "engines": {
