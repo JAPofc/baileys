@@ -53,6 +53,7 @@
 - [🔐 Authentication](#-authentication)
 - [🗄️ Store Backends](#-store-backends)
 - [💡 Usage Examples](#-usage-examples)
+- [🆕 Everyday Utilities](#-everyday-utilities)
   - [Buttons & Native Flow](#buttons--native-flow)
   - [Poll](#poll)
   - [Carousel](#carousel)
@@ -613,6 +614,54 @@ await sendMiniApp(sock, jid, {
 })
 // or as a socket method: await sock.sendMiniApp(jid, { ... })
 ```
+
+---
+
+## 🆕 Everyday Utilities
+
+One-liners for daily bot work (also usable standalone — see `examples/`):
+
+```js
+// 📊 Poll (chats/groups) + Quiz (channels only)
+await sock.sendPoll(jid, { name: 'Makan apa?', options: ['Nasi', 'Mie'] })
+await sock.sendQuiz(channelJid, { name: 'Kuis', options: ['A', 'B'], correctAnswer: 'A' })
+
+// 🎙️ Voice note — auto-converts mp3/wav/… to Opus PTT (needs fluent-ffmpeg)
+await sock.sendVoiceNote(jid, './hello.mp3') // path | Buffer | { url }
+
+// 📞 Tag everyone (visible @list vs hidden)
+await sock.tagAll(groupJid, 'Rapat jam 10!')
+await sock.hideTag(groupJid, 'Pengumuman 📢')
+
+// 🔍 LID → phone number (best-effort, null when unknown)
+await sock.getPhoneNumber('12345@lid') // → '62812…'
+await sock.getLidForPhone('62812…')    // reverse lookup
+
+// 🧍 Humanized send — typing… + natural delay + per-chat queue
+await sock.sendHumanized(jid, { text: 'Halo!' })
+
+// 🤖 Meta AI chat (experimental — needs Meta AI on the account/region)
+const { text } = await sock.askMetaAI('Jelaskan black hole!')
+```
+
+**Command router** for prefix bots (`!menu`, `.sticker`) with middleware + auto-help:
+
+```js
+import { createRouter } from '@j.ap/baileys'
+const router = createRouter({ prefix: '!' })
+router.command('ping', async (ctx) => ctx.reply('pong! 🏓'), { desc: 'Check bot' })
+router.attach(sock) // → detach()
+```
+
+**Status / channel schedulers** (in-memory):
+
+```js
+import { StatusScheduler, ChannelScheduler, StatusHelper } from '@j.ap/baileys'
+new StatusScheduler(sock).schedule(StatusHelper.text('Pagi! ☀️'), new Date('2026-09-11T06:00:00+07:00'))
+new ChannelScheduler(sock).schedule(channelJid, { text: 'Update' }, Date.now() + 3600_000)
+```
+
+`npm test` runs the offline suite (`tests/`, 68 asserts, no network needed).
 
 ---
 

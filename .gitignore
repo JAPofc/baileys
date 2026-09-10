@@ -1,5 +1,6 @@
 node_modules/
 auth_info/
 auth_sessions/
+auth_*/
 *.log
 .DS_Store
