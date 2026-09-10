@@ -37,5 +37,6 @@ export * from "./use-cache-manager-auth-state.js";
 export * from "./baileys-event-stream.js";
 export * from "./past-participants.js";
 export * from "./chat-control.js";
+export * from "./mini-app.js";
 
 export * from "./MessageBuilder.js";

@@ -58,6 +58,9 @@
   - [Carousel](#carousel)
   - [AIRich — rich response cards](#airich--rich-response-cards)
   - [📁 Builders Folder Map](#-builders-folder-map-libbuilders)
+  - [📌 Pin / Keep in Chat](#-pin--keep-in-chat)
+  - [📞 Scheduled Call](#-scheduled-call)
+  - [📱 Mini App](#-mini-app)
 - [📞 Voice & Video Calls](#-voice--video-calls)
 - [🔎 User Sync Queries](#-user-sync-queries)
 - [👤 Username Management](#-username-management)
@@ -343,6 +346,20 @@ Everything below is **optional** — the socket works without any of them. Insta
 | `ioredis` | Redis store adapter |
 | `@roamhq/wrtc` | Native WebRTC bindings for [voice calling](#-voice--video-calls) |
 
+### 🔁 Migrating from `@vanzxy/baileys`
+
+Just swap the package name — old import names keep working through deprecated aliases:
+
+```js
+// old code still runs as-is:
+import { VanzxyBaileys, AIVanzxy } from '@j.ap/baileys'
+new VanzxyBaileys(sock).vanzxyAI()
+
+// ...but new code should use the new names:
+import { JapBaileys, AIJap } from '@j.ap/baileys'
+new JapBaileys(sock).japAI()
+```
+
 ---
 
 ## 🚀 Quick Start
@@ -549,6 +566,64 @@ await vx.poll()
 
 ---
 
+### 📌 Pin / Keep in Chat
+
+```js
+// Pin a message for 7 days (default 24h), unpin, keep / unkeep in disappearing chats
+await sock.sendPin(jid, msg.key, { durationSec: 7 * 86400 })
+await sock.sendUnpin(jid, msg.key)
+await sock.sendKeep(jid, msg.key)
+await sock.sendUnkeep(jid, msg.key)
+```
+
+### 📅 Event
+
+```js
+await sock.sendEvent(jid, {
+    name: 'Rapat Mingguan',
+    description: 'Bahas progres bot',
+    startDate: new Date('2026-09-15T10:00:00+07:00'),
+    endDate: new Date('2026-09-15T11:00:00+07:00'),
+    location: { name: 'Kantor', address: 'Jakarta' },
+    extraGuestsAllowed: true
+})
+```
+
+### 📞 Scheduled Call
+
+Native scheduled-call message (the "Schedule call" card with a join reminder):
+
+```js
+// 'voice' (default) or 'video'
+await sock.sendScheduledCall(jid, {
+    title: 'Daily standup',
+    scheduledAt: new Date('2026-09-15T09:00:00+07:00'),
+    callType: 'video'
+})
+
+// Cancel it later (needs the creation message's key)
+await sock.cancelScheduledCall(jid, creationMsg.key)
+```
+
+### 📱 Mini App
+
+WhatsApp has no HTML-message protocol, so a Mini App is delivered as a native rich card + CTA button that opens your web-app URL (in-app webview when supported, else the browser):
+
+```js
+import { sendMiniApp } from '@j.ap/baileys'
+
+await sendMiniApp(sock, jid, {
+    title: 'My Mini App',
+    body: 'Tap the button to open the app 👇',
+    url: 'https://myapp.example.com',
+    buttonText: '🚀 Open App',
+    thumbnail: 'https://myapp.example.com/icon.png' // url or Buffer
+})
+// or as a socket method: await sock.sendMiniApp(jid, { ... })
+```
+
+---
+
 ## 📞 Voice & Video Calls
 
 Experimental audio-call support (ported from ourin-baileys) via a WASM call stack + WebRTC relay. Requires the optional `@roamhq/wrtc` peer dependency.
@@ -567,6 +642,30 @@ call.on('ended', (reason) => console.log('Call ended:', reason))
 ```
 
 `ActiveCall` (returned by `.call()`) and `CallState` are also exported directly if you need finer-grained control over call state.
+
+**J.AP upgrades:**
+
+```js
+import { attachVoip } from '@j.ap/baileys'
+
+// one-liner setup (also stored as sock.voip)
+const voip = await attachVoip(sock)
+
+// the client is an EventEmitter now
+voip.on('incoming-call', ({ from, busy }) => console.log('ringing from', from, { busy }))
+voip.on('outgoing-call', ({ to }) => console.log('dialing', to))
+voip.on('call-ended', ({ reason }) => console.log('ended:', reason))
+
+// audioSource: 'silence' | ffmpeg lavfi/file path/URL | { data: Buffer, ext: 'mp3' }
+const call = await voip.call('628123456789', { audioSource: './greeting.mp3' })
+
+// record the remote peer's audio to .wav (auto-finalized on call end)
+const stopRecording = call.recordToFile('./call.wav')
+console.log('busy?', voip.isBusy(), '| active:', voip.getActiveCall()?.callId)
+await call.waitForEnd()
+```
+
+> Inbound calls surface as `incoming-call` events (useful for logging / auto-reply), but **answering** them is not supported — the WASM build only exposes outbound `startVoipCall`/`endCall`.
 
 ---
 

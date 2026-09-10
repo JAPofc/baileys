@@ -9,7 +9,10 @@ export declare class AudioFeeder {
     underflowChunks: number;
     bytesProduced: number;
     chunksEmitted: number;
-    constructor(sampleRate: number, channels: number, framesPerChunk: number, onChunk: (chunk: Float32Array) => void, source?: string);
+    constructor(sampleRate: number, channels: number, framesPerChunk: number, onChunk: (chunk: Float32Array) => void, source?: string | {
+        data: Buffer;
+        ext?: string;
+    });
     start: () => void;
     stop: () => void;
 }

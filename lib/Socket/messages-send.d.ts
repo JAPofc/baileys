@@ -46,6 +46,16 @@ export function makeMessagesSocket(config: any): {
     updateMediaMessage: (message: any) => Promise<any>;
     sendMessage: (jid: any, content: any, options?: {}) => Promise<any>;
     sendReaction: (jid: any, reaction: any, key: any) => Promise<any>;
+    sendPin: (jid: any, key: any, opts?: {
+        durationSec?: number;
+    }, options?: any) => Promise<any>;
+    sendUnpin: (jid: any, key: any, options?: any) => Promise<any>;
+    sendKeep: (jid: any, key: any, options?: any) => Promise<any>;
+    sendUnkeep: (jid: any, key: any, options?: any) => Promise<any>;
+    sendEvent: (jid: any, event: any, options?: any) => Promise<any>;
+    sendScheduledCall: (jid: any, scheduledCall: any, options?: any) => Promise<any>;
+    cancelScheduledCall: (jid: any, key: any, options?: any) => Promise<any>;
+    sendMiniApp: (jid: any, miniApp: any, options?: any) => Promise<any>;
     downloadMedia: (message: any, type?: string, options?: {}) => Promise<any>;
     copyNForward: (jid: any, message: any, forceForward?: boolean, options?: {}) => Promise<any>;
     executeWMexQuery: (variables: any, queryId: any, dataPath: any) => Promise<any>;
