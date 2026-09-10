@@ -266,6 +266,11 @@ declare function makeWASocket(config: any): {
     getLidForPhone: (phone: string) => Promise<string | null>;
     askMetaAI: (prompt: string, opts?: any) => Promise<any>;
     sendHumanized: (jid: any, content: any, humanOpts?: any, sendOptions?: any) => Promise<any>;
+    editPoll: (jid: any, key: any, poll: any, options?: any) => Promise<any>;
+    sendMentionAll: (jid: any, text: string, options?: any) => Promise<any>;
+    resolveSenderPn: (webMessage: any) => Promise<string | null>;
+    setUsername: (username: string, options?: any) => Promise<any>;
+    reserveUsername: (username: string, options?: any) => Promise<any>;
     downloadMedia: (message: any, type?: string, options?: {}) => Promise<any>;
     copyNForward: (jid: any, message: any, forceForward?: boolean, options?: {}) => Promise<any>;
     executeWMexQuery: (variables: any, queryId: any, dataPath: any) => Promise<any>;

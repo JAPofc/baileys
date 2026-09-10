@@ -53,6 +53,7 @@
 - [🔐 Authentication](#-authentication)
 - [🗄️ Store Backends](#-store-backends)
 - [💡 Usage Examples](#-usage-examples)
+- [🆕 WA 2026 catch-up](#-wa-2026-catch-up)
 - [🆕 Everyday Utilities](#-everyday-utilities)
   - [Buttons & Native Flow](#buttons--native-flow)
   - [Poll](#poll)
@@ -616,6 +617,87 @@ await sendMiniApp(sock, jid, {
 ```
 
 ---
+
+## 🆕 WA 2026 catch-up
+
+WhatsApp 2026 features, wired into JAP-Baileys. Everything here was audited against the
+latest official clients — only gaps were added; what already worked is just documented.
+
+### Usernames (chat without phone numbers)
+
+```js
+await sock.checkUsername('japstore');            // availability
+await sock.setUsername('japstore');              // claim it
+await sock.reserveUsername('japstore');          // reserve it (2026 reservation flow)
+await sock.findUserByUsername('japstore');       // USync lookup → JID
+const u = await sock.fetchContactUsernames(['62812@s.whatsapp.net']);
+```
+
+### Editable polls (`editPoll`)
+
+Polls are editable for ~15 minutes after creation (server-side rule):
+
+```js
+const sent = await sock.sendPoll(jid, { name: 'Jam berapa?', values: ['Pagi', 'Sore'] });
+await sock.editPoll(jid, sent.key, { name: 'Jam berapa?', values: ['Pagi', 'Siang', 'Sore'] });
+```
+
+### Mass mention (`sendMentionAll`)
+
+```js
+await sock.sendMentionAll(groupJid, 'Pengumuman: rapat jam 9!');
+```
+
+> In groups with 32+ members `@all` is admin-only and the rule is enforced
+> server-side — non-admin calls are silently dropped by WhatsApp.
+
+### Event reminders
+
+```js
+await sock.sendMessage(jid, {
+  event: {
+    title: 'Rapat', description: 'Q3', startDate: new Date('2026-09-15T09:00:00+07:00'),
+    reminder: true, reminderOffsetSec: 1800, // remind 30 min before start
+  }
+});
+```
+
+### Sender phone from LID events (`resolveSenderPn`)
+
+Fixes LID-only payloads (e.g. call offers where `caller_pn` is missing):
+
+```js
+sock.ev.on('messages.upsert', async ({ messages }) => {
+  for (const m of messages) console.log(await sock.resolveSenderPn(m)); // '62812…' | null
+});
+```
+
+### View-once voice notes
+
+`sendVoiceNote()` content composes with `viewOnce`:
+
+```js
+await sock.sendMessage(jid, { ...(await toVoiceNoteContent('./a.ogg')), viewOnce: true });
+```
+
+### Member tags (groups)
+
+Already exposed — no new code, documented here:
+
+```js
+await sock.updateMemberLabel({ groupJid, lid, label: 'Admin' });
+```
+
+### Honestly not implemented (and why)
+
+- **Voice message transcripts** — generated on-device by official clients only; there is
+  no transcript API on the wire.
+- **Group message history sharing** — the wire format isn't captured by any public Baileys
+  fork yet (verified against `@whiskeysockets/baileys@7.0.0-rc14`, whose proto is 100+
+  fields behind this repo).
+- **Music messages** — `MusicMessage` needs Spotify/Apple catalog IDs plus an artwork
+  upload flow we haven't captured; the proto struct exists, sending real ones doesn't.
+- **`AudioMessage.mediaKeyDomain`** (new in rc14) — optional field, uploads work without it.
 
 ## 🆕 Everyday Utilities
 

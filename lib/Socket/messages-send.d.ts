@@ -58,6 +58,8 @@ export function makeMessagesSocket(config: any): {
     sendMiniApp: (jid: any, miniApp: any, options?: any) => Promise<any>;
     sendPoll: (jid: any, poll: any, options?: any) => Promise<any>;
     sendQuiz: (jid: any, quiz: any, options?: any) => Promise<any>;
+    editPoll: (jid: any, key: any, poll: any, options?: any) => Promise<any>;
+    sendMentionAll: (jid: any, text: string, options?: any) => Promise<any>;
     downloadMedia: (message: any, type?: string, options?: {}) => Promise<any>;
     copyNForward: (jid: any, message: any, forceForward?: boolean, options?: {}) => Promise<any>;
     executeWMexQuery: (variables: any, queryId: any, dataPath: any) => Promise<any>;
