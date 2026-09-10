@@ -1,4 +1,4 @@
-import type { AuthenticationState, SignalDataTypeMap } from '../Types/Auth';
+import type { AuthenticationState, SignalDataTypeMap } from '../Types/Auth.js';
 import type { Logger } from 'pino';
 
 export declare const ENC_MAGIC: string;

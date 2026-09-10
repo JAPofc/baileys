@@ -1,4 +1,4 @@
-# @j.ap/baileys examples
+# @japofc/baileys examples
 
 Ready-to-run bots. From the repo root:
 

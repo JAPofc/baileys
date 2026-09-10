@@ -7,8 +7,8 @@
 </p>
 
 <p>
-<a href="https://www.npmjs.com/package/@j.ap/baileys" target="_blank"><img src="https://img.shields.io/npm/v/@j.ap/baileys?color=2ecc71&label=npm&style=for-the-badge" alt="npm version"/></a>
-<a href="https://www.npmjs.com/package/@j.ap/baileys" target="_blank"><img src="https://img.shields.io/npm/dt/@j.ap/baileys?color=3498db&style=for-the-badge" alt="npm downloads"/></a>
+<a href="https://www.npmjs.com/package/@japofc/baileys" target="_blank"><img src="https://img.shields.io/npm/v/@japofc/baileys?color=2ecc71&label=npm&style=for-the-badge" alt="npm version"/></a>
+<a href="https://www.npmjs.com/package/@japofc/baileys" target="_blank"><img src="https://img.shields.io/npm/dt/@japofc/baileys?color=3498db&style=for-the-badge" alt="npm downloads"/></a>
 <a href="https://github.com/JAPofc/jap-baileys/stargazers" target="_blank"><img src="https://img.shields.io/github/stars/JAPofc/jap-baileys?color=f1c40f&style=for-the-badge" alt="GitHub stars"/></a>
 <a href="https://github.com/JAPofc/jap-baileys/issues" target="_blank"><img src="https://img.shields.io/github/issues/JAPofc/jap-baileys?color=e74c3c&style=for-the-badge" alt="GitHub issues"/></a>
 </p>
@@ -43,7 +43,7 @@
 <summary>📖 Full table of contents</summary>
 <br/>
 
-- [🍃 Why @j.ap/baileys](#-why-jap-baileys)
+- [🍃 Why jap-baileys](#-why-jap-baileys)
 - [🆚 Comparison](#-comparison)
 - [🧰 Built With](#-built-with)
 - [🔥 Features](#-features)
@@ -96,7 +96,7 @@
 
 ---
 
-## 🍃 Why @j.ap/baileys?
+## 🍃 Why jap-baileys?
 
 This fork focuses on:
 
@@ -115,9 +115,9 @@ This fork focuses on:
 
 ## 🆚 Comparison
 
-How `@j.ap/baileys` stacks up against other Baileys libraries:
+How `@japofc/baileys` stacks up against other Baileys libraries:
 
-| Capability | `@j.ap/baileys` | Other forks (typical) |
+| Capability | `@japofc/baileys` | Other forks (typical) |
 |---|:---:|:---:|
 | Native Flow buttons (V1/V2/V3) | ✅ | ⚠️ partial |
 | Carousel messages | ✅ | ❌ |
@@ -320,7 +320,7 @@ Useful for filtering:
 ## 📦 Installation
 
 ```bash
-npm install @j.ap/baileys
+npm install @japofc/baileys
 ```
 
 Directly from GitHub:
@@ -356,7 +356,7 @@ Everything below is **optional** — the socket works without any of them. Insta
 ## 🚀 Quick Start
 
 ```js
-import { makeWASocket, useMultiFileAuthState } from '@j.ap/baileys'
+import { makeWASocket, useMultiFileAuthState } from '@japofc/baileys'
 
 const { state, saveCreds } = await useMultiFileAuthState('auth_info')
 
@@ -400,7 +400,7 @@ Four auth-state backends ship out of the box. All return the same `{ state, save
 | `useCacheManagerAuthState(store, sessionKey)` | Any [`cacheable`](https://www.npmjs.com/package/@cacheable/node-cache)-compatible store | Multi-session hosting panels, Redis-backed setups |
 
 ```js
-import { makeWASocket, useMultiFileAuthState } from '@j.ap/baileys'
+import { makeWASocket, useMultiFileAuthState } from '@japofc/baileys'
 
 const { state, saveCreds } = await useMultiFileAuthState('auth_info')
 const sock = makeWASocket({ auth: state })
@@ -409,7 +409,7 @@ sock.ev.on('creds.update', saveCreds)
 
 ```js
 // SQLite variant
-import { makeWASocket, useSqliteAuthState } from '@j.ap/baileys'
+import { makeWASocket, useSqliteAuthState } from '@japofc/baileys'
 
 const { state, saveCreds } = await useSqliteAuthState({ database: './auth.db' })
 const sock = makeWASocket({ auth: state })
@@ -433,7 +433,7 @@ sock.ev.on('creds.update', saveCreds)
 | Redis | `createRedisStoreAdapter(opts)` |
 
 ```js
-import { makeWASocket, makeInMemoryStore } from '@j.ap/baileys'
+import { makeWASocket, makeInMemoryStore } from '@japofc/baileys'
 
 const store = makeInMemoryStore({})
 store.readFromFile('./baileys_store.json')
@@ -450,12 +450,12 @@ store.bind(sock.ev)
 ### Buttons & Native Flow
 
 ```js
-import { Button } from '@j.ap/baileys'
+import { Button } from '@japofc/baileys'
 
 await new Button(sock)
     .setTitle('Promo Spesial')
     .setBody('Diskon 20% cuma hari ini')
-    .setFooter('@j.ap/baileys')
+    .setFooter('@japofc/baileys')
     .addReply('Klaim Sekarang', 'claim_promo')
     .addUrl('Lihat Katalog', 'https://example.com/catalog')
     .addCall('Hubungi Kami', '628123456789')
@@ -465,7 +465,7 @@ await new Button(sock)
 ### Poll
 
 ```js
-import { Poll } from '@j.ap/baileys'
+import { Poll } from '@japofc/baileys'
 
 await new Poll(sock)
     .setName('Mau makan apa hari ini?')
@@ -479,7 +479,7 @@ await new Poll(sock)
 > Each card must be built with `Button(...).toCard()` first — a carousel card is really just a button card with an image/video header.
 
 ```js
-import { Button, Carousel } from '@j.ap/baileys'
+import { Button, Carousel } from '@japofc/baileys'
 
 const cardA = await new Button(sock)
     .setImage('https://example.com/a.jpg')
@@ -502,7 +502,7 @@ await new Carousel(sock)
 ### AIRich — rich response cards
 
 ```js
-import { AIRich } from '@j.ap/baileys'
+import { AIRich } from '@japofc/baileys'
 
 await new AIRich(sock)
     .addHeading('Ringkasan Order')
@@ -522,7 +522,7 @@ Other builders worth knowing about: **`ButtonV2`** (simpler quick-reply-only but
 
 ### 📁 Builders Folder Map (`lib/Builders/`)
 
-Every message builder lives in its own file under `lib/Builders/`, so you can trace exactly where a class comes from instead of digging through one giant `MessageBuilder.js`. `index.js` is just the barrel file that re-exports everything below (plus their aliases) for the top-level `import { ... } from '@j.ap/baileys'` syntax.
+Every message builder lives in its own file under `lib/Builders/`, so you can trace exactly where a class comes from instead of digging through one giant `MessageBuilder.js`. `index.js` is just the barrel file that re-exports everything below (plus their aliases) for the top-level `import { ... } from '@japofc/baileys'` syntax.
 
 | File | Exports | What it's for |
 |---|---|---|
@@ -535,12 +535,12 @@ Every message builder lives in its own file under `lib/Builders/`, so you can tr
 | `AIRich.js` | `AIRich` (+ aliases `ORich`, `AIJap`, `LeafRich`, `JapAI`, `JapRich`, `RichJap`) | The rich AI-assistant-style response builder described above — headings, formatted text, tables, media/product/post cards, task/progress cards, tip banners, quick-reply suggestions. |
 | `A2UI.js` | `A2UI`, `sendA2UIWidget` | Lower-level A2UI/Bloks widget builder. Builds the flat `components` tree (Column/Row → `children`, Card/Button → `child`, Modal → `trigger`/`content`) that Bloks widgets expect and sends it through the same `getBizBinaryNode()` path as `Button`/`ButtonV2`, so the wire-level node always matches the button names actually sent. |
 | `JapBaileys.js` | `JapBaileys` | A unified builder **hub** — one object that wraps all the builders above behind short method names (`.button()`, `.buttonV2()`, `.buttonV3()`, `.carousel()`, `.poll()`, `.airich()`, `.a2ui()`), plus PascalCase aliases (`.Button()`, `.Carousel()`, `.Poll()`, `.AIRich()`, `.A2UI()`) for developers who prefer that naming style. Nothing new is implemented here — it's purely a single entry point over the individual classes. |
-| `index.js` | everything above, plus `MESSAGE_BUILDER_VERSION` | The barrel file — re-exports every builder and its aliases so `import { Button, Poll, AIRich, JapBaileys } from '@j.ap/baileys'` works without reaching into individual files. `MESSAGE_BUILDER_VERSION` tracks the builder API surface's own version, independent of the package version. |
+| `index.js` | everything above, plus `MESSAGE_BUILDER_VERSION` | The barrel file — re-exports every builder and its aliases so `import { Button, Poll, AIRich, JapBaileys } from '@japofc/baileys'` works without reaching into individual files. `MESSAGE_BUILDER_VERSION` tracks the builder API surface's own version, independent of the package version. |
 
 **Unified hub example** — useful if you'd rather carry one object around than import each builder individually:
 
 ```js
-import { JapBaileys } from '@j.ap/baileys'
+import { JapBaileys } from '@japofc/baileys'
 
 const vx = new JapBaileys(sock)
 
@@ -601,7 +601,7 @@ await sock.cancelScheduledCall(jid, creationMsg.key)
 Two modes — pass `url`, `flow`, or both (two buttons):
 
 ```js
-import { sendMiniApp } from '@j.ap/baileys'
+import { sendMiniApp } from '@japofc/baileys'
 
 await sendMiniApp(sock, jid, {
     title: 'My Mini App',
@@ -657,7 +657,7 @@ passes any proto field through untouched — full `WAProto` coverage with zero w
 await sock.sendMessage(jid, { raw: true, musicMessage: { songUri } });
 ```
 
-TypeScript consumers get a typed `AnyMessageContent` (`import type { AnyMessageContent } from '@j.ap/baileys'`).
+TypeScript consumers get a typed `AnyMessageContent` (`import type { AnyMessageContent } from '@japofc/baileys'`).
 
 ## 🧰 Channels, History & Transcripts
 
@@ -675,7 +675,7 @@ await sock.communityGetInviteCode(communityJid)
 **Group history sharing** for new members (forwards recent messages to their DM):
 
 ```js
-import { getGroupHistoryFromStore } from '@j.ap/baileys'
+import { getGroupHistoryFromStore } from '@japofc/baileys'
 const messages = getGroupHistoryFromStore(store, groupJid, 10)
 await sock.shareGroupHistory({ groupJid, members: newMemberJid, messages, greeting: true })
 ```
@@ -683,7 +683,7 @@ await sock.shareGroupHistory({ groupJid, members: newMemberJid, messages, greeti
 **Voice-note transcription** (pluggable provider — cloud Whisper or your own):
 
 ```js
-import { openAIWhisperProvider } from '@j.ap/baileys'
+import { openAIWhisperProvider } from '@japofc/baileys'
 const provider = openAIWhisperProvider({ apiKey: process.env.OPENAI_API_KEY })
 const { text } = await sock.transcribeMessage(voiceNoteMsg, { provider })
 ```
@@ -691,7 +691,7 @@ const { text } = await sock.transcribeMessage(voiceNoteMsg, { provider })
 **Mini-app deep links** (HMAC-signed params your web app can verify):
 
 ```js
-import { createMiniAppLink, parseMiniAppParams, buildFlowDataExchange } from '@j.ap/baileys'
+import { createMiniAppLink, parseMiniAppParams, buildFlowDataExchange } from '@japofc/baileys'
 const link = createMiniAppLink('https://app.example.com/', { uid: '123' }, { secret: 's3cr3t' })
 parseMiniAppParams(link, { secret: 's3cr3t' }) // → { uid: '123' } (throws if tampered)
 buildFlowDataExchange('navigate', { screen: 'HOME' }) // Flows data_exchange payload
@@ -710,7 +710,7 @@ Drop-in hardening for auth state, secrets, and abuse — all in
 import {
   useEncryptedFileAuthState, secureLogger, withPairingGuard,
   createQRGuard, backupAuthState, writeAuthIntegrity, repairAuthState, secureLogout
-} from '@j.ap/baileys'
+} from '@japofc/baileys'
 
 // 1. AES-256-GCM encrypted auth state (reads legacy plaintext, migrates on save)
 const { state, saveCreds } = await useEncryptedFileAuthState('./auth', { password: process.env.AUTH_PW })
@@ -855,7 +855,7 @@ const { text } = await sock.askMetaAI('Jelaskan black hole!')
 **Command router** for prefix bots (`!menu`, `.sticker`) with middleware + auto-help:
 
 ```js
-import { createRouter } from '@j.ap/baileys'
+import { createRouter } from '@japofc/baileys'
 const router = createRouter({ prefix: '!' })
 router.command('ping', async (ctx) => ctx.reply('pong! 🏓'), { desc: 'Check bot' })
 router.attach(sock) // → detach()
@@ -864,7 +864,7 @@ router.attach(sock) // → detach()
 **Status / channel schedulers** (in-memory):
 
 ```js
-import { StatusScheduler, ChannelScheduler, StatusHelper } from '@j.ap/baileys'
+import { StatusScheduler, ChannelScheduler, StatusHelper } from '@japofc/baileys'
 new StatusScheduler(sock).schedule(StatusHelper.text('Pagi! ☀️'), new Date('2026-09-11T06:00:00+07:00'))
 new ChannelScheduler(sock).schedule(channelJid, { text: 'Update' }, Date.now() + 3600_000)
 ```
@@ -878,7 +878,7 @@ new ChannelScheduler(sock).schedule(channelJid, { text: 'Update' }, Date.now() +
 Experimental audio-call support via a bundled WASM call stack + WebRTC relay. Requires the optional `@roamhq/wrtc` peer dependency.
 
 ```js
-import { VoipClient } from '@j.ap/baileys'
+import { VoipClient } from '@japofc/baileys'
 
 const voip = new VoipClient({ resourcesPath: './voip-resources' })
 await voip.connectWithSocket(sock)
@@ -895,7 +895,7 @@ call.on('ended', (reason) => console.log('Call ended:', reason))
 **Answering inbound calls** — offers are tracked, so the bot can pick up (1:1) or join (group):
 
 ```js
-import { attachVoip } from '@j.ap/baileys'
+import { attachVoip } from '@japofc/baileys'
 const voip = await attachVoip(sock) // also stored as sock.voip
 
 voip.on('incoming-call', async ({ callId, from, isGroupCall, busy }) => {
@@ -960,7 +960,7 @@ npm run voip:fetch-wasm
 `WAUSync` (`USyncQuery` / `USyncUser` + protocols) lets you check things like WhatsApp registration, device lists, status, and username info for a JID before you message it — the same mechanism behind `sock.onWhatsApp()`.
 
 ```js
-import { USyncQuery, USyncUser, USyncContactProtocol } from '@j.ap/baileys'
+import { USyncQuery, USyncUser, USyncContactProtocol } from '@japofc/baileys'
 
 const query = new USyncQuery()
     .withContext('interactive')
@@ -1022,7 +1022,7 @@ An optional, higher-level layer on top of the raw socket: middleware routing, a 
 Needs the `better-sqlite3` peer dependency (session + stats storage) and `fluent-ffmpeg` (sticker/voice-note conversion, already listed above) — both fail with an install hint rather than crashing if you use a Framework feature that needs them without installing them first.
 
 ```js
-import { Bot } from '@j.ap/baileys'
+import { Bot } from '@japofc/baileys'
 
 const bot = new Bot({
     socketConfig: { printQRInTerminal: true },
@@ -1095,7 +1095,7 @@ Every module above ships a matching `.d.ts`, so your editor will show full hover
 
 ## 📘 TypeScript Support
 
-Every file in `lib/` ships a matching `.d.ts`, including the message builders (`MessageBuilder_d.ts`) and all `Types/*` definitions (Auth, Chat, Contact, Events, GroupMetadata, Message, Product, Signal, USync, and more). No `@types/` package needed — plain `import { ... } from '@j.ap/baileys'` gets full autocomplete in TS or JS-with-checkJS projects.
+The whole public surface (`import { ... } from '@japofc/baileys'` — the package exposes only its root entry) resolves in TypeScript with no `@types/` package needed, verified with `tsc --strict` at zero errors. Core is hand-typed: `makeWASocket` incl. the username methods, all `Types/*` definitions (Auth, Chat, Contact, Events, GroupMetadata, Message, Product, Signal, USync, and more), `WAProto`, stores, and `Utils/*`. The message builders (`Button`, `Poll`, `Carousel`, `AIRich`, `A2UI`, …), the Bot Framework (`Bot`, `Context`, …), and the `VoipClient`/`ActiveCall` classes currently ship as `any`-typed entry declarations — importable and callable, but without autocomplete for their members yet. (Internal deep files are not part of the public API and may lack their own `.d.ts`.)
 
 ---
 
@@ -1176,7 +1176,7 @@ Full details and license terms per component: see [`NOTICE.md`](./NOTICE.md).
 **J.AP**
 
 - GitHub: [github.com/JAPofc](https://github.com/JAPofc)
-- Package: [`@j.ap/baileys`](https://www.npmjs.com/package/@j.ap/baileys)
+- Package: [`@japofc/baileys`](https://www.npmjs.com/package/@japofc/baileys)
 - ✦ Maintains this fork solo — issues & PRs are welcome and reviewed personally.
 
 </td>

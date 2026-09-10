@@ -6,7 +6,7 @@ type DecryptGroupSignalOpts = {
     msg: Uint8Array;
 };
 type ProcessSenderKeyDistributionMessageOpts = {
-    item: proto.Message.ISenderKeyDistributionMessage;
+    item: any;
     authorJid: string;
 };
 type DecryptSignalProtoOpts = {

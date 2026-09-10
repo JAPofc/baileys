@@ -1,7 +1,7 @@
 /**
  * Chat Control Utilities
  *
- * Part of @j.ap/baileys chat utilities.
+ * Part of @japofc/baileys chat utilities.
  * Rewritten as clean TypeScript with full types and JSDoc.
  *
  * Three components:

@@ -48,4 +48,4 @@ export type JapStickerPackOptions = {
         set: (key: string, value: Buffer) => void;
     };
 };
-export declare const prepareStickerPackMessage: (message: JapStickerPackInput, options: JapStickerPackOptions) => Promise<proto.Message.IStickerPackMessage>;
+export declare const prepareStickerPackMessage: (message: JapStickerPackInput, options: JapStickerPackOptions) => Promise<any>;

@@ -1,5 +1,5 @@
 {
-  "name": "@j.ap/baileys",
+  "name": "@japofc/baileys",
   "version": "2.0.1",
   "description": "Feature-rich WhatsApp Multi-Device library for Node.js — interactive messages, native flows, polls, newsletters, VoIP, mini-apps and everyday bot utilities.",
   "type": "module",
@@ -35,7 +35,7 @@
     "NOTICE.md"
   ],
   "keywords": [
-    "j.ap",
+    "japofc",
     "jap",
     "jap-baileys",
     "japbaileys",

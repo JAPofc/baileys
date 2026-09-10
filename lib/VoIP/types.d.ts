@@ -1,5 +1,5 @@
 /**
- * Shared type definitions for the @j.ap/baileys VoIP stack.
+ * Shared type definitions for the @japofc/baileys VoIP stack.
  *
  * @author J.AP
  */

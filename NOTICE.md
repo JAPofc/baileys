@@ -1,6 +1,6 @@
 # NOTICE
 
-`@j.ap/baileys` is MIT-licensed (see the root `LICENSE`/`license` field in
+`@japofc/baileys` is MIT-licensed (see the root `LICENSE`/`license` field in
 `package.json`). It's a fork built on top of, and incorporating ported code
 from, several other MIT-licensed WhatsApp libraries. This file lists each
 third-party component, its original author/source, and where it lives in
@@ -24,7 +24,7 @@ below was MIT-licensed at its source at the time it was ported.
 - **Source:** Nixel, "NIXCODE — Advanced WhatsApp Interactive Message Builder", with contributions from Ahmad tumbuh kembang.
 - **Location in this package:** `lib/Utils/MessageBuilder.js` and the `AIRich`/`AIJap`/`LeafRich` exports.
 - **⚠ Needs your confirmation:** the in-file header as of 1.7.0 now says this
-  was "ported into @j.ap/baileys 1.0.0 from the `@blurose/baileys` 1.1.13
+  was "ported into @japofc/baileys 1.0.0 from the `@blurose/baileys` 1.1.13
   fork (base, feature-complete), with perf defaults and message-authenticity
   fields backported from `arslan-baileys` 1.1.0." That doesn't name Nixel/
   NIXCODE or Ahmad tumbuh kembang at all. I didn't overwrite the existing

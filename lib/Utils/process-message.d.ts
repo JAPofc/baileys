@@ -41,7 +41,7 @@ export function decryptEventResponse({ encPayload, encIv }: {
  *   aad  = (empty)              <-- differs from Poll Vote / Event Response
  *   key  = HKDF-SHA256(salt=zeros, ikm=messageSecret, info, L=32)
  *
- * The decrypted plaintext is a regular `proto.Message` whose
+ * The decrypted plaintext is a regular `any` whose
  * `protocolMessage.editedMessage` field holds the new content — same
  * shape as the legacy `protocolMessage.editedMessage` edit path, so
  * consumers can treat the result identically.

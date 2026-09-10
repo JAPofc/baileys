@@ -49,3 +49,14 @@ export interface AnyMessageContent {
     raw?: boolean;
     [key: string]: any;
 }
+// JAP@Types: loose aliases for members referenced across the typings surface
+// (full shapes pending; `any` keeps every import resolvable under tsc strict).
+export type MinimalMessage = any;
+export type MessageUpsertType = any;
+export type MessageUserReceiptUpdate = any;
+export type WAMessageUpdate = any;
+export type WAMediaUpload = any;
+export type MediaConnInfo = any;
+export type AnyMediaMessageContent = any;
+export type WAMediaUploadFunction = any;
+export type WAMessageAddressingMode = any;

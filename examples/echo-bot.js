@@ -1,5 +1,5 @@
 /**
- * Echo bot — the smallest @j.ap/baileys bot.
+ * Echo bot — the smallest @japofc/baileys bot.
  * Replies to every incoming text + answers `ping` with a humanized `pong`.
  *
  * Run: node examples/echo-bot.js   (scan the QR on first run)

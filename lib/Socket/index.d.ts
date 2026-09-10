@@ -283,6 +283,23 @@ declare function makeWASocket(config: any): {
     transcribeMessage: (webMessage: any, opts?: any) => Promise<any>;
     setUsername: (username: string, options?: any) => Promise<any>;
     reserveUsername: (username: string, options?: any) => Promise<any>;
+    checkUsername: (username: string, includeSuggestions?: boolean) => Promise<{
+        available: boolean;
+        username: string;
+        suggestions?: any[];
+        rejectionReasons?: any[];
+        suggestionsEligible?: boolean;
+    }>;
+    checkUsernameMulti: (usernames: string[]) => Promise<any>;
+    deleteUsername: () => Promise<any>;
+    getMyUsername: () => Promise<string | null>;
+    setUsernamePin: (pin: string) => Promise<any>;
+    findUserByUsername: (username: string, pin?: string) => Promise<{
+        jid: string;
+        contact: boolean;
+    } | null>;
+    fetchContactUsernames: (...jids: string[]) => Promise<any[]>;
+    getUsernameRecommendations: (source?: string | null) => Promise<any>;
     downloadMedia: (message: any, type?: string, options?: {}) => Promise<any>;
     copyNForward: (jid: any, message: any, forceForward?: boolean, options?: {}) => Promise<any>;
     executeWMexQuery: (variables: any, queryId: any, dataPath: any) => Promise<any>;

@@ -27,7 +27,7 @@ export type PossiblyExtendedCacheStore = CacheStore & {
     }[]) => Promise<void> | void | number | boolean;
     mdel?: (keys: string[]) => void | Promise<void> | number | boolean;
 };
-export type PatchedMessageWithRecipientJID = proto.IMessage & {
+export type PatchedMessageWithRecipientJID = any & {
     recipientJid?: string;
 };
 export type SocketConfig = {
@@ -72,7 +72,7 @@ export type SocketConfig = {
     /** provide an auth state object to maintain the auth state */
     auth: AuthenticationState;
     /** manage history processing with this control; by default will sync up everything */
-    shouldSyncHistoryMessage: (msg: proto.Message.IHistorySyncNotification) => boolean;
+    shouldSyncHistoryMessage: (msg: any) => boolean;
     /** transaction capability options for SignalKeyStore */
     transactionOpts: TransactionCapabilityOptions;
     /** marks the client as online whenever the socket successfully connects */
@@ -115,7 +115,7 @@ export type SocketConfig = {
     /**
      * Optionally patch the message before sending out
      * */
-    patchMessageBeforeSending: (msg: proto.IMessage, recipientJids?: string[]) => Promise<PatchedMessageWithRecipientJID[] | PatchedMessageWithRecipientJID> | PatchedMessageWithRecipientJID[] | PatchedMessageWithRecipientJID;
+    patchMessageBeforeSending: (msg: any, recipientJids?: string[]) => Promise<PatchedMessageWithRecipientJID[] | PatchedMessageWithRecipientJID> | PatchedMessageWithRecipientJID[] | PatchedMessageWithRecipientJID;
     /** verify app state MACs */
     appStateMacVerification: {
         patch: boolean;
@@ -128,7 +128,7 @@ export type SocketConfig = {
      * implement this so that messages failed to send
      * (solves the "this message can take a while" issue) can be retried
      * */
-    getMessage: (key: WAMessageKey) => Promise<proto.IMessage | undefined>;
+    getMessage: (key: WAMessageKey) => Promise<any | undefined>;
     /** cached group metadata, use to prevent redundant requests to WA & speed up msg sending */
     cachedGroupMetadata: (jid: string) => Promise<GroupMetadata | undefined>;
     makeSignalRepository: (auth: SignalAuthState, logger: ILogger, pnToLIDFunc?: (jids: string[]) => Promise<LIDMapping[] | undefined>) => SignalRepositoryWithLIDStore;

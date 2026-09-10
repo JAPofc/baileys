@@ -9,6 +9,6 @@ export interface ProcessedPastParticipants {
     participants: ProcessedPastParticipant[];
 }
 /** Process proto.IPastParticipants[] from a history sync payload into a structured list per group. */
-export declare const processPastParticipants: (pastParticipantsList: proto.IPastParticipants[]) => ProcessedPastParticipants[];
+export declare const processPastParticipants: (pastParticipantsList: any[]) => ProcessedPastParticipants[];
 /** Check if a history sync event contains past participants data. */
 export declare const hasPastParticipants: (event: { pastParticipants?: unknown[] }) => boolean;

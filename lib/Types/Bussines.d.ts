@@ -1,4 +1,4 @@
-import type { proto } from '../../WAProto';
+import type { proto } from '../../WAProto/index.js';
 export type DayOfWeekBussines = 'sun' | 'mon' | 'tue' | 'wed' | 'thu' | 'fri' | 'sat';
 export type HoursDay = {
     day: DayOfWeekBussines;
@@ -19,7 +19,7 @@ export type UpdateBussinesProfileProps = {
         days: HoursDay[];
     };
 };
-export type QuickReplyAction = proto.SyncActionValue.IQuickReplyAction & {
+export type QuickReplyAction = any & {
     timestamp?: string;
 };
 //# sourceMappingURL=Bussines.d.ts.map

@@ -22,15 +22,15 @@ export type BaileysEventMap = {
         lidPnMappings?: LIDMapping[];
         isLatest?: boolean;
         progress?: number | null;
-        syncType?: proto.HistorySync.HistorySyncType | null;
-        pastParticipants?: proto.IPastParticipants[] | null;
+        syncType?: any | null;
+        pastParticipants?: any[] | null;
         chunkOrder?: number | null;
         peerDataRequestSessionId?: string | null;
     };
     /** signals history sync milestones (completion or stall) per sync type */
     'messaging-history.status': {
         /** which sync phase this status refers to */
-        syncType: proto.HistorySync.HistorySyncType;
+        syncType: any;
         /** the status of this sync phase */
         status: 'complete' | 'paused';
         /**
@@ -83,7 +83,7 @@ export type BaileysEventMap = {
     /** message was reacted to. If reaction was removed -- then "reaction.text" will be falsey */
     'messages.reaction': {
         key: WAMessageKey;
-        reaction: proto.IReaction;
+        reaction: any;
     }[];
     'message-receipt.update': MessageUserReceiptUpdate[];
     'groups.upsert': GroupMetadata[];
@@ -168,22 +168,22 @@ export type BaileysEventMap = {
         value: string;
     } | {
         setting: 'disableLinkPreviews';
-        value: proto.SyncActionValue.IPrivacySettingDisableLinkPreviewsAction;
+        value: any;
     } | {
         setting: 'timeFormat';
-        value: proto.SyncActionValue.ITimeFormatAction;
+        value: any;
     } | {
         setting: 'privacySettingRelayAllCalls';
-        value: proto.SyncActionValue.IPrivacySettingRelayAllCalls;
+        value: any;
     } | {
         setting: 'statusPrivacy';
-        value: proto.SyncActionValue.IStatusPrivacyAction;
+        value: any;
     } | {
         setting: 'notificationActivitySetting';
-        value: proto.SyncActionValue.NotificationActivitySettingAction.NotificationActivitySetting;
+        value: any;
     } | {
         setting: 'channelsPersonalisedRecommendation';
-        value: proto.SyncActionValue.IPrivacySettingChannelsPersonalisedRecommendationAction;
+        value: any;
     };
 };
 export type BufferedEventData = {
@@ -200,8 +200,8 @@ export type BufferedEventData = {
         empty: boolean;
         isLatest: boolean;
         progress?: number | null;
-        syncType?: proto.HistorySync.HistorySyncType;
-        pastParticipants?: proto.IPastParticipants[];
+        syncType?: any;
+        pastParticipants?: any[];
         chunkOrder?: number | null;
         peerDataRequestSessionId?: string;
     };
@@ -233,13 +233,13 @@ export type BufferedEventData = {
     messageReactions: {
         [key: string]: {
             key: WAMessageKey;
-            reactions: proto.IReaction[];
+            reactions: any[];
         };
     };
     messageReceipts: {
         [key: string]: {
             key: WAMessageKey;
-            userReceipt: proto.IUserReceipt[];
+            userReceipt: any[];
         };
     };
     groupUpdates: {

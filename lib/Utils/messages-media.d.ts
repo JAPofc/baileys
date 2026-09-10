@@ -44,8 +44,8 @@ export function getStream(item: any, opts: any): Promise<{
     stream: any;
     type: string;
 }>;
-export function getHttpStream(url: any, options?: {}): Promise<any>;
-export function encryptedStream(media: any, mediaType: any, { logger, saveOriginalFileIfRequired, opts }?: {}): Promise<{
+export function getHttpStream(url: any, options?: any): Promise<any>;
+export function encryptedStream(media: any, mediaType: any, { logger, saveOriginalFileIfRequired, opts }?: any): Promise<{
     mediaKey: any;
     originalFilePath: any;
     encFilePath: any;
@@ -60,11 +60,11 @@ export function downloadContentFromMessage({ mediaKey, directPath, url }: {
     mediaKey: any;
     directPath: any;
     url: any;
-}, type: any, opts?: {}): Promise<any>;
+}, type: any, opts?: any): Promise<any>;
 export function downloadEncryptedContent(downloadUrl: any, { cipherKey, iv }: {
     cipherKey: any;
     iv: any;
-}, { startByte, endByte, options }?: {}): Promise<any>;
+}, { startByte, endByte, options }?: any): Promise<any>;
 export function uploadWithNodeHttp({ url, filePath, headers, timeoutMs, agent }: {
     url: any;
     filePath: any;

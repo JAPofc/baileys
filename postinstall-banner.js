@@ -52,7 +52,7 @@ const bottom = `${border}╰${'─'.repeat(WIDTH)}╯${c.reset}`;
 const row = (content = '') => `${border}│${c.reset}${content}${border}│${c.reset}`;
 const blank = row(' '.repeat(WIDTH));
 
-const title = `${c.bold}${c.green}⚡  @j.ap/baileys${c.reset}${version ? `  ${c.dim}v${version}${c.reset}` : ''}`;
+const title = `${c.bold}${c.green}⚡  @japofc/baileys${c.reset}${version ? `  ${c.dim}v${version}${c.reset}` : ''}`;
 const tagline = `${c.mint}Next-gen Baileys fork by J.AP${c.reset}`;
 const sub = `${c.dim}Interactive messages · native flow · status tools${c.reset}`;
 

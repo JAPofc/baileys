@@ -4,7 +4,7 @@ export const DEFAULT_ORIGIN: "https://web.whatsapp.com";
 export const CALL_VIDEO_PREFIX: "https://call.whatsapp.com/video/";
 export const CALL_AUDIO_PREFIX: "https://call.whatsapp.com/voice/";
 export const DONATE_URL: "";
-export const LIBRARY_NAME: "j.ap/baileys";
+export const LIBRARY_NAME: "japofc/baileys";
 export const COMPANION_DEVICE_VERSION: {
     primary: number;
     secondary: number;
@@ -150,3 +150,5 @@ export namespace TimeMs {
 declare const version: number[];
 import { makeLibSignalRepository } from '../Signal/libsignal.js';
 export {};
+/** Media direction/type tag used across media helpers (typed loosely). */
+export type MediaType = any;

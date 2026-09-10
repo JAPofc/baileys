@@ -41,14 +41,14 @@ export type AccountSettings = {
     /** unarchive chats when a new message is received */
     unarchiveChats: boolean;
     /** the default mode to start new conversations with */
-    defaultDisappearingMode?: Pick<proto.IConversation, 'ephemeralExpiration' | 'ephemeralSettingTimestamp'>;
+    defaultDisappearingMode?: Pick<any, 'ephemeralExpiration' | 'ephemeralSettingTimestamp'>;
 };
 export type AuthenticationCreds = SignalCreds & {
     readonly noiseKey: KeyPair;
     readonly pairingEphemeralKeyPair: KeyPair;
     advSecretKey: string;
     me?: Contact;
-    account?: proto.IADVSignedDeviceIdentity;
+    account?: any;
     signalIdentities?: SignalIdentity[];
     myAppStateKeyId?: string;
     firstUnuploadedPreKeyId: number;
@@ -72,7 +72,7 @@ export type SignalDataTypeMap = {
     'sender-key-memory': {
         [jid: string]: boolean;
     };
-    'app-state-sync-key': proto.Message.IAppStateSyncKeyData;
+    'app-state-sync-key': any;
     'app-state-sync-version': LTHashState;
     'lid-mapping': string;
     'device-list': string[];
