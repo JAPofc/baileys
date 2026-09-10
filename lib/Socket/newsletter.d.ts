@@ -19,6 +19,11 @@ export function makeNewsletterSocket(config: any): {
     newsletterSubscribers: (jid: any) => Promise<any>;
     newsletterSubscribed: () => Promise<any>;
     newsletterMetadata: (type: any, key: any) => Promise<any>;
+    newsletterDelete: (jid: any) => Promise<any>;
+    newsletterAdminCount: (jid: any) => Promise<any>;
+    newsletterDemoteAdmin: (jid: any, userJid: any) => Promise<any>;
+    newsletterChangeOwner: (jid: any, userJid: any) => Promise<any>;
+    newsletterJoinInvite: (code: string) => Promise<any>;
     newsletterFollow: (jid: any) => Promise<any>;
     newsletterUnfollow: (jid: any) => Promise<any>;
     newsletterMute: (jid: any) => Promise<any>;

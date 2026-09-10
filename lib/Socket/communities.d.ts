@@ -101,6 +101,7 @@ export function makeCommunitiesSocket(config: any): {
     communityRequestParticipantsList: (jid: any) => Promise<any>;
     communityRequestParticipantsUpdate: (jid: any, participants: any, action: any) => Promise<any>;
     communityParticipantsUpdate: (jid: any, participants: any, action: any) => Promise<any>;
+    communityGetInviteCode: (jid: any) => Promise<string>;
     communityUpdateDescription: (jid: any, description: any) => Promise<void>;
     communityInviteCode: (jid: any) => Promise<any>;
     communityRevokeInvite: (jid: any) => Promise<any>;

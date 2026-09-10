@@ -54,6 +54,7 @@
 - [🗄️ Store Backends](#-store-backends)
 - [💡 Usage Examples](#-usage-examples)
 - [📨 Message Helpers](#-message-helpers)
+- [🧰 Channels, History & Transcripts](#-channels-history--transcripts)
 - [🆕 WA 2026 catch-up](#-wa-2026-catch-up)
 - [🆕 Everyday Utilities](#-everyday-utilities)
   - [Buttons & Native Flow](#buttons--native-flow)
@@ -656,6 +657,48 @@ await sock.sendMessage(jid, { raw: true, musicMessage: { songUri } });
 ```
 
 TypeScript consumers get a typed `AnyMessageContent` (`import type { AnyMessageContent } from '@j.ap/baileys'`).
+
+## 🧰 Channels, History & Transcripts
+
+**Channel management** (live queries):
+
+```js
+await sock.newsletterDelete(channelJid)
+await sock.newsletterAdminCount(channelJid)
+await sock.newsletterJoinInvite('invite-code')
+await sock.newsletterChangeOwner(channelJid, newOwnerJid) // experimental
+await sock.communityGetInviteCode(communityJid)
+// ...plus existing follow/unfollow/mute/react/fetch + full community CRUD
+```
+
+**Group history sharing** for new members (forwards recent messages to their DM):
+
+```js
+import { getGroupHistoryFromStore } from '@j.ap/baileys'
+const messages = getGroupHistoryFromStore(store, groupJid, 10)
+await sock.shareGroupHistory({ groupJid, members: newMemberJid, messages, greeting: true })
+```
+
+**Voice-note transcription** (pluggable provider — cloud Whisper or your own):
+
+```js
+import { openAIWhisperProvider } from '@j.ap/baileys'
+const provider = openAIWhisperProvider({ apiKey: process.env.OPENAI_API_KEY })
+const { text } = await sock.transcribeMessage(voiceNoteMsg, { provider })
+```
+
+**Mini-app deep links** (HMAC-signed params your web app can verify):
+
+```js
+import { createMiniAppLink, parseMiniAppParams, buildFlowDataExchange } from '@j.ap/baileys'
+const link = createMiniAppLink('https://app.example.com/', { uid: '123' }, { secret: 's3cr3t' })
+parseMiniAppParams(link, { secret: 's3cr3t' }) // → { uid: '123' } (throws if tampered)
+buildFlowDataExchange('navigate', { screen: 'HOME' }) // Flows data_exchange payload
+```
+
+**A2UI widgets** now include `Slider`, `Switch`, `List`, `ProgressBar`, `Avatar`,
+`Badge`, `Spacer`, and `Tabs` alongside the existing Text/Image/Video/Button/Card/Modal
+set (all ref-validated at `build()`).
 
 ## 🆕 WA 2026 catch-up
 

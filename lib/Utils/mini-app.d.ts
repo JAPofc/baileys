@@ -30,3 +30,6 @@ export interface MiniAppOptions {
 }
 export declare const buildMiniAppContent: (opts?: MiniAppOptions) => Promise<any>;
 export declare const sendMiniApp: (sock: any, jid: any, miniApp: MiniAppOptions, options?: any) => Promise<any>;
+export declare const createMiniAppLink: (baseUrl: string, params?: Record<string, string | number | boolean>, opts?: { secret?: string }) => string;
+export declare const parseMiniAppParams: (link: string, opts?: { secret?: string }) => Record<string, string>;
+export declare const buildFlowDataExchange: (action: string, data?: any, opts?: { version?: string; token?: string }) => any;

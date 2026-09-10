@@ -279,6 +279,8 @@ declare function makeWASocket(config: any): {
     sendEventInvite: (jid: any, invite: any, options?: any) => Promise<any>;
     sendNewsletterInvite: (jid: any, invite: any, options?: any) => Promise<any>;
     resolveSenderPn: (webMessage: any) => Promise<string | null>;
+    shareGroupHistory: (opts: any) => Promise<any>;
+    transcribeMessage: (webMessage: any, opts?: any) => Promise<any>;
     setUsername: (username: string, options?: any) => Promise<any>;
     reserveUsername: (username: string, options?: any) => Promise<any>;
     downloadMedia: (message: any, type?: string, options?: {}) => Promise<any>;
