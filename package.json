@@ -1,7 +1,7 @@
 {
   "name": "@j.ap/baileys",
   "version": "2.0.1",
-  "description": "Enhanced Baileys fork by J.AP — based on @itsliaaa/baileys + @whiskeysockets/baileys with fixes for audio group status and clean media without newsletter button.",
+  "description": "Feature-rich WhatsApp Multi-Device library for Node.js — interactive messages, native flows, polls, newsletters, VoIP, mini-apps and everyday bot utilities.",
   "type": "module",
   "main": "./lib/index.js",
   "module": "./lib/index.js",
@@ -25,7 +25,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/J-AP/jap-baileys.git"
+    "url": "git+https://github.com/JAPofc/jap-baileys.git"
   },
   "files": [
     "lib/**/*",
@@ -70,7 +70,7 @@
     "multi-device",
     "interactive-messages"
   ],
-  "homepage": "https://github.com/J-AP/jap-baileys#readme",
+  "homepage": "https://github.com/JAPofc/jap-baileys#readme",
   "author": "J.AP",
   "license": "MIT",
   "dependencies": {

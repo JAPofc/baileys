@@ -1,5 +1,5 @@
 /**
- * JAP@Port --- from SheIITear/baileys-caller scripts/fetch-wasm-resources.mjs (MIT).
+ * JAP@Tool --- refresh the bundled VoIP WASM resources from the WhatsApp Web CDN.
  * Fetch fresh WASM resources from a running WhatsApp Web browser instance.
  * Requires Chrome with remote debugging enabled on port 9222.
  *

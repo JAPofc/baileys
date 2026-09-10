@@ -1,7 +1,7 @@
 /**
  * Chat Control Utilities
  *
- * Source: @innovatorssoft/baileys (chat-control.js)
+ * Part of @j.ap/baileys chat utilities.
  * Rewritten as clean TypeScript with full types and JSDoc.
  *
  * Three components:

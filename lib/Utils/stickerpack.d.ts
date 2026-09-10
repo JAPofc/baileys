@@ -20,19 +20,19 @@ export declare const buildStickerPackProto: (pack: {
     description: string;
 };
 export declare const STICKER_PACK_MESSAGE_TYPE: 'sticker_pack';
-export type ItsliaaaStickerInput = {
+export type JapStickerInput = {
     data: WAMediaUpload;
     emojis?: string[];
     accessibilityLabel?: string;
 };
-export type ItsliaaaStickerPackInput = {
+export type JapStickerPackInput = {
     cover: WAMediaUpload;
-    stickers: ItsliaaaStickerInput[];
+    stickers: JapStickerInput[];
     name?: string;
     publisher?: string;
     description?: string;
 };
-export type ItsliaaaStickerPackOptions = {
+export type JapStickerPackOptions = {
     logger?: ILogger;
     upload: (filePath: string, opts: {
         fileEncSha256B64: string;
@@ -48,4 +48,4 @@ export type ItsliaaaStickerPackOptions = {
         set: (key: string, value: Buffer) => void;
     };
 };
-export declare const prepareStickerPackMessageItsliaaa: (message: ItsliaaaStickerPackInput, options: ItsliaaaStickerPackOptions) => Promise<proto.Message.IStickerPackMessage>;
+export declare const prepareStickerPackMessage: (message: JapStickerPackInput, options: JapStickerPackOptions) => Promise<proto.Message.IStickerPackMessage>;

@@ -3,19 +3,19 @@
 <img src="https://files.catbox.moe/l72xji.svg" width="100%" alt="Sakura night banner"/>
 
 <p>
-  <img src="https://readme-typing-svg.demolab.com?font=Fira+Code&size=18&pause=1200&color=2ECC71&center=true&vCenter=true&width=650&lines=Extended+interactive+messages+%26+native+flow;Status+tools+%2B+quality-of-life+fixes;Built+on+top+of+WhiskeySockets%2FBaileys" alt="Typing SVG" />
+  <img src="https://readme-typing-svg.demolab.com?font=Fira+Code&size=18&pause=1200&color=2ECC71&center=true&vCenter=true&width=650&lines=Extended+interactive+messages+%26+native+flow;Status+tools+%2B+quality-of-life+fixes;WhatsApp+automation+toolkit" alt="Typing SVG" />
 </p>
 
 <p>
 <a href="https://www.npmjs.com/package/@j.ap/baileys" target="_blank"><img src="https://img.shields.io/npm/v/@j.ap/baileys?color=2ecc71&label=npm&style=for-the-badge" alt="npm version"/></a>
 <a href="https://www.npmjs.com/package/@j.ap/baileys" target="_blank"><img src="https://img.shields.io/npm/dt/@j.ap/baileys?color=3498db&style=for-the-badge" alt="npm downloads"/></a>
-<a href="https://github.com/J-AP/jap-baileys/stargazers" target="_blank"><img src="https://img.shields.io/github/stars/J-AP/jap-baileys?color=f1c40f&style=for-the-badge" alt="GitHub stars"/></a>
-<a href="https://github.com/J-AP/jap-baileys/issues" target="_blank"><img src="https://img.shields.io/github/issues/J-AP/jap-baileys?color=e74c3c&style=for-the-badge" alt="GitHub issues"/></a>
+<a href="https://github.com/JAPofc/jap-baileys/stargazers" target="_blank"><img src="https://img.shields.io/github/stars/JAPofc/jap-baileys?color=f1c40f&style=for-the-badge" alt="GitHub stars"/></a>
+<a href="https://github.com/JAPofc/jap-baileys/issues" target="_blank"><img src="https://img.shields.io/github/issues/JAPofc/jap-baileys?color=e74c3c&style=for-the-badge" alt="GitHub issues"/></a>
 </p>
 <p>
-<img src="https://img.shields.io/github/last-commit/J-AP/jap-baileys?color=9b59b6&style=flat-square" alt="Last commit"/>
-<img src="https://img.shields.io/github/commit-activity/m/J-AP/jap-baileys?color=1abc9c&style=flat-square" alt="Commit activity"/>
-<img src="https://img.shields.io/github/languages/code-size/J-AP/jap-baileys?color=e67e22&style=flat-square" alt="Code size"/>
+<img src="https://img.shields.io/github/last-commit/JAPofc/jap-baileys?color=9b59b6&style=flat-square" alt="Last commit"/>
+<img src="https://img.shields.io/github/commit-activity/m/JAPofc/jap-baileys?color=1abc9c&style=flat-square" alt="Commit activity"/>
+<img src="https://img.shields.io/github/languages/code-size/JAPofc/jap-baileys?color=e67e22&style=flat-square" alt="Code size"/>
 <img src="https://img.shields.io/badge/node-%3E%3D20-brightgreen?style=flat-square" alt="Node >=20"/>
 <img src="https://img.shields.io/badge/module-ESM-blue?style=flat-square" alt="ESM"/>
 <img src="https://img.shields.io/badge/types-included-blue?style=flat-square" alt="TypeScript types included"/>
@@ -23,7 +23,7 @@
 </p>
 
 <p>
-<img src="https://komarev.com/ghpvc/?username=J-AP&repo=jap-baileys&color=2ecc71&style=for-the-badge&label=Repo+Views" alt="Visitor count"/>
+<img src="https://komarev.com/ghpvc/?username=JAPofc&repo=jap-baileys&color=2ecc71&style=for-the-badge&label=Repo+Views" alt="Visitor count"/>
 </p>
 
 <p>
@@ -112,20 +112,20 @@ This fork focuses on:
 
 ## 🆚 Comparison
 
-How `@j.ap/baileys` stacks up against its own lineage and the wider Baileys fork ecosystem:
+How `@j.ap/baileys` stacks up against other Baileys libraries:
 
-| Capability | `@j.ap/baileys` | `@itsliaaa/baileys` | `WhiskeySockets/Baileys` |
-|---|:---:|:---:|:---:|
-| Native Flow buttons (V1/V2/V3) | ✅ | ✅ | ⚠️ basic only |
-| Carousel messages | ✅ | ❌ | ❌ |
-| Rich response cards (AIRich) | ✅ | ❌ | ❌ |
-| Commerce flow (catalog/order/payment) | ✅ | ⚠️ partial | ❌ |
-| Voice calling (VoIP) | ✅ experimental | ❌ | ❌ |
-| Multi-backend store (SQL/Mongo/Redis) | ✅ | ⚠️ file/SQLite only | ⚠️ in-memory only |
-| Full `.d.ts` TypeScript definitions | ✅ | ⚠️ partial | ⚠️ partial |
-| User sync queries (WAUSync) | ✅ | ✅ | ✅ |
-| Username management (check/set/pin/recommend) | ✅ | ❌ | ❌ |
-| Bot framework (middleware, session, stats) | ✅ | ❌ | ❌ |
+| Capability | `@j.ap/baileys` | Other forks (typical) |
+|---|:---:|:---:|
+| Native Flow buttons (V1/V2/V3) | ✅ | ⚠️ partial |
+| Carousel messages | ✅ | ❌ |
+| Rich response cards (AIRich) | ✅ | ❌ |
+| Commerce flow (catalog/order/payment) | ✅ | ⚠️ partial |
+| Voice calling (VoIP) | ✅ experimental | ❌ |
+| Multi-backend store (SQL/Mongo/Redis) | ✅ | ⚠️ partial |
+| Full `.d.ts` TypeScript definitions | ✅ | ⚠️ partial |
+| User sync queries (WAUSync) | ✅ | ✅ |
+| Username management (check/set/pin/recommend) | ✅ | ❌ |
+| Bot framework (middleware, session, stats) | ✅ | ❌ |
 
 > Tabel ini menggambarkan fitur di level package, bukan benchmark performa. PR untuk memperbarui/mengoreksi tabel ini dipersilakan lewat [Contributing](#-contributing).
 
@@ -323,7 +323,7 @@ npm install @j.ap/baileys
 Directly from GitHub:
 
 ```bash
-npm install github:J-AP/jap-baileys
+npm install github:JAPofc/jap-baileys
 ```
 
 > Requires **Node.js 20+** — install will refuse to run below that (checked by `engine-requirements.js` on `preinstall`).
@@ -693,7 +693,7 @@ await sock.updateMemberLabel({ groupJid, lid, label: 'Admin' });
 - **Voice message transcripts** — generated on-device by official clients only; there is
   no transcript API on the wire.
 - **Group message history sharing** — the wire format isn't captured by any public Baileys
-  fork yet (verified against `@whiskeysockets/baileys@7.0.0-rc14`, whose proto is 100+
+  fork yet (verified against the latest upstream Baileys release, whose proto is 100+
   fields behind this repo).
 - **Music messages** — `MusicMessage` needs Spotify/Apple catalog IDs plus an artwork
   upload flow we haven't captured; the proto struct exists, sending real ones doesn't.
@@ -754,7 +754,7 @@ new ChannelScheduler(sock).schedule(channelJid, { text: 'Update' }, Date.now() +
 
 ## 📞 Voice & Video Calls
 
-Experimental audio-call support (ported from ourin-baileys) via a WASM call stack + WebRTC relay. Requires the optional `@roamhq/wrtc` peer dependency.
+Experimental audio-call support via a bundled WASM call stack + WebRTC relay. Requires the optional `@roamhq/wrtc` peer dependency.
 
 ```js
 import { VoipClient } from '@j.ap/baileys'
@@ -793,7 +793,7 @@ console.log('busy?', voip.isBusy(), '| active:', voip.getActiveCall()?.callId)
 await call.waitForEnd()
 ```
 
-> Inbound calls surface as `incoming-call` events (useful for logging / auto-reply), but **answering** them is not supported — the WASM build only exposes outbound `startVoipCall`/`endCall`. Nobody has cracked this (same limitation in `baileys-caller` and `ourin-baileys` 9.0.21).
+> Inbound calls surface as `incoming-call` events (useful for logging / auto-reply), but **answering** them is not supported — the WASM build only exposes outbound `startVoipCall`/`endCall`. No other Baileys-based implementation has cracked this yet.
 
 **Handling inbound calls** — the standard socket path works (`call` event + `rejectCall`), plus VoIP-level conveniences:
 
@@ -962,18 +962,6 @@ Every file in `lib/` ships a matching `.d.ts`, including the message builders (`
 
 ---
 
-## 📚 Fork Lineage
-
-```
-@j.ap/baileys
-└── @itsliaaa/baileys
-    └── WhiskeySockets/Baileys
-```
-
-Respect to all original maintainers and contributors.
-
----
-
 ## ❓ FAQ & Troubleshooting
 
 <details>
@@ -1033,10 +1021,7 @@ Untuk laporan bug, sertakan versi Node.js, cara reproduksi, dan potongan log `la
 
 ## 🙏 Credits
 
-- **Nixel** (with contributions from **Ahmad tumbuh kembang**) — base implementation of the `MessageBuilder` (AIRich / Button / Carousel / Toolkit), originally "NIXCODE — Advanced WhatsApp Interactive Message Builder"
-- **vinikjkkj** ([zapo](https://github.com/vinikjkkj/zapo)) — button/list addon-kind resolution logic
-- **QueenAnya** (`@queenanya/baileys`) — interactive/native-flow button send layer
-- **WhiskeySockets/Baileys** & **@itsliaaa/baileys** — upstream base
+Built on the shoulders of the open-source WhatsApp community.
 
 Full details and license terms per component: see [`NOTICE.md`](./NOTICE.md).
 
@@ -1053,7 +1038,7 @@ Full details and license terms per component: see [`NOTICE.md`](./NOTICE.md).
 
 **J.AP**
 
-- GitHub: [github.com/J-AP](https://github.com/J-AP)
+- GitHub: [github.com/JAPofc](https://github.com/JAPofc)
 - Package: [`@j.ap/baileys`](https://www.npmjs.com/package/@j.ap/baileys)
 - ✦ Maintains this fork solo — issues & PRs are welcome and reviewed personally.
 
@@ -1062,7 +1047,7 @@ Full details and license terms per component: see [`NOTICE.md`](./NOTICE.md).
 </table>
 
 <p align="center">
-<img src="https://raw.githubusercontent.com/J-AP/J-AP/output/github-contribution-grid-snake.svg" width="100%" alt="Contribution snake animation"/>
+<img src="https://raw.githubusercontent.com/JAPofc/JAPofc/output/github-contribution-grid-snake.svg" width="100%" alt="Contribution snake animation"/>
 </p>
 
 ---
@@ -1086,8 +1071,8 @@ Use responsibly and follow WhatsApp Terms of Service.
 
 ## 📝 V5 Patch Notes
 
-- Added [Username Management](#-username-management): `checkUsername`, `checkUsernameMulti`, `setUsername`, `deleteUsername`, `getMyUsername`, `setUsernamePin`, `findUserByUsername`, `fetchContactUsernames`, `getUsernameRecommendations` — ported from `@queenanya/baileys`, layered onto this fork's existing `USyncUsernameProtocol` support.
-- Added the [Bot Framework](#-bot-framework) (`Bot`, `Context`, `SessionManager`, `StatsManager`, `MediaManager`, `SQLiteStore`) — ported from `@queenanya/baileys` (originally WhiskeySockets PR #2710 by LuferOS). Adapted on the way in:
+- Added [Username Management](#-username-management): `checkUsername`, `checkUsernameMulti`, `setUsername`, `deleteUsername`, `getMyUsername`, `setUsernamePin`, `findUserByUsername`, `fetchContactUsernames`, `getUsernameRecommendations`, layered onto the existing `USyncUsernameProtocol` support.
+- Added the [Bot Framework](#-bot-framework) (`Bot`, `Context`, `SessionManager`, `StatsManager`, `MediaManager`, `SQLiteStore`). Adapted on the way in:
   - `SQLiteStore`/`StatsManager` construction moved behind an async `.create()` factory so `better-sqlite3` stays a lazily-loaded optional peer dep instead of a hard top-level import that would crash the Framework module for anyone without it installed.
   - `MediaManager`'s sticker/voice-note conversion now reuses this fork's existing lazy `fluent-ffmpeg` loader (see `Utils/MessageBuilder.js`) instead of adding `ffmpeg-static` + a second ffmpeg dependency; `node-webpmux` (sticker EXIF metadata) is lazy-loaded the same way and only when packname/author is actually requested.
   - `Bot`'s default logger now falls back to this fork's own pino instance instead of a silent no-op stub.
@@ -1103,7 +1088,6 @@ Use responsibly and follow WhatsApp Terms of Service.
 - Existing guarded fallbacks for platforms where the native bridge cannot load remain in place.
 - ESM-only package metadata is preserved; no CommonJS build is included.
 
-Reference audit: the supplied Ourin, Elaina, ItsLiaaa, and Noxleyss packages were compared before this patch. Their broader core changes were not copied wholesale because the current J.AP tree already contains additional LID, retry, media, interactive, and AIRich fixes that would risk regressions if replaced.
 
 ---
 
