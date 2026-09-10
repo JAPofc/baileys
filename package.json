@@ -170,5 +170,8 @@
   "packageManager": "yarn@4.9.2",
   "optionalDependencies": {
     "whatsapp-rust-bridge": "0.5.5"
+  },
+  "devDependencies": {
+    "@types/node": "^22.20.2"
   }
 }

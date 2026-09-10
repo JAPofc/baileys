@@ -1,47 +1,17 @@
-// JAP Baileys — message-builder surface (typed stubs).
-//
-// The builders (Button/Poll/Carousel/AIRich/A2UI/…) are plain JavaScript
-// without hand-written declarations yet. These `any` stubs keep every
-// builder name importable from TypeScript until full .d.ts files land —
-// value use (`new Button()`, `Toolkit.x`) and type use (`let b: Button`)
-// both resolve instead of erroring with TS2305/TS2307.
-declare const _any: any;
-export declare const Toolkit: typeof _any;
-export type Toolkit = any;
-export declare const BaseBuilder: typeof _any;
-export type BaseBuilder = any;
-export declare const RowBuilder: typeof _any;
-export type RowBuilder = any;
-export declare const Button: typeof _any;
-export type Button = any;
-export declare const CardBuilder: typeof _any;
-export type CardBuilder = any;
-export declare const ButtonV2: typeof _any;
-export type ButtonV2 = any;
-export declare const ButtonV3: typeof _any;
-export type ButtonV3 = any;
-export declare const Carousel: typeof _any;
-export type Carousel = any;
-export declare const Poll: typeof _any;
-export type Poll = any;
-export declare const AIRich: typeof _any;
-export type AIRich = any;
-export declare const ORich: typeof _any;
-export type ORich = any;
-export declare const A2UI: typeof _any;
-export type A2UI = any;
-export declare const sendA2UIWidget: typeof _any;
-export type sendA2UIWidget = any;
-export declare const AIJap: typeof _any;
-export type AIJap = any;
-export declare const LeafRich: typeof _any;
-export type LeafRich = any;
-export declare const JapAI: typeof _any;
-export type JapAI = any;
-export declare const JapRich: typeof _any;
-export type JapRich = any;
-export declare const RichJap: typeof _any;
-export type RichJap = any;
+export { Toolkit, BaseBuilder, RowBuilder } from './shared.js';
+export { Button, CardBuilder } from './Button.js';
+export { ButtonV2 } from './ButtonV2.js';
+export { ButtonV3 } from './ButtonV3.js';
+export { Carousel } from './Carousel.js';
+export { Poll } from './Poll.js';
+export { AIRich, ORich } from './AIRich.js';
+export { A2UI, sendA2UIWidget } from './A2UI.js';
+export { AIRich as AIJap, AIRich as LeafRich, AIRich as JapAI, AIRich as JapRich, AIRich as RichJap } from './AIRich.js';
 export declare const MESSAGE_BUILDER_VERSION: string;
-export declare const JapBaileys: typeof _any;
-export type JapBaileys = any;
+export { JapBaileys } from './JapBaileys.js';
+export type { LimitedTimeOfferParams, BottomSheetParams, TapTargetConfigurationParams, BloksWidgetOptions } from './Button.js';
+export type { ButtonV2BuildOptions } from './ButtonV2.js';
+export type { AddTextOptions, AddInlineImageOptions, AIRichBuildOptions, AIRichSendOptions, AIRichEditOptions } from './AIRich.js';
+export type { BloksRef, BloksNodeBase, ColumnRowNode, TextNode, IconNode, DividerNode, ImageNode, VideoNode, ListNode, TextFieldNode, DateTimeInputNode, SliderNode, SwitchNode, CheckBoxNode, ChoicePickerNode, BloksButtonNode, ModalNode, TabsNode, CardNode, ProgressBarNode, AvatarNode, BadgeNode, SpacerNode, AudioPlayerNode, AnyBloksNode, BloksNode, A2UIBuilderOptions, A2UIBuildOptions, A2UIBuildResult, ListCardOptions, SendA2UIWidgetOptions } from './A2UI.js';
+export type { CarouselCard } from './Carousel.js';
+export type { ExtractIEOptions, FetchBufferOptions, ResolveMediaOptions, Mp4PreviewOptions } from './shared.js';

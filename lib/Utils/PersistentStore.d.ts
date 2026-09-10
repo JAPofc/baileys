@@ -19,23 +19,23 @@ export interface StoreAdapter {
 	close(): Promise<void>;
 }
 
-export function createSqliteStoreAdapter(opts?: { dbPath?: string; database?: import('better-sqlite3').Database }): Promise<StoreAdapter>;
+export function createSqliteStoreAdapter(opts?: { dbPath?: string; database?: any /* import('better-sqlite3').Database — optional peer */ }): Promise<StoreAdapter>;
 
 export function createMongoStoreAdapter(opts?: {
 	url?: string;
 	dbName?: string;
-	client?: import('mongodb').MongoClient;
+	client?: any /* import('mongodb').MongoClient — optional peer */;
 	collectionName?: string;
 }): Promise<StoreAdapter>;
 
 export function createMysqlStoreAdapter(
-	opts?: { pool?: import('mysql2/promise').Pool } & import('mysql2/promise').PoolOptions
+	opts?: { pool?: any /* import('mysql2/promise').Pool — optional peer */ } & Record<string, any> /* PoolOptions */
 ): Promise<StoreAdapter>;
 
-export function createPostgresStoreAdapter(opts?: { pool?: import('pg').Pool } & import('pg').PoolConfig): Promise<StoreAdapter>;
+export function createPostgresStoreAdapter(opts?: { pool?: any /* import('pg').Pool — optional peer */ } & Record<string, any> /* PoolConfig */): Promise<StoreAdapter>;
 
 export function createRedisStoreAdapter(
-	opts?: { url?: string; client?: import('ioredis').Redis } & import('ioredis').RedisOptions
+	opts?: { url?: string; client?: any /* import('ioredis').Redis — optional peer */ } & Record<string, any> /* RedisOptions */
 ): Promise<StoreAdapter>;
 
 export interface MakePersistentStoreConfig {

@@ -300,6 +300,9 @@ declare function makeWASocket(config: any): {
     } | null>;
     fetchContactUsernames: (...jids: string[]) => Promise<any[]>;
     getUsernameRecommendations: (source?: string | null) => Promise<any>;
+    USERNAME_QUERY_IDS: import('./username.js').USERNAME_QUERY_IDS;
+    USERNAME_CHECK_RESULT: import('./username.js').USERNAME_CHECK_RESULT;
+    USERNAME_SOURCE: import('./username.js').USERNAME_SOURCE;
     downloadMedia: (message: any, type?: string, options?: {}) => Promise<any>;
     copyNForward: (jid: any, message: any, forceForward?: boolean, options?: {}) => Promise<any>;
     executeWMexQuery: (variables: any, queryId: any, dataPath: any) => Promise<any>;

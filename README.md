@@ -1095,7 +1095,7 @@ Every module above ships a matching `.d.ts`, so your editor will show full hover
 
 ## 📘 TypeScript Support
 
-The whole public surface (`import { ... } from '@japofc/baileys'` — the package exposes only its root entry) resolves in TypeScript with no `@types/` package needed, verified with `tsc --strict` at zero errors. Core is hand-typed: `makeWASocket` incl. the username methods, all `Types/*` definitions (Auth, Chat, Contact, Events, GroupMetadata, Message, Product, Signal, USync, and more), `WAProto`, stores, and `Utils/*`. The message builders (`Button`, `Poll`, `Carousel`, `AIRich`, `A2UI`, …), the Bot Framework (`Bot`, `Context`, …), and the `VoipClient`/`ActiveCall` classes currently ship as `any`-typed entry declarations — importable and callable, but without autocomplete for their members yet. (Internal deep files are not part of the public API and may lack their own `.d.ts`.)
+Full `.d.ts`: every shipped `.js` file has a matching TypeScript declaration (guarded by `tests/types-parity.test.js`), and the whole package verifies at zero errors under `tsc --strict`. `import { ... } from '@japofc/baileys'` resolves with no `@types/` package needed (beyond the standard `@types/node` every Node TS project has): `makeWASocket` incl. the username methods and `USERNAME_*` constants, all `Types/*` definitions, `WAProto`, stores, `Utils/*`, the message builders (`Button`, `Poll`, `Carousel`, `AIRich`, `A2UI`, … with Bloks node types), the Bot Framework (`Bot`, `Context`, …), and the VoIP client (`VoipClient`, `ActiveCall`, …). Complex wire payloads are typed as loose records where WhatsApp publishes no schema.
 
 ---
 
