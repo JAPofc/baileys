@@ -10,4 +10,3 @@ export { Dugong } from "./Socket/dugong.js";
 export { makeWASocket };
 export default makeWASocket;
 import makeWASocket from './Socket/index.js';
-export * from "./Compat/index.js";

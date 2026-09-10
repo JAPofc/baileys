@@ -346,20 +346,6 @@ Everything below is **optional** — the socket works without any of them. Insta
 | `ioredis` | Redis store adapter |
 | `@roamhq/wrtc` | Native WebRTC bindings for [voice calling](#-voice--video-calls) |
 
-### 🔁 Migrating from `@vanzxy/baileys`
-
-Just swap the package name — old import names keep working through deprecated aliases:
-
-```js
-// old code still runs as-is:
-import { VanzxyBaileys, AIVanzxy } from '@j.ap/baileys'
-new VanzxyBaileys(sock).vanzxyAI()
-
-// ...but new code should use the new names:
-import { JapBaileys, AIJap } from '@j.ap/baileys'
-new JapBaileys(sock).japAI()
-```
-
 ---
 
 ## 🚀 Quick Start
