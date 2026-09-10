@@ -1,6 +1,7 @@
 import { describe, it } from 'node:test';
 import assert from 'node:assert/strict';
 import { generateWAMessage, resolveSenderPn } from '../lib/index.js';
+import { proto } from '../WAProto/index.js';
 
 const JID = '12345@s.whatsapp.net';
 const OPTS = { userJid: '1@s.whatsapp.net' };
@@ -79,5 +80,30 @@ describe('view-once voice note (stubbed upload)', () => {
         const inner = m.message.viewOnceMessage.message.audioMessage;
         assert.equal(inner.ptt, true);
         assert.ok(inner.mediaKey);
+    });
+});
+
+describe('MediaKeyDomain (WA 2026 proto backport)', () => {
+    it('nested enum matches upstream (UNSET..BOT)', () => {
+        assert.deepEqual({ ...proto.Message.MediaKeyDomain },
+            { UNSET: 0, E2EE_CHAT: 1, STATUS: 2, CAPI: 3, BOT: 4 });
+    });
+    for (const X of ['AudioMessage', 'DocumentMessage', 'ImageMessage', 'StickerMessage', 'VideoMessage']) {
+        it(`${X} roundtrips mediaKeyDomain`, () => {
+            const T = proto.Message[X];
+            const m = T.fromObject({ mediaKeyDomain: 'STATUS' });
+            assert.equal(m.mediaKeyDomain, 2);
+            const d = T.decode(T.encode(m).finish());
+            assert.equal(d.mediaKeyDomain, 2);
+            assert.equal(T.toObject(d, { enums: String }).mediaKeyDomain, 'STATUS');
+        });
+    }
+    it('passthrough: generateWAMessage sets it, unset by default', async () => {
+        const stubUpload = async () => ({ mediaUrl: 'https://x/y', directPath: '/d' });
+        const base = { audio: Buffer.alloc(64), mimetype: 'audio/ogg; codecs=opus' };
+        const m1 = await generateWAMessage(JID, { ...base, mediaKeyDomain: 1 }, { ...OPTS, upload: stubUpload });
+        assert.equal(m1.message.audioMessage.mediaKeyDomain, 1);
+        const m2 = await generateWAMessage(JID, base, { ...OPTS, upload: stubUpload });
+        assert.ok(m2.message.audioMessage.mediaKeyDomain == null); // prototype default, never encoded
     });
 });

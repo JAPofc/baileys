@@ -697,7 +697,12 @@ await sock.updateMemberLabel({ groupJid, lid, label: 'Admin' });
   fields behind this repo).
 - **Music messages** — `MusicMessage` needs Spotify/Apple catalog IDs plus an artwork
   upload flow we haven't captured; the proto struct exists, sending real ones doesn't.
-- **`AudioMessage.mediaKeyDomain`** (new in rc14) — optional field, uploads work without it.
+- **`mediaKeyDomain` — IMPLEMENTED.** Backported from rc14 onto all 5 media types
+  (`Audio/Document/Image/Sticker/VideoMessage`, enum `UNSET/E2EE_CHAT/STATUS/CAPI/BOT`)
+  with a send passthrough: `sendMessage(jid, { image: buf, mediaKeyDomain: 1 })`.
+  Unset by default (recommended — the server labels it). Skipped only on
+  `MMSThumbnailMetadata`, where upstream's field number 8 collides with the newer
+  `messageHistoryMetadata` in our proto.
 
 ## 🆕 Everyday Utilities
 

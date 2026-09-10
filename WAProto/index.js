@@ -64432,6 +64432,7 @@ export const proto = $root.proto = (() => {
             AudioMessage.prototype.backgroundArgb = null;
             AudioMessage.prototype.viewOnce = null;
             AudioMessage.prototype.accessibilityLabel = null;
+            AudioMessage.prototype.mediaKeyDomain = null;
 
             let $oneOfFields;
 
@@ -64531,6 +64532,12 @@ export const proto = $root.proto = (() => {
                 set: $util.oneOfSetter($oneOfFields)
             });
 
+                        // Virtual OneOf for proto3 optional field
+            Object.defineProperty(AudioMessage.prototype, "_mediaKeyDomain", {
+                get: $util.oneOfGetter($oneOfFields = ["mediaKeyDomain"]),
+                set: $util.oneOfSetter($oneOfFields)
+            });
+
             AudioMessage.create = function create(properties) {
                 return new AudioMessage(properties);
             };
@@ -64570,6 +64577,8 @@ export const proto = $root.proto = (() => {
                     w.uint32(168).bool(m.viewOnce);
                 if (m.accessibilityLabel != null && Object.hasOwnProperty.call(m, "accessibilityLabel"))
                     w.uint32(178).string(m.accessibilityLabel);
+                if (m.mediaKeyDomain != null && Object.hasOwnProperty.call(m, "mediaKeyDomain"))
+                    w.uint32(184).int32(m.mediaKeyDomain);
                 return w;
             };
 
@@ -64648,6 +64657,10 @@ export const proto = $root.proto = (() => {
                         }
                     case 22: {
                             m.accessibilityLabel = r.string();
+                            break;
+                        }
+                    case 23: {
+                            m.mediaKeyDomain = r.int32();
                             break;
                         }
                     default:
@@ -64745,6 +64758,34 @@ export const proto = $root.proto = (() => {
                 if (d.accessibilityLabel != null) {
                     m.accessibilityLabel = String(d.accessibilityLabel);
                 }
+                switch (d.mediaKeyDomain) {
+                default:
+                    if (typeof d.mediaKeyDomain === "number") {
+                        m.mediaKeyDomain = d.mediaKeyDomain;
+                        break;
+                    }
+                    break;
+                case "UNSET":
+                case 0:
+                    m.mediaKeyDomain = 0;
+                    break;
+                case "E2EE_CHAT":
+                case 1:
+                    m.mediaKeyDomain = 1;
+                    break;
+                case "STATUS":
+                case 2:
+                    m.mediaKeyDomain = 2;
+                    break;
+                case "CAPI":
+                case 3:
+                    m.mediaKeyDomain = 3;
+                    break;
+                case "BOT":
+                case 4:
+                    m.mediaKeyDomain = 4;
+                    break;
+                }
                 return m;
             };
 
@@ -64837,6 +64878,11 @@ export const proto = $root.proto = (() => {
                     d.accessibilityLabel = m.accessibilityLabel;
                     if (o.oneofs)
                         d._accessibilityLabel = "accessibilityLabel";
+                }
+                if (m.mediaKeyDomain != null && m.hasOwnProperty("mediaKeyDomain")) {
+                    d.mediaKeyDomain = o.enums === String ? $root.proto.Message.MediaKeyDomain[m.mediaKeyDomain] === undefined ? m.mediaKeyDomain : $root.proto.Message.MediaKeyDomain[m.mediaKeyDomain] : m.mediaKeyDomain;
+                    if (o.oneofs)
+                        d._mediaKeyDomain = "mediaKeyDomain";
                 }
                 return d;
             };
@@ -68914,6 +68960,7 @@ export const proto = $root.proto = (() => {
             DocumentMessage.prototype.thumbnailWidth = null;
             DocumentMessage.prototype.caption = null;
             DocumentMessage.prototype.accessibilityLabel = null;
+            DocumentMessage.prototype.mediaKeyDomain = null;
 
             let $oneOfFields;
 
@@ -69043,6 +69090,12 @@ export const proto = $root.proto = (() => {
                 set: $util.oneOfSetter($oneOfFields)
             });
 
+                        // Virtual OneOf for proto3 optional field
+            Object.defineProperty(DocumentMessage.prototype, "_mediaKeyDomain", {
+                get: $util.oneOfGetter($oneOfFields = ["mediaKeyDomain"]),
+                set: $util.oneOfSetter($oneOfFields)
+            });
+
             DocumentMessage.create = function create(properties) {
                 return new DocumentMessage(properties);
             };
@@ -69092,6 +69145,8 @@ export const proto = $root.proto = (() => {
                     w.uint32(162).string(m.caption);
                 if (m.accessibilityLabel != null && Object.hasOwnProperty.call(m, "accessibilityLabel"))
                     w.uint32(170).string(m.accessibilityLabel);
+                if (m.mediaKeyDomain != null && Object.hasOwnProperty.call(m, "mediaKeyDomain"))
+                    w.uint32(176).int32(m.mediaKeyDomain);
                 return w;
             };
 
@@ -69190,6 +69245,10 @@ export const proto = $root.proto = (() => {
                         }
                     case 21: {
                             m.accessibilityLabel = r.string();
+                            break;
+                        }
+                    case 22: {
+                            m.mediaKeyDomain = r.int32();
                             break;
                         }
                     default:
@@ -69304,6 +69363,34 @@ export const proto = $root.proto = (() => {
                 }
                 if (d.accessibilityLabel != null) {
                     m.accessibilityLabel = String(d.accessibilityLabel);
+                }
+                switch (d.mediaKeyDomain) {
+                default:
+                    if (typeof d.mediaKeyDomain === "number") {
+                        m.mediaKeyDomain = d.mediaKeyDomain;
+                        break;
+                    }
+                    break;
+                case "UNSET":
+                case 0:
+                    m.mediaKeyDomain = 0;
+                    break;
+                case "E2EE_CHAT":
+                case 1:
+                    m.mediaKeyDomain = 1;
+                    break;
+                case "STATUS":
+                case 2:
+                    m.mediaKeyDomain = 2;
+                    break;
+                case "CAPI":
+                case 3:
+                    m.mediaKeyDomain = 3;
+                    break;
+                case "BOT":
+                case 4:
+                    m.mediaKeyDomain = 4;
+                    break;
                 }
                 return m;
             };
@@ -69422,6 +69509,11 @@ export const proto = $root.proto = (() => {
                     d.accessibilityLabel = m.accessibilityLabel;
                     if (o.oneofs)
                         d._accessibilityLabel = "accessibilityLabel";
+                }
+                if (m.mediaKeyDomain != null && m.hasOwnProperty("mediaKeyDomain")) {
+                    d.mediaKeyDomain = o.enums === String ? $root.proto.Message.MediaKeyDomain[m.mediaKeyDomain] === undefined ? m.mediaKeyDomain : $root.proto.Message.MediaKeyDomain[m.mediaKeyDomain] : m.mediaKeyDomain;
+                    if (o.oneofs)
+                        d._mediaKeyDomain = "mediaKeyDomain";
                 }
                 return d;
             };
@@ -73928,6 +74020,7 @@ export const proto = $root.proto = (() => {
             ImageMessage.prototype.imageSourceType = null;
             ImageMessage.prototype.accessibilityLabel = null;
             ImageMessage.prototype.qrUrl = null;
+            ImageMessage.prototype.mediaKeyDomain = null;
 
             let $oneOfFields;
 
@@ -74093,6 +74186,12 @@ export const proto = $root.proto = (() => {
                 set: $util.oneOfSetter($oneOfFields)
             });
 
+                        // Virtual OneOf for proto3 optional field
+            Object.defineProperty(ImageMessage.prototype, "_mediaKeyDomain", {
+                get: $util.oneOfGetter($oneOfFields = ["mediaKeyDomain"]),
+                set: $util.oneOfSetter($oneOfFields)
+            });
+
             ImageMessage.create = function create(properties) {
                 return new ImageMessage(properties);
             };
@@ -74168,6 +74267,8 @@ export const proto = $root.proto = (() => {
                     w.uint32(258).string(m.accessibilityLabel);
                 if (m.qrUrl != null && Object.hasOwnProperty.call(m, "qrUrl"))
                     w.uint32(274).string(m.qrUrl);
+                if (m.mediaKeyDomain != null && Object.hasOwnProperty.call(m, "mediaKeyDomain"))
+                    w.uint32(264).int32(m.mediaKeyDomain);
                 return w;
             };
 
@@ -74313,6 +74414,10 @@ export const proto = $root.proto = (() => {
                         }
                     case 34: {
                             m.qrUrl = r.string();
+                            break;
+                        }
+                    case 33: {
+                            m.mediaKeyDomain = r.int32();
                             break;
                         }
                     default:
@@ -74507,6 +74612,34 @@ export const proto = $root.proto = (() => {
                 if (d.qrUrl != null) {
                     m.qrUrl = String(d.qrUrl);
                 }
+                switch (d.mediaKeyDomain) {
+                default:
+                    if (typeof d.mediaKeyDomain === "number") {
+                        m.mediaKeyDomain = d.mediaKeyDomain;
+                        break;
+                    }
+                    break;
+                case "UNSET":
+                case 0:
+                    m.mediaKeyDomain = 0;
+                    break;
+                case "E2EE_CHAT":
+                case 1:
+                    m.mediaKeyDomain = 1;
+                    break;
+                case "STATUS":
+                case 2:
+                    m.mediaKeyDomain = 2;
+                    break;
+                case "CAPI":
+                case 3:
+                    m.mediaKeyDomain = 3;
+                    break;
+                case "BOT":
+                case 4:
+                    m.mediaKeyDomain = 4;
+                    break;
+                }
                 return m;
             };
 
@@ -74677,6 +74810,11 @@ export const proto = $root.proto = (() => {
                     d.qrUrl = m.qrUrl;
                     if (o.oneofs)
                         d._qrUrl = "qrUrl";
+                }
+                if (m.mediaKeyDomain != null && m.hasOwnProperty("mediaKeyDomain")) {
+                    d.mediaKeyDomain = o.enums === String ? $root.proto.Message.MediaKeyDomain[m.mediaKeyDomain] === undefined ? m.mediaKeyDomain : $root.proto.Message.MediaKeyDomain[m.mediaKeyDomain] : m.mediaKeyDomain;
+                    if (o.oneofs)
+                        d._mediaKeyDomain = "mediaKeyDomain";
                 }
                 return d;
             };
@@ -79891,6 +80029,16 @@ export const proto = $root.proto = (() => {
             };
 
             return MarkAsVerifiedAction;
+        })();
+
+        Message.MediaKeyDomain = (function() {
+            const valuesById = {}, values = Object.create(valuesById);
+            values[valuesById[0] = "UNSET"] = 0;
+            values[valuesById[1] = "E2EE_CHAT"] = 1;
+            values[valuesById[2] = "STATUS"] = 2;
+            values[valuesById[3] = "CAPI"] = 3;
+            values[valuesById[4] = "BOT"] = 4;
+            return values;
         })();
 
         Message.MessageHistoryBundle = (function() {
@@ -93689,6 +93837,7 @@ export const proto = $root.proto = (() => {
             StickerMessage.prototype.accessibilityLabel = null;
             StickerMessage.prototype.premium = null;
             StickerMessage.prototype.emojis = null;
+            StickerMessage.prototype.mediaKeyDomain = null;
 
             let $oneOfFields;
 
@@ -93824,6 +93973,12 @@ export const proto = $root.proto = (() => {
                 set: $util.oneOfSetter($oneOfFields)
             });
 
+                        // Virtual OneOf for proto3 optional field
+            Object.defineProperty(StickerMessage.prototype, "_mediaKeyDomain", {
+                get: $util.oneOfGetter($oneOfFields = ["mediaKeyDomain"]),
+                set: $util.oneOfSetter($oneOfFields)
+            });
+
             StickerMessage.create = function create(properties) {
                 return new StickerMessage(properties);
             };
@@ -93875,6 +94030,8 @@ export const proto = $root.proto = (() => {
                     w.uint32(192).int32(m.premium);
                 if (m.emojis != null && Object.hasOwnProperty.call(m, "emojis"))
                     w.uint32(202).string(m.emojis);
+                if (m.mediaKeyDomain != null && Object.hasOwnProperty.call(m, "mediaKeyDomain"))
+                    w.uint32(184).int32(m.mediaKeyDomain);
                 return w;
             };
 
@@ -93977,6 +94134,10 @@ export const proto = $root.proto = (() => {
                         }
                     case 25: {
                             m.emojis = r.string();
+                            break;
+                        }
+                    case 23: {
+                            m.mediaKeyDomain = r.int32();
                             break;
                         }
                     default:
@@ -94098,6 +94259,34 @@ export const proto = $root.proto = (() => {
                 }
                 if (d.emojis != null) {
                     m.emojis = String(d.emojis);
+                }
+                switch (d.mediaKeyDomain) {
+                default:
+                    if (typeof d.mediaKeyDomain === "number") {
+                        m.mediaKeyDomain = d.mediaKeyDomain;
+                        break;
+                    }
+                    break;
+                case "UNSET":
+                case 0:
+                    m.mediaKeyDomain = 0;
+                    break;
+                case "E2EE_CHAT":
+                case 1:
+                    m.mediaKeyDomain = 1;
+                    break;
+                case "STATUS":
+                case 2:
+                    m.mediaKeyDomain = 2;
+                    break;
+                case "CAPI":
+                case 3:
+                    m.mediaKeyDomain = 3;
+                    break;
+                case "BOT":
+                case 4:
+                    m.mediaKeyDomain = 4;
+                    break;
                 }
                 return m;
             };
@@ -94224,6 +94413,11 @@ export const proto = $root.proto = (() => {
                     d.emojis = m.emojis;
                     if (o.oneofs)
                         d._emojis = "emojis";
+                }
+                if (m.mediaKeyDomain != null && m.hasOwnProperty("mediaKeyDomain")) {
+                    d.mediaKeyDomain = o.enums === String ? $root.proto.Message.MediaKeyDomain[m.mediaKeyDomain] === undefined ? m.mediaKeyDomain : $root.proto.Message.MediaKeyDomain[m.mediaKeyDomain] : m.mediaKeyDomain;
+                    if (o.oneofs)
+                        d._mediaKeyDomain = "mediaKeyDomain";
                 }
                 return d;
             };
@@ -96347,6 +96541,7 @@ export const proto = $root.proto = (() => {
             VideoMessage.prototype.metadataUrl = null;
             VideoMessage.prototype.videoSourceType = null;
             VideoMessage.prototype.dashManifestUrl = null;
+            VideoMessage.prototype.mediaKeyDomain = null;
 
             let $oneOfFields;
 
@@ -96518,6 +96713,12 @@ export const proto = $root.proto = (() => {
                 set: $util.oneOfSetter($oneOfFields)
             });
 
+                        // Virtual OneOf for proto3 optional field
+            Object.defineProperty(VideoMessage.prototype, "_mediaKeyDomain", {
+                get: $util.oneOfGetter($oneOfFields = ["mediaKeyDomain"]),
+                set: $util.oneOfSetter($oneOfFields)
+            });
+
             VideoMessage.create = function create(properties) {
                 return new VideoMessage(properties);
             };
@@ -96593,6 +96794,8 @@ export const proto = $root.proto = (() => {
                     w.uint32(248).int32(m.videoSourceType);
                 if (m.dashManifestUrl != null && Object.hasOwnProperty.call(m, "dashManifestUrl"))
                     w.uint32(266).string(m.dashManifestUrl);
+                if (m.mediaKeyDomain != null && Object.hasOwnProperty.call(m, "mediaKeyDomain"))
+                    w.uint32(256).int32(m.mediaKeyDomain);
                 return w;
             };
 
@@ -96737,6 +96940,10 @@ export const proto = $root.proto = (() => {
                         }
                     case 33: {
                             m.dashManifestUrl = r.string();
+                            break;
+                        }
+                    case 32: {
+                            m.mediaKeyDomain = r.int32();
                             break;
                         }
                     default:
@@ -96947,6 +97154,34 @@ export const proto = $root.proto = (() => {
                 if (d.dashManifestUrl != null) {
                     m.dashManifestUrl = String(d.dashManifestUrl);
                 }
+                switch (d.mediaKeyDomain) {
+                default:
+                    if (typeof d.mediaKeyDomain === "number") {
+                        m.mediaKeyDomain = d.mediaKeyDomain;
+                        break;
+                    }
+                    break;
+                case "UNSET":
+                case 0:
+                    m.mediaKeyDomain = 0;
+                    break;
+                case "E2EE_CHAT":
+                case 1:
+                    m.mediaKeyDomain = 1;
+                    break;
+                case "STATUS":
+                case 2:
+                    m.mediaKeyDomain = 2;
+                    break;
+                case "CAPI":
+                case 3:
+                    m.mediaKeyDomain = 3;
+                    break;
+                case "BOT":
+                case 4:
+                    m.mediaKeyDomain = 4;
+                    break;
+                }
                 return m;
             };
 
@@ -97125,6 +97360,11 @@ export const proto = $root.proto = (() => {
                     d.dashManifestUrl = m.dashManifestUrl;
                     if (o.oneofs)
                         d._dashManifestUrl = "dashManifestUrl";
+                }
+                if (m.mediaKeyDomain != null && m.hasOwnProperty("mediaKeyDomain")) {
+                    d.mediaKeyDomain = o.enums === String ? $root.proto.Message.MediaKeyDomain[m.mediaKeyDomain] === undefined ? m.mediaKeyDomain : $root.proto.Message.MediaKeyDomain[m.mediaKeyDomain] : m.mediaKeyDomain;
+                    if (o.oneofs)
+                        d._mediaKeyDomain = "mediaKeyDomain";
                 }
                 return d;
             };
