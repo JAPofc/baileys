@@ -45,5 +45,8 @@ export * from "./meta-ai.js";
 export * from "./humanizer.js";
 export * from "./router.js";
 export * from "./scheduled-posts.js";
+export * from "./history-share.js";
+export * from "./transcribe.js";
+export * from "./auth-secure.js";
 
 export * from "./MessageBuilder.js";

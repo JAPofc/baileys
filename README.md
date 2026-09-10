@@ -55,6 +55,7 @@
 - [💡 Usage Examples](#-usage-examples)
 - [📨 Message Helpers](#-message-helpers)
 - [🧰 Channels, History & Transcripts](#-channels-history--transcripts)
+- [🔐 Security Pack](#-security-pack)
 - [🆕 WA 2026 catch-up](#-wa-2026-catch-up)
 - [🆕 Everyday Utilities](#-everyday-utilities)
   - [Buttons & Native Flow](#buttons--native-flow)
@@ -699,6 +700,44 @@ buildFlowDataExchange('navigate', { screen: 'HOME' }) // Flows data_exchange pay
 **A2UI widgets** now include `Slider`, `Switch`, `List`, `ProgressBar`, `Avatar`,
 `Badge`, `Spacer`, and `Tabs` alongside the existing Text/Image/Video/Button/Card/Modal
 set (all ref-validated at `build()`).
+
+## 🔐 Security Pack
+
+Drop-in hardening for auth state, secrets, and abuse — all in
+`lib/Utils/auth-secure.js`, covered by `tests/security.test.js` (incl. fuzzing).
+
+```js
+import {
+  useEncryptedFileAuthState, secureLogger, withPairingGuard,
+  createQRGuard, backupAuthState, writeAuthIntegrity, repairAuthState, secureLogout
+} from '@j.ap/baileys'
+
+// 1. AES-256-GCM encrypted auth state (reads legacy plaintext, migrates on save)
+const { state, saveCreds } = await useEncryptedFileAuthState('./auth', { password: process.env.AUTH_PW })
+const sock = makeWASocket({
+  auth: state,
+  logger: secureLogger(pino({ level: 'info' })), // 7. redacts qr/tokens/keys in every log line
+})
+
+// 2. pairing-code rate limit: 5/hour per number, 30s between attempts
+withPairingGuard(sock, { maxPerHour: 5, minIntervalMs: 30_000 })
+
+// 3. QR fist-guard: handle the first QR, swallow re-emits for 60s
+const qrGuard = createQRGuard({ ttlMs: 60_000 })
+sock.ev.on('connection.update', ({ qr }) => { qr = qrGuard.handle(qr); if (qr) show(qr) })
+
+// 6/8. encrypted backup + integrity snapshot
+await backupAuthState('./auth', './auth.jabackup', { password: process.env.BACKUP_PW })
+await writeAuthIntegrity('./auth', { secret: process.env.INT_PW })
+
+// 9. repair corrupt stores (quarantines + restores creds from backup)
+await repairAuthState('./auth', { password: process.env.AUTH_PW, backupFile: './auth.jabackup', backupPassword: process.env.BACKUP_PW })
+
+// 4. logout + overwrite/unlink every auth file + scrub in-memory creds
+await secureLogout(sock, { authFolder: './auth' })
+```
+
+Single-file variant: `useEncryptedSingleFileAuthState(file, { password })`.
 
 ## 🆕 WA 2026 catch-up
 
