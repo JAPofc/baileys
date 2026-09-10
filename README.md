@@ -677,7 +677,7 @@ sock.ev.on('messages.upsert', async ({ messages }) => {
 `sendVoiceNote()` content composes with `viewOnce`:
 
 ```js
-await sock.sendMessage(jid, { ...(await toVoiceNoteContent('./a.ogg')), viewOnce: true });
+await sock.sendMessage(jid, { ...(await buildVoiceNoteContent('./a.ogg')), viewOnce: true });
 ```
 
 ### Member tags (groups)
