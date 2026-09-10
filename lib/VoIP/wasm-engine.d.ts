@@ -60,6 +60,23 @@ export declare class WasmEngine {
     }) => unknown;
     endCall: (reason?: number, sendTerminate?: boolean) => void;
     setMute: (muted: boolean) => number;
+    acceptCall: (opts?: { isMicEnabled?: boolean; isCameraEnabled?: boolean }) => void;
+    rejectCall: () => void;
+    rejectCallWithoutCallContext: (opts?: any) => void;
+    startGroupCall: (opts?: any) => any;
+    joinOngoingCall: (opts?: any) => any;
+    inviteToCall: (opts?: any) => any;
+    removeCallParticipant: (peerJid: string) => any;
+    requestPeerMute: (peerJid: string) => any;
+    previewCallLink: (opts?: any) => any;
+    joinCallLink: () => any;
+    resendOfferOnDecryptionFailure: (peerJid: string, callId: string) => void;
+    resendEncRekeyRetry: (peerJid: string, retryCount?: number) => void;
+    checkOngoingCalls: (callIds?: string[], callCreatorJids?: string[]) => void;
+    getCallInfo: () => any;
+    getCallStats: (debug?: boolean) => string;
+    sendReaction: (reaction: string) => boolean;
+    raiseHand: (raised: boolean) => boolean;
     updateNetworkMedium: (networkMedium: number, networkMtu?: number) => void;
     handleSignalingOffer: (msg: {
         payload: string;

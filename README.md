@@ -810,43 +810,59 @@ call.on('ended', (reason) => console.log('Call ended:', reason))
 
 `ActiveCall` (returned by `.call()`) and `CallState` are also exported directly if you need finer-grained control over call state.
 
-**J.AP upgrades:**
+**Answering inbound calls** — offers are tracked, so the bot can pick up (1:1) or join (group):
 
 ```js
 import { attachVoip } from '@j.ap/baileys'
+const voip = await attachVoip(sock) // also stored as sock.voip
 
-// one-liner setup (also stored as sock.voip)
-const voip = await attachVoip(sock)
-
-// the client is an EventEmitter now
-voip.on('incoming-call', ({ from, busy }) => console.log('ringing from', from, { busy }))
-voip.on('outgoing-call', ({ to }) => console.log('dialing', to))
-voip.on('call-ended', ({ reason }) => console.log('ended:', reason))
-
-// audioSource: 'silence' | ffmpeg lavfi/file path/URL | { data: Buffer, ext: 'mp3' }
-const call = await voip.call('628123456789', { audioSource: './greeting.mp3' })
-
-// record the remote peer's audio to .wav (auto-finalized on call end)
-const stopRecording = call.recordToFile('./call.wav')
-console.log('busy?', voip.isBusy(), '| active:', voip.getActiveCall()?.callId)
-await call.waitForEnd()
-```
-
-> Inbound calls surface as `incoming-call` events (useful for logging / auto-reply), but **answering** them is not supported — the WASM build only exposes outbound `startVoipCall`/`endCall`. No other Baileys-based implementation has cracked this yet.
-
-**Handling inbound calls** — the standard socket path works (`call` event + `rejectCall`), plus VoIP-level conveniences:
-
-```js
-// standard Baileys path (no VoIP client needed)
-sock.ev.on('call', async (calls) => {
-    for (const c of calls) {
-        if (c.status === 'offer') await sock.rejectCall(c.id, c.from)
-    }
+voip.on('incoming-call', async ({ callId, from, isGroupCall, busy }) => {
+    if (busy) return
+    if (isGroupCall) await voip.joinGroupCall(callId, { audioSource: './greeting.mp3' })
+    else await voip.answerCall(callId, { audioSource: './greeting.mp3' })
 })
 
-// ...or let the VoIP client do it:
-const voip = await attachVoip(sock, { autoReject: true, autoRejectText: 'Bot cannot take calls 🙏' })
-await voip.rejectCall(callId, callFrom) // manual reject + optional reply
+// ...or fully automatic:
+await attachVoip(sock, { autoAnswer: true })   // pick up 1:1 calls
+await attachVoip(sock, { autoJoinGroup: true }) // join group calls
+await attachVoip(sock, { autoReject: true, autoRejectText: 'Bot cannot take calls 🙏' })
+
+// still-pending offers (answer before `offerTtlMs`, default 45s):
+voip.getPendingCalls() // → [{ callId, from, isGroupCall, ... }]
+```
+
+**Group / multi-party calls:**
+
+```js
+const gcall = await voip.startGroupCall(groupJid, ['62812…', '62813…'], { chatName: 'Rapat' })
+await voip.inviteToGroupCall('62814…')
+await voip.removeGroupParticipant('62813@s.whatsapp.net')
+await voip.rejoinGroupCall() // recovery after a drop
+
+voip.on('group-call-started', console.log)
+voip.on('group-call-joined', console.log)
+```
+
+Calls also support reactions, hand-raise, recording, and call links:
+
+```js
+const call = await voip.call('628123456789', { audioSource: './greeting.mp3' })
+call.react('👍')
+call.setHandRaised(true)
+const stopRecording = call.recordToFile('./call.wav') // remote peer → .wav
+await voip.previewCallLink('call-link-token')
+```
+
+**Reconnect & recovery** — a watchdog monitors the relay transport during every call
+(`watchdogIntervalMs`/`watchdogMaxSilent`); on a dead relay it emits `call-degraded`
+and automatically re-sends the crypto rekey + offer. Manual controls:
+
+```js
+voip.on('call-degraded', ({ callId }) => console.log('relay dead, recovering', callId))
+voip.on('call-recovery', (r) => console.log('recovery result', r))
+await voip.recoverCall({}) // manual: { rekey: true, offer: true }
+voip.getStats()            // { busy, callId, call, relay }
+sock.ev.on('call', (calls) => { /* standard offer/reject path still works */ })
 ```
 
 **Refreshing the WASM stack** — if calls break after a WA Web update, re-fetch the official VoIP build from your own browser (Chrome with `--remote-debugging-port=9222` + web.whatsapp.com open):
