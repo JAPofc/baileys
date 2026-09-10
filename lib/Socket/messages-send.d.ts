@@ -60,6 +60,16 @@ export function makeMessagesSocket(config: any): {
     sendQuiz: (jid: any, quiz: any, options?: any) => Promise<any>;
     editPoll: (jid: any, key: any, poll: any, options?: any) => Promise<any>;
     sendMentionAll: (jid: any, text: string, options?: any) => Promise<any>;
+    sendLocation: (jid: any, location: any, options?: any) => Promise<any>;
+    sendContact: (jid: any, contact: any, options?: any) => Promise<any>;
+    sendGroupInvite: (jid: any, invite: any, options?: any) => Promise<any>;
+    sendMusic: (jid: any, music: any, options?: any) => Promise<any>;
+    sendPaymentRequest: (jid: any, req: any, options?: any) => Promise<any>;
+    sendPayment: (jid: any, pay: any, options?: any) => Promise<any>;
+    sendInvoice: (jid: any, invoice: any, options?: any) => Promise<any>;
+    sendPollOption: (jid: any, pollKey: any, options2: any, options?: any) => Promise<any>;
+    sendEventInvite: (jid: any, invite: any, options?: any) => Promise<any>;
+    sendNewsletterInvite: (jid: any, invite: any, options?: any) => Promise<any>;
     downloadMedia: (message: any, type?: string, options?: {}) => Promise<any>;
     copyNForward: (jid: any, message: any, forceForward?: boolean, options?: {}) => Promise<any>;
     executeWMexQuery: (variables: any, queryId: any, dataPath: any) => Promise<any>;

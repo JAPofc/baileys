@@ -53,6 +53,7 @@
 - [🔐 Authentication](#-authentication)
 - [🗄️ Store Backends](#-store-backends)
 - [💡 Usage Examples](#-usage-examples)
+- [📨 Message Helpers](#-message-helpers)
 - [🆕 WA 2026 catch-up](#-wa-2026-catch-up)
 - [🆕 Everyday Utilities](#-everyday-utilities)
   - [Buttons & Native Flow](#buttons--native-flow)
@@ -617,6 +618,44 @@ await sendMiniApp(sock, jid, {
 ```
 
 ---
+
+## 📨 Message Helpers
+
+High-level one-liners for modern message types — validated, with friendly aliases:
+
+```js
+await sock.sendLocation(jid, { lat: -6.2, lng: 106.8, name: 'Jakarta' });
+await sock.sendContact(jid, { name: 'Budi', vcard: 'BEGIN:VCARD\n...' });
+await sock.sendGroupInvite(jid, { code: 'AbC123', jid: groupJid, subject: 'Komunitas' });
+await sock.sendPaymentRequest(jid, { currency: 'IDR', amount: 50000, note: 'kopi ☕' });
+await sock.sendInvoice(jid, { note: 'INV-001' });
+await sock.sendPollOption(jid, pollKey, ['Opsi baru']);
+await sock.sendEventInvite(jid, { eventTitle: 'Party', startTime: new Date(...) });
+await sock.sendNewsletterInvite(jid, { newsletterJid, newsletterName: 'News' });
+
+// Poll upgrades (already wired end-to-end):
+await sock.sendPoll(jid, {
+  name: 'Jam berapa?', values: ['Pagi', 'Sore'],
+  endDate: new Date('2026-09-16T00:00:00Z'), // auto-close
+  hideVoter: true,      // anonymous poll
+  canAddOption: true,   // voters may add options
+});
+```
+
+Music messages are experimental (real provider catalog IDs required):
+
+```js
+await sock.sendMusic(jid, { songUri, artworkUri, embeddedMusic: { songId, title, author } });
+```
+
+**Escape hatch:** every content key also works inline via `sendMessage`, and `{ raw: true, <AnyMessageField>: {...} }`
+passes any proto field through untouched — full `WAProto` coverage with zero wrapper lag:
+
+```js
+await sock.sendMessage(jid, { raw: true, musicMessage: { songUri } });
+```
+
+TypeScript consumers get a typed `AnyMessageContent` (`import type { AnyMessageContent } from '@j.ap/baileys'`).
 
 ## 🆕 WA 2026 catch-up
 
