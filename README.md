@@ -407,6 +407,24 @@ await manager.start()
 
 Full runnable version: [`examples/auto-reconnect-bot.js`](./examples/auto-reconnect-bot.js).
 
+**Observability** — attach `createDebugMonitor()` for a safe, structured snapshot
+(connection state, disconnect reason, uptime, message latency percentiles, send-retry
+counts, Signal error tallies, VoIP/WASM state, memory). It **never** contains QR
+payloads, pairing codes, auth keys, tokens, or private keys — the whole snapshot is
+passed through `redactSecrets()` before it is returned, so it's safe to log or attach
+to bug reports as-is:
+
+```js
+import { createDebugMonitor } from '@japofc/baileys'
+
+const monitor = createDebugMonitor(sock)
+// later — in a health endpoint, cron log, or crash handler:
+console.log(JSON.stringify(monitor.getDebugInfo(), null, 2))
+// { connection: { state, uptimeMs, lastDisconnect: { code, reason } },
+//   messages: { received, decryptFailed, latencyMs: { p50, p90, p99 } },
+//   sendRetries, signalErrors: { noSession, badMac, ... }, voip, memory }
+```
+
 ---
 
 ## 🔐 Authentication
@@ -665,7 +683,8 @@ await sock.sendPoll(jid, {
 });
 ```
 
-Music messages are experimental (real provider catalog IDs required):
+Music messages are experimental — the proto is correct but interop with official
+clients is unverified (see [Honestly not implemented](#honestly-not-implemented-and-why)):
 
 ```js
 await sock.sendMusic(jid, { songUri, artworkUri, embeddedMusic: { songId, title, author } });
@@ -834,11 +853,20 @@ await sock.updateMemberLabel({ groupJid, lid, label: 'Admin' });
 
 - **Voice message transcripts** — generated on-device by official clients only; there is
   no transcript API on the wire.
-- **Group message history sharing** — the wire format isn't captured by any public Baileys
-  fork yet (verified against the latest upstream Baileys release, whose proto is 100+
-  fields behind this repo).
-- **Music messages** — `MusicMessage` needs Spotify/Apple catalog IDs plus an artwork
-  upload flow we haven't captured; the proto struct exists, sending real ones doesn't.
+- **Group message history sharing (native)** — WhatsApp began rolling out the official
+  "Group Message History" feature (share the last 25–100 messages with a newly added
+  member, E2EE, admin-controlled) in Feb 2026. Its wire format still hasn't been captured
+  by any public library (re-verified Sep 2026 against upstream Baileys, whatsmeow, and
+  every active fork). Until it is, this repo ships an honest *workaround* —
+  `shareGroupHistory()` forwards recent messages into the new member's DM — which is NOT
+  the native flow (no in-group history bubble, no "history shared" notice). If you need
+  native behaviour, the only path today is an official client.
+- **Music messages (interoperability)** — the `MusicMessage` proto struct round-trips
+  fine and `sendMusic()` emits it, but real interop needs provider catalog IDs
+  (Spotify/Apple) plus an artwork upload flow that official clients negotiate privately;
+  no public capture exists (re-verified Sep 2026). Messages built with made-up IDs render
+  as a plain preview or nothing at all on official clients — treat `sendMusic()` as
+  experimental and test against a real device before shipping.
 - **`mediaKeyDomain` — IMPLEMENTED.** Backported from rc14 onto all 5 media types
   (`Audio/Document/Image/Sticker/VideoMessage`, enum `UNSET/E2EE_CHAT/STATUS/CAPI/BOT`)
   with a send passthrough: `sendMessage(jid, { image: buf, mediaKeyDomain: 1 })`.
