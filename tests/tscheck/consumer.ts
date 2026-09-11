@@ -6,6 +6,7 @@
 import makeWASocket, {
     makeWASocketAuto, autoReconnect,
     type AutoReconnectOptions, type AutoReconnectManager,
+    createDebugMonitor, type DebugInfo, type DebugMonitor,
     // core
     initAuthCreds, fetchBestWaVersion, fetchLatestWaWebVersion, DisconnectReason,
     // builders
@@ -64,6 +65,12 @@ async function compileOnly(): Promise<void> {
 async function compileOnly2(): Promise<void> {
     const sock = await makeWASocketAuto({ printQRInTerminal: true });
     const opts: AutoReconnectOptions = { maxAttempts: 5, baseDelayMs: 500, onLoggedOut: () => { } };
+    const monitor: DebugMonitor = createDebugMonitor(sock, { sampleLimit: 100 });
+    const dbg: DebugInfo = monitor.getDebugInfo();
+    const uptime: number = dbg.connection.uptimeMs;
+    const p50: number | null = dbg.messages.latencyMs.p50;
+    monitor.stop();
+    void uptime; void p50;
     const mgr: AutoReconnectManager = autoReconnect(() => makeWASocketAuto({}), opts);
     const started = await mgr.start();
     const n: number = mgr.attempts;
