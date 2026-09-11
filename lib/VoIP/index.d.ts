@@ -10,6 +10,16 @@ export interface VoipClientConfig {
     relay?: any;
     /** Path to the VOIP wasm resources directory. */
     resourcesPath?: string;
+    /** Relay-health watchdog poll interval in ms (default 5000; 0 disables). */
+    watchdogIntervalMs?: number;
+    /** Consecutive empty-relay polls before recovery kicks in (default 3). */
+    watchdogMaxSilent?: number;
+    /**
+     * Recovery budget per call (default 3): after this many consecutive failed
+     * recoveries the client emits 'call-unrecoverable' and force-ends the call
+     * instead of retrying forever.
+     */
+    watchdogMaxRecoveries?: number;
     [key: string]: any;
 }
 
