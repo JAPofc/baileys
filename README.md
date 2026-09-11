@@ -370,11 +370,13 @@ sock.ev.on('creds.update', saveCreds)
 sock.ev.on('connection.update', (update) => {
     const { connection, qr } = update
 
-    // `printQRInTerminal` is deprecated upstream — render the QR yourself,
-    // e.g. with the `qrcode-terminal` package:
-    //   import qrcode from 'qrcode-terminal'
-    //   if (qr) qrcode.generate(qr, { small: true })
-    if (qr) console.log('Scan this QR:', qr)
+    // Easiest: pass `printQRInTerminal: true` to makeWASocket and the QR is
+    // drawn automatically with the built-in zero-dependency renderer.
+    // Manual/custom rendering from the event also works:
+    //   import { renderQRToTerminal, qrToSVG } from '@japofc/baileys'
+    //   if (qr) console.log(renderQRToTerminal(qr))          // terminal (▀▄█)
+    //   if (qr) fs.writeFileSync('qr.svg', qrToSVG(qr))      // for a web UI
+    if (qr) console.log('Got a pairing QR')
 
     if (connection === 'open') console.log('🍃 Connected!')
 })
@@ -1113,7 +1115,7 @@ Cek `connection.update` untuk field `lastDisconnect.error`. Kalau status code-ny
 <summary><b>QR tidak muncul / tidak ke-scan</b></summary>
 <br/>
 
-`printQRInTerminal` sudah deprecated di upstream Baileys — pastikan kamu render QR sendiri dari event `qr` (lihat contoh di [Quick Start](#-quick-start)). Kalau QR muncul tapi gagal linking, biasanya karena versi WA Web (`version` di `makeWASocket`) sudah kedaluwarsa; fetch versi terbaru lewat `fetchLatestBaileysVersion()`.
+Di upstream Baileys `printQRInTerminal` sudah dihapus, tapi di paket ini opsi tersebut **berfungsi lagi** — QR digambar otomatis oleh renderer bawaan (vendored [qrcodegen](https://github.com/nayuki/QR-Code-generator), tanpa dependency tambahan). Bisa juga render manual dari event `qr` dengan `renderQRToTerminal(qr)` / `qrToSVG(qr)` / `qrToMatrix(qr)`. Kalau QR muncul tapi gagal linking, biasanya karena versi WA Web (`version` di `makeWASocket`) sudah kedaluwarsa; fetch versi terbaru lewat `fetchLatestBaileysVersion()`. QR kelihatan "kebalik" di terminal tema terang? Pakai `renderQRToTerminal(qr, { inverted: true })`.
 
 </details>
 

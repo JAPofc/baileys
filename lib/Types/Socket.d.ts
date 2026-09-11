@@ -55,8 +55,10 @@ export type SocketConfig = {
     pushName?: string;
     /** agent used for fetch requests -- uploading/downloading media */
     fetchAgent?: Agent;
-    /** should the QR be printed in the terminal
-     * @deprecated This feature has been removed
+    /**
+     * Print pairing QRs to the terminal automatically on `connection.update`
+     * (rendered with the built-in zero-dependency engine — see
+     * `renderQRToTerminal` in Utils for manual/custom rendering).
      */
     printQRInTerminal?: boolean;
     /** should events be emitted for actions done by this socket connection */

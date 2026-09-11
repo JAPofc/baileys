@@ -172,6 +172,7 @@
     "whatsapp-rust-bridge": "0.5.5"
   },
   "devDependencies": {
-    "@types/node": "^22.20.2"
+    "@types/node": "^22.20.2",
+    "jsqr": "^1.4.0"
   }
 }

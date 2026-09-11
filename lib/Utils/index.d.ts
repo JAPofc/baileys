@@ -52,5 +52,6 @@ export * from "./scheduled-posts.js";
 export * from "./history-share.js";
 export * from "./transcribe.js";
 export * from "./auth-secure.js";
+export * from "./qr-render.js";
 
 export * from "./MessageBuilder.js";
