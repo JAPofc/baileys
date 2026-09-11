@@ -1,6 +1,6 @@
 <div align="center" id="top">
 
-<img src="https://files.catbox.moe/l72xji.svg" width="100%" alt="Sakura night banner"/>
+<img src="https://capsule-render.vercel.app/api?type=waving&color=0:2ecc71,100:1d6a23&height=180&section=header&text=%40japofc%2Fbaileys&fontSize=48&fontColor=ffffff&animation=fadeIn&fontAlignY=35&desc=WhatsApp%20Web%20API%20%E2%80%94%20typed%2C%20extended%2C%20battle-tested&descSize=16&descAlignY=55" width="100%" alt="@japofc/baileys banner"/>
 
 <p>
   <img src="https://readme-typing-svg.demolab.com?font=Fira+Code&size=18&pause=1200&color=2ECC71&center=true&vCenter=true&width=650&lines=Extended+interactive+messages+%26+native+flow;Status+tools+%2B+quality-of-life+fixes;WhatsApp+automation+toolkit" alt="Typing SVG" />
@@ -9,25 +9,27 @@
 <p>
 <a href="https://www.npmjs.com/package/@japofc/baileys" target="_blank"><img src="https://img.shields.io/npm/v/@japofc/baileys?color=2ecc71&label=npm&style=for-the-badge" alt="npm version"/></a>
 <a href="https://www.npmjs.com/package/@japofc/baileys" target="_blank"><img src="https://img.shields.io/npm/dt/@japofc/baileys?color=3498db&style=for-the-badge" alt="npm downloads"/></a>
-<a href="https://github.com/JAPofc/jap-baileys/stargazers" target="_blank"><img src="https://img.shields.io/github/stars/JAPofc/jap-baileys?color=f1c40f&style=for-the-badge" alt="GitHub stars"/></a>
-<a href="https://github.com/JAPofc/jap-baileys/issues" target="_blank"><img src="https://img.shields.io/github/issues/JAPofc/jap-baileys?color=e74c3c&style=for-the-badge" alt="GitHub issues"/></a>
+<a href="https://github.com/JAPofc/baileys/stargazers" target="_blank"><img src="https://img.shields.io/github/stars/JAPofc/baileys?color=f1c40f&style=for-the-badge" alt="GitHub stars"/></a>
+<a href="https://github.com/JAPofc/baileys/issues" target="_blank"><img src="https://img.shields.io/github/issues/JAPofc/baileys?color=e74c3c&style=for-the-badge" alt="GitHub issues"/></a>
 </p>
 <p>
-<img src="https://img.shields.io/github/last-commit/JAPofc/jap-baileys?color=9b59b6&style=flat-square" alt="Last commit"/>
-<img src="https://img.shields.io/github/commit-activity/m/JAPofc/jap-baileys?color=1abc9c&style=flat-square" alt="Commit activity"/>
-<img src="https://img.shields.io/github/languages/code-size/JAPofc/jap-baileys?color=e67e22&style=flat-square" alt="Code size"/>
+<a href="https://github.com/JAPofc/baileys/actions/workflows/ci.yml" target="_blank"><img src="https://img.shields.io/github/actions/workflow/status/JAPofc/baileys/ci.yml?branch=main&style=flat-square&label=CI&color=2ecc71" alt="CI status"/></a>
+<img src="https://img.shields.io/badge/tests-174%20passing-2ecc71?style=flat-square" alt="Tests"/>
+<img src="https://img.shields.io/badge/tsc%20--strict-clean-3178c6?style=flat-square&logo=typescript&logoColor=white" alt="tsc strict clean"/>
+<img src="https://img.shields.io/github/last-commit/JAPofc/baileys?color=9b59b6&style=flat-square" alt="Last commit"/>
+<img src="https://img.shields.io/github/languages/code-size/JAPofc/baileys?color=e67e22&style=flat-square" alt="Code size"/>
 <img src="https://img.shields.io/badge/node-%3E%3D20-brightgreen?style=flat-square" alt="Node >=20"/>
 <img src="https://img.shields.io/badge/module-ESM-blue?style=flat-square" alt="ESM"/>
-<img src="https://img.shields.io/badge/types-included-blue?style=flat-square" alt="TypeScript types included"/>
+<img src="https://img.shields.io/badge/dependencies-zero%20QR%2FPNG%20deps-success?style=flat-square" alt="Zero extra deps"/>
 <img src="https://img.shields.io/badge/license-see%20NOTICE-lightgrey?style=flat-square" alt="License"/>
 </p>
 
 <p>
-<img src="https://komarev.com/ghpvc/?username=JAPofc&repo=jap-baileys&color=2ecc71&style=for-the-badge&label=Repo+Views" alt="Visitor count"/>
+<img src="https://komarev.com/ghpvc/?username=JAPofc&repo=baileys&color=2ecc71&style=for-the-badge&label=Repo+Views" alt="Visitor count"/>
 </p>
 
 <p>
-<a href="#-why-jap-baileys">About</a> &#xa0;|&#xa0;
+<a href="#-why-this-fork">About</a> &#xa0;|&#xa0;
 <a href="#-comparison">Comparison</a> &#xa0;|&#xa0;
 <a href="#-features">Features</a> &#xa0;|&#xa0;
 <a href="#-installation">Installation</a> &#xa0;|&#xa0;
@@ -43,11 +45,11 @@
 <summary>📖 Full table of contents</summary>
 <br/>
 
-- [🍃 Why jap-baileys](#-why-jap-baileys)
+- [🍃 Why this fork](#-why-this-fork)
 - [🆚 Comparison](#-comparison)
 - [🧰 Built With](#-built-with)
 - [🔥 Features](#-features)
-- [✨ Exclusive J.AP Enhancements](#-exclusive-J.AP-enhancements)
+- [✨ Exclusive J.AP Enhancements](#-exclusive-jap-enhancements)
 - [📦 Installation](#-installation)
 - [🚀 Quick Start](#-quick-start)
 - [🔐 Authentication](#-authentication)
@@ -71,18 +73,15 @@
 - [👤 Username Management](#-username-management)
 - [🤖 Bot Framework](#-bot-framework)
 - [🧩 Utility Modules](#-utility-modules)
-- [🛎️ System Notification Filter](#-system-notification-filter)
+- [🛎️ System Notification Filter](#system-notification-filter)
 - [🛠 Recommended Environment](#-recommended-environment)
 - [📘 TypeScript Support](#-typescript-support)
-- [📚 Fork Lineage](#-fork-lineage)
 - [❓ FAQ & Troubleshooting](#-faq--troubleshooting)
 - [🤝 Contributing](#-contributing)
 - [🙏 Credits](#-credits)
-- [📈 Repo Activity](#-repo-activity)
-- [💖 Support](#-support)
 - [👑 Maintainer](#-maintainer)
 - [⚠️ Disclaimer](#-disclaimer)
-- [📝 Patch Notes](#-v6-patch-notes)
+- [📝 Patch Notes](#-v210-patch-notes)
 
 </details>
 
@@ -90,13 +89,7 @@
 
 ---
 
-<div align="center">
-<img src="https://files.catbox.moe/o2zpaq.png" width="100%" alt="J.AP banner art"/>
-</div>
-
----
-
-## 🍃 Why jap-baileys?
+## 🍃 Why this fork?
 
 This fork focuses on:
 
@@ -129,6 +122,8 @@ How `@japofc/baileys` stacks up against other Baileys libraries:
 | User sync queries (WAUSync) | ✅ | ✅ |
 | Username management (check/set/pin/recommend) | ✅ | ❌ |
 | Bot framework (middleware, session, stats) | ✅ | ❌ |
+| Built-in QR render (terminal/SVG/PNG, zero deps) | ✅ | ❌ needs `qrcode-terminal` |
+| Auto WA Web version resolution | ✅ | ❌ hardcoded |
 
 > Tabel ini menggambarkan fitur di level package, bukan benchmark performa. PR untuk memperbarui/mengoreksi tabel ini dipersilakan lewat [Contributing](#-contributing).
 
@@ -326,7 +321,7 @@ npm install @japofc/baileys
 Directly from GitHub:
 
 ```bash
-npm install github:JAPofc/jap-baileys
+npm install github:JAPofc/baileys
 ```
 
 > Requires **Node.js 20+** — install will refuse to run below that (checked by `engine-requirements.js` on `preinstall`).
@@ -1171,8 +1166,8 @@ Full details and license terms per component: see [`NOTICE.md`](./NOTICE.md).
 
 <table>
 <tr>
-<td width="180">
-<img src="https://files.catbox.moe/reqhur.png" width="160" alt="J.AP portrait"/>
+<td width="180" align="center">
+<img src="https://github.com/JAPofc.png" width="160" alt="J.AP avatar" style="border-radius:50%"/>
 </td>
 <td>
 
@@ -1196,6 +1191,19 @@ Full details and license terms per component: see [`NOTICE.md`](./NOTICE.md).
 
 This project is an independent fork.
 Use responsibly and follow WhatsApp Terms of Service.
+
+---
+
+## 📝 v2.1.0 Patch Notes
+
+> Ringkasan — detail lengkap di [CHANGELOG.md](./CHANGELOG.md).
+
+- **QR bawaan, nol dependency**: vendored [qrcodegen](https://github.com/nayuki/QR-Code-generator) (Nayuki, MIT) + renderer sendiri — `renderQRToTerminal` (half-block `▀▄█`, setengah tinggi renderer klasik), `qrToSVG`, `qrToPNG` (encoder PNG hand-rolled di atas zlib Node), `qrToMatrix`, `formatPairingCode`. Round-trip diverifikasi decoder independen (jsQR) di CI.
+- **`printQRInTerminal` berfungsi lagi** — bukan warning deprecated: QR digambar otomatis di terminal tiap `connection.update`.
+- **Fix spam VoIP `VoipStatsTracker is not a constructor`**: shim Metro di `worker-bootstrap.js` menggeser `module`/`exports` satu posisi (argumen ke-5 `null`). Diperbaiki untuk kedua konvensi export bundle FB Comet (flag-66 → arg 6, flag-98 → arg 7, 124/204 modul) + fallback `?.exports` di loader. Diverifikasi worker asli boot sampai `worker_ready` tanpa error shim.
+- **Auto WA-version di Framework `Bot`**: tiap `start()`/reconnect resolve versi tersegar via `fetchBestWaVersion()` (sw.js WA → fork → fallback), mencegah 405 pairing gara-gara versi basi. Opt-out: `versionCheck: false` atau pin `socketConfig.version`.
+- **Full `.d.ts` beneran**: setiap `.js` yang di-ship punya deklarasi pasangan, dijaga test parity + harness `tsc --strict` di CI.
+- **CI + release automation**: GitHub Actions (test di Node 20/22, type-check, pack sanity) dan publish workflow ber-provenance yang terpicu tag `v*`.
 
 ---
 
@@ -1232,8 +1240,6 @@ Use responsibly and follow WhatsApp Terms of Service.
 ---
 
 <div align="center">
-
-<img src="https://files.catbox.moe/tfqh0f.gif" width="60%" alt="Thanks for visiting"/>
 
 Thanks for visiting, bye 👋
 

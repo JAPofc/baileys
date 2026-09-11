@@ -58,7 +58,7 @@ const sub = `${c.dim}Interactive messages · native flow · status tools${c.rese
 
 const infoLines = [
     [`${c.white}Node${c.reset}`, `${c.dim}${nodeVersion}${c.reset}`],
-    [`${c.white}Docs${c.reset}`, `${c.cyan}github.com/JAPofc/jap-baileys${c.reset}`],
+    [`${c.white}Docs${c.reset}`, `${c.cyan}github.com/JAPofc/baileys${c.reset}`],
 ];
 
 const lines = [

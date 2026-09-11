@@ -26,7 +26,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/JAPofc/jap-baileys.git"
+    "url": "git+https://github.com/JAPofc/baileys.git"
   },
   "files": [
     "lib/**/*",
@@ -71,7 +71,7 @@
     "multi-device",
     "interactive-messages"
   ],
-  "homepage": "https://github.com/JAPofc/jap-baileys#readme",
+  "homepage": "https://github.com/JAPofc/baileys#readme",
   "author": "J.AP",
   "license": "MIT",
   "dependencies": {

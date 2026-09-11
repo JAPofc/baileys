@@ -1,7 +1,7 @@
 /**
  * Vendored Project Nayuki QR Code generator (MIT).
  * Upstream: https://github.com/nayuki/QR-Code-generator
- * Declarations mirror the upstream public API used by jap-baileys.
+ * Declarations mirror the upstream public API used by @japofc/baileys.
  */
 
 export declare class QrCode {
