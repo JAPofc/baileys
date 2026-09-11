@@ -47,9 +47,13 @@ async function compileOnly(): Promise<void> {
     const bot = new Bot(botCfg);
     bot.command('!ping', async (ctx: Context) => { await ctx.reply('pong'); });
 
-    const voipCfg: VoipClientConfig = {} as VoipClientConfig;
+    const voipCfg: VoipClientConfig = {
+        watchdogIntervalMs: 5000, watchdogMaxSilent: 3, watchdogMaxRecoveries: 3,
+    } as VoipClientConfig;
     const voip = new VoipClient(voipCfg);
     await voip.connectWithSocket(sock);
+    voip.on('call-degraded', (_d: unknown) => { });
+    voip.on('call-unrecoverable', (_u: unknown) => { });
 
     const node: BloksNode = { type: 'text', children: [] } as unknown as BloksNode;
     const card: CarouselCard = {} as CarouselCard;
