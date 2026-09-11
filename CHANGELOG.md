@@ -3,7 +3,7 @@
 All notable changes to `@japofc/baileys` are documented here.
 Format follows [Keep a Changelog](https://keepachangelog.com/); versioning follows [SemVer](https://semver.org/).
 
-## [Unreleased]
+## [2.3.0] - 2026-09-12
 
 ### Added
 - **Central ffmpeg resolver with auto-detection** (`lib/Utils/ffmpeg-path.js`) — every ffmpeg consumer (video thumbnails in `extractVideoThumb`, sticker/voice-note conversion in `MediaManager` and the message builders, VoIP `AudioFeeder`) now resolves the binary through one resolver: explicit `setFfmpegPath()` / `FFMPEG_PATH` env var → `ffmpeg-static` (if installed) → `@ffmpeg-installer/ffmpeg` (if installed) → system `PATH`. `ffmpeg-static` and `@ffmpeg-installer/ffmpeg` are now **optional** peer dependencies: `npm i ffmpeg-static` is all you need on desktop/server platforms — zero config, nothing bundled by default (package size unchanged). When nothing is found, features fail with a per-platform install hint (Termux-aware: `pkg install ffmpeg`) instead of `spawn ffmpeg ENOENT`. New exports: `setFfmpegPath`, `resolveFfmpegPath`, `requireFfmpegPath`, `ffmpegInstallHint`; new suite `tests/ffmpeg-path.test.js`. Verified end-to-end: voice-note conversion produces valid Ogg/Opus using the auto-detected `ffmpeg-static` binary on a machine with no system ffmpeg.
