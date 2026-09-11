@@ -1,0 +1,143 @@
+name: Release verification
+
+# Runs automatically after "Publish to npm" succeeds (and on demand via
+# workflow_dispatch with a version). It verifies what actually landed on the
+# registry — as a real consumer, not from the repo checkout:
+#
+#   1. the tagged version is live on npm and is the `latest` dist-tag
+#   2. the provenance attestation exists and passes `npm audit signatures`
+#   3. the published tarball installs cleanly into a blank project
+#   4. the installed package imports, constructs a socket, and exposes the
+#      documented surface (makeWASocket, VoIP, QR, pairing codes, ...)
+#   5. the published .d.ts typechecks for a consumer under tsc --strict
+#
+# A red run here means users are already getting a broken package — fix
+# forward with a patch release; never unpublish.
+
+on:
+  workflow_run:
+    workflows: ["Publish to npm"]
+    types: [completed]
+  workflow_dispatch:
+    inputs:
+      version:
+        description: "Version to verify (e.g. 2.2.0). Empty = latest on npm."
+        required: false
+        default: ""
+
+env:
+  PKG: "@japofc/baileys"
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    # only chase successful publishes (manual dispatch always runs)
+    if: ${{ github.event_name == 'workflow_dispatch' || github.event.workflow_run.conclusion == 'success' }}
+    steps:
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          registry-url: https://registry.npmjs.org
+
+      - name: Resolve the version to verify
+        id: ver
+        run: |
+          if [ -n "${{ inputs.version }}" ]; then
+            VERSION="${{ inputs.version }}"
+          elif [ "${{ github.event_name }}" = "workflow_run" ]; then
+            # publish runs on tag vX.Y.Z — head_branch carries the tag name
+            VERSION="${{ github.event.workflow_run.head_branch }}"
+            VERSION="${VERSION#v}"
+          fi
+          if [ -z "$VERSION" ]; then
+            VERSION="$(npm view "$PKG" version)"
+          fi
+          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
+          echo "Verifying $PKG@$VERSION"
+
+      - name: Registry may lag a few seconds behind publish
+        run: |
+          V="${{ steps.ver.outputs.version }}"
+          for i in $(seq 1 12); do
+            if npm view "$PKG@$V" version >/dev/null 2>&1; then
+              echo "live after attempt $i"; exit 0
+            fi
+            echo "not visible yet (attempt $i) — waiting 10s"; sleep 10
+          done
+          echo "::error::$PKG@$V never appeared on the registry"; exit 1
+
+      - name: Version is live and dist-tag latest points at it
+        run: |
+          V="${{ steps.ver.outputs.version }}"
+          LIVE="$(npm view "$PKG@$V" version)"
+          [ "$LIVE" = "$V" ] || { echo "::error::expected $V, registry says $LIVE"; exit 1; }
+          LATEST="$(npm view "$PKG" dist-tags.latest)"
+          if [ "$LATEST" != "$V" ]; then
+            echo "::warning::dist-tag latest is $LATEST, not $V (fine for backport releases)"
+          fi
+
+      - name: Install into a blank consumer project
+        run: |
+          V="${{ steps.ver.outputs.version }}"
+          mkdir consumer && cd consumer
+          npm init -y >/dev/null
+          npm install "$PKG@$V" --no-audit --no-fund
+          npm ls "$PKG"
+
+      - name: Provenance / registry signatures verify
+        working-directory: consumer
+        run: npm audit signatures
+
+      - name: No stray files in the tarball (lib + docs only)
+        working-directory: consumer
+        run: |
+          DIR="node_modules/$PKG"
+          for must in lib/index.js lib/index.d.ts package.json README.md; do
+            [ -e "$DIR/$must" ] || { echo "::error::missing $must in published package"; exit 1; }
+          done
+          BAD="$(find "$DIR" \( -name '*.test.js' -o -name '.env*' -o -name '*.tgz' -o -path '*/tests/*' -o -path '*/.github/*' \) | head -20)"
+          [ -z "$BAD" ] || { echo "::error::stray files published:"; echo "$BAD"; exit 1; }
+
+      - name: Package imports and works as a consumer
+        working-directory: consumer
+        run: |
+          cat > check.mjs <<'EOF'
+          import assert from 'node:assert/strict';
+          import * as B from '@japofc/baileys';
+          import { makeWASocket, initAuthCreds } from '@japofc/baileys';
+
+          // documented surface exists
+          for (const name of [
+            'makeWASocket', 'makeWASocketAuto', 'autoReconnect', 'initAuthCreds',
+            'useMultiFileAuthState', 'attachVoip', 'VoipClient',
+            'renderQRToTerminal', 'qrToSVG', 'formatPairingCode',
+            'generateWAMessage', 'proto', 'DisconnectReason',
+          ]) {
+            assert.ok(name in B, `missing export: ${name}`);
+          }
+
+          // constructs offline + pairing-code staging works (incl. custom code)
+          const keys = { get: async () => ({}), set: async () => {} };
+          const sock = makeWASocket({ auth: { creds: initAuthCreds(), keys } });
+          sock.ws?.on?.('error', () => {});
+          await assert.rejects(sock.requestPairingCode('628', 'BAD'), /8 chars/);
+          await sock.requestPairingCode('62812345678', 'JAPJAP12').catch(() => {});
+          assert.equal(sock.authState.creds.pairingCode, 'JAPJAP12');
+          await sock.end();
+          console.log('published package OK:', Object.keys(B).length, 'exports');
+          EOF
+          node check.mjs
+
+      - name: Published types hold up under tsc --strict
+        working-directory: consumer
+        run: |
+          npm install -D typescript@6.0.x @types/node >/dev/null 2>&1
+          cat > consumer.ts <<'EOF'
+          import { makeWASocket, initAuthCreds, attachVoip, autoReconnect } from '@japofc/baileys';
+          const keys = { get: async () => ({}), set: async () => {} };
+          const sock = makeWASocket({ auth: { creds: initAuthCreds(), keys } });
+          const code: Promise<string> = sock.requestPairingCode('628', 'JAPJAP12');
+          const mgr = autoReconnect(() => sock, { baseDelayMs: 500 });
+          void code; void mgr; void attachVoip;
+          EOF
+          npx tsc --strict --noEmit --skipLibCheck --module nodenext --moduleResolution nodenext consumer.ts
