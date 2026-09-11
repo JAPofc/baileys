@@ -55,5 +55,6 @@ export * from "./auth-secure.js";
 export * from "./qr-render.js";
 export * from "./auto-reconnect.js";
 export * from "./debug-info.js";
+export * from "./ffmpeg-path.js";
 
 export * from "./MessageBuilder.js";

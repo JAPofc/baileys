@@ -7,6 +7,7 @@ import makeWASocket, {
     makeWASocketAuto, autoReconnect,
     type AutoReconnectOptions, type AutoReconnectManager,
     createDebugMonitor, type DebugInfo, type DebugMonitor,
+    setFfmpegPath, resolveFfmpegPath, requireFfmpegPath, ffmpegInstallHint,
     // core
     initAuthCreds, fetchBestWaVersion, fetchLatestWaWebVersion, DisconnectReason,
     // builders
@@ -77,5 +78,14 @@ async function compileOnly2(): Promise<void> {
     await mgr.stop();
     console.log(sock, started, n);
 }
+async function compileOnly3(): Promise<void> {
+    setFfmpegPath('/usr/bin/ffmpeg');
+    setFfmpegPath(null);
+    const bin: string | null = await resolveFfmpegPath();
+    const required: string = await requireFfmpegPath();
+    const hint: string = ffmpegInstallHint();
+    console.log(bin, required, hint);
+}
 void compileOnly;
 void compileOnly2;
+void compileOnly3;

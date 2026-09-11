@@ -338,6 +338,8 @@ Everything below is **optional** — the socket works without any of them. Insta
 | `@napi-rs/image` | Lighter native alternative to `sharp` for image ops |
 | `jimp` | Pure-JS image fallback when neither of the above is installed |
 | `fluent-ffmpeg` | Audio/video conversion for media messages |
+| `ffmpeg-static` | Bundled ffmpeg **binary** — auto-detected, zero config (~80MB; not available for Termux/Android, use `pkg install ffmpeg` there) |
+| `@ffmpeg-installer/ffmpeg` | Alternative bundled ffmpeg binary — also auto-detected |
 | `audio-decode` | Audio waveform/duration extraction (voice notes, VoIP capture) |
 | `link-preview-js` | Rich link previews for URLs in outgoing text messages |
 | `better-sqlite3` | SQLite auth state, SQLite store adapter, **and** the [Bot Framework](#-bot-framework)'s `SQLiteStore`/`StatsManager` |
@@ -347,6 +349,23 @@ Everything below is **optional** — the socket works without any of them. Insta
 | `pg` | PostgreSQL store adapter |
 | `ioredis` | Redis store adapter |
 | `@roamhq/wrtc` | Native WebRTC bindings for [voice calling](#-voice--video-calls) |
+
+#### ffmpeg: how it's found
+
+Every feature that shells out to ffmpeg (video thumbnails, sticker conversion, voice-note conversion, VoIP audio feeding) resolves the binary through one central resolver, in this order:
+
+1. **Your override** — `setFfmpegPath('/path/to/ffmpeg')` (exported from the package) or the `FFMPEG_PATH` env var
+2. **`ffmpeg-static`** — if installed, its bundled binary is used automatically
+3. **`@ffmpeg-installer/ffmpeg`** — same, as an alternative
+4. **System `ffmpeg`** on your `PATH`
+
+So on a normal server you can just `npm i ffmpeg-static` and never think about it. On **Termux/Android** (where neither npm package ships a binary) install the system one instead — it's picked up automatically:
+
+```sh
+pkg install ffmpeg
+```
+
+If nothing is found, the feature fails with a per-platform install hint instead of a cryptic `spawn ffmpeg ENOENT`.
 
 ---
 
