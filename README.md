@@ -1241,13 +1241,13 @@ Use responsibly and follow WhatsApp Terms of Service.
 
 <div align="center">
 
+Made with 🍃 by **JAP**
+
 Thanks for visiting, bye 👋
 
 <img src="https://capsule-render.vercel.app/api?type=waving&color=0:2ecc71,100:1d6a23&height=100&section=footer" width="100%"/>
 
-Made with 🍃 by **J.AP**
 
-Thanks for stopping by! ✌️
 
 <a href="#top">⬆️ Back to top</a>
 
