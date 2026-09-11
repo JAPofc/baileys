@@ -1,0 +1,40 @@
+name: Publish to npm
+
+# Publishes when you push a version tag:
+#   npm version minor            # bumps package.json + creates the git tag
+#   git push --follow-tags       # triggers this workflow
+#
+# One-time setup: create a Granular Access Token on npmjs.com (packages:
+# read/write for @japofc/baileys) and save it as the NPM_TOKEN repository
+# secret (GitHub repo > Settings > Secrets and variables > Actions).
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      id-token: write # npm provenance attestation
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          registry-url: https://registry.npmjs.org
+      - run: npm ci
+      - name: Full test suite must pass before anything is published
+        run: npm test
+      - name: Type-check public API
+        run: npm run test:types
+      - name: Guard - tag must match package.json version
+        run: |
+          PKG_V="v$(node -p "require('./package.json').version")"
+          [ "$PKG_V" = "${GITHUB_REF_NAME}" ] || { echo "tag ${GITHUB_REF_NAME} != package.json ${PKG_V}"; exit 1; }
+      - run: npm publish --provenance --access public
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}

@@ -10,8 +10,21 @@ export interface BotConfig {
     dbPath?: string;
     /** Enable group StatsManager. Default off. */
     enableStats?: boolean;
+    /**
+     * Resolve the freshest WA Web version via fetchBestWaVersion() on every
+     * start()/reconnect (WA sw.js -> baileys fork -> hardcoded fallback).
+     * Default true; set false or pin `socketConfig.version` to opt out.
+     */
+    versionCheck?: boolean;
     logger?: any;
 }
+
+/**
+ * Resolve the socketConfig a Bot connects with: injects the freshest WA Web
+ * version via fetchBestWaVersion() unless `versionCheck: false` or
+ * `socketConfig.version` is pinned. Pure and never throws.
+ */
+export function resolveSocketVersionConfig(config: BotConfig, logger?: any): Promise<any>;
 
 export type BotMiddleware = (ctx: Context, next: () => Promise<void>) => Promise<void> | void;
 export type BotCommandHandler = (ctx: Context) => Promise<void> | void;

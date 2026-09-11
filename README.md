@@ -373,9 +373,10 @@ sock.ev.on('connection.update', (update) => {
     // Easiest: pass `printQRInTerminal: true` to makeWASocket and the QR is
     // drawn automatically with the built-in zero-dependency renderer.
     // Manual/custom rendering from the event also works:
-    //   import { renderQRToTerminal, qrToSVG } from '@japofc/baileys'
+    //   import { renderQRToTerminal, qrToSVG, qrToPNG } from '@japofc/baileys'
     //   if (qr) console.log(renderQRToTerminal(qr))          // terminal (▀▄█)
     //   if (qr) fs.writeFileSync('qr.svg', qrToSVG(qr))      // for a web UI
+    //   if (qr) fs.writeFileSync('qr.png', qrToPNG(qr))      // raster (send anywhere)
     if (qr) console.log('Got a pairing QR')
 
     if (connection === 'open') console.log('🍃 Connected!')
@@ -1115,7 +1116,7 @@ Cek `connection.update` untuk field `lastDisconnect.error`. Kalau status code-ny
 <summary><b>QR tidak muncul / tidak ke-scan</b></summary>
 <br/>
 
-Di upstream Baileys `printQRInTerminal` sudah dihapus, tapi di paket ini opsi tersebut **berfungsi lagi** — QR digambar otomatis oleh renderer bawaan (vendored [qrcodegen](https://github.com/nayuki/QR-Code-generator), tanpa dependency tambahan). Bisa juga render manual dari event `qr` dengan `renderQRToTerminal(qr)` / `qrToSVG(qr)` / `qrToMatrix(qr)`. Kalau QR muncul tapi gagal linking, biasanya karena versi WA Web (`version` di `makeWASocket`) sudah kedaluwarsa; fetch versi terbaru lewat `fetchLatestBaileysVersion()`. QR kelihatan "kebalik" di terminal tema terang? Pakai `renderQRToTerminal(qr, { inverted: true })`.
+Di upstream Baileys `printQRInTerminal` sudah dihapus, tapi di paket ini opsi tersebut **berfungsi lagi** — QR digambar otomatis oleh renderer bawaan (vendored [qrcodegen](https://github.com/nayuki/QR-Code-generator), tanpa dependency tambahan). Bisa juga render manual dari event `qr` dengan `renderQRToTerminal(qr)` / `qrToSVG(qr)` / `qrToPNG(qr)` / `qrToMatrix(qr)`. Kalau QR muncul tapi gagal linking, biasanya karena versi WA Web (`version` di `makeWASocket`) sudah kedaluwarsa; fetch versi terbaru lewat `fetchBestWaVersion()` (chain: sw.js WA → fork baileys → fallback). Framework `Bot` sudah melakukannya otomatis tiap `start()`/reconnect (matikan dengan `versionCheck: false`). QR kelihatan "kebalik" di terminal tema terang? Pakai `renderQRToTerminal(qr, { inverted: true })`.
 
 </details>
 

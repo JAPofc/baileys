@@ -40,5 +40,20 @@ export declare const renderQRToTerminal: (text: string, options?: QRTerminalOpti
 /** Render a QR as a standalone SVG string (viewBox in module units). */
 export declare const qrToSVG: (text: string, options?: QRSVGOptions) => string;
 
+export interface QRPNGOptions extends QRMatrixOptions {
+    /** Pixels per module (default 8). */
+    scale?: number;
+    /** Dark module gray value 0-255 (default 0). */
+    dark?: number;
+    /** Background gray value 0-255 (default 255). */
+    light?: number;
+}
+
+/**
+ * Render a QR as a PNG Buffer (grayscale, zero external dependencies —
+ * hand-rolled encoder on Node's zlib).
+ */
+export declare const qrToPNG: (text: string, options?: QRPNGOptions) => Buffer;
+
 /** "ABCDEFGH" -> "ABCD-EFGH" for display; leaves non-8-char codes untouched. */
 export declare const formatPairingCode: (code: string | null | undefined) => string;

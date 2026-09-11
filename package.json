@@ -1,6 +1,6 @@
 {
   "name": "@japofc/baileys",
-  "version": "2.0.1",
+  "version": "2.1.0",
   "description": "Feature-rich WhatsApp Multi-Device library for Node.js — interactive messages, native flows, polls, newsletters, VoIP, mini-apps and everyday bot utilities.",
   "type": "module",
   "main": "./lib/index.js",
@@ -18,7 +18,8 @@
     "preinstall": "node ./engine-requirements.js",
     "postinstall": "node ./postinstall-banner.js",
     "voip:fetch-wasm": "node --experimental-websocket ./scripts/fetch-wasm-resources.mjs",
-    "test": "node --test tests/"
+    "test": "node --test tests/",
+    "test:types": "tsc -p tests/tscheck/tsconfig.json"
   },
   "engines": {
     "node": ">=20.0.0"
@@ -173,6 +174,7 @@
   },
   "devDependencies": {
     "@types/node": "^22.20.2",
-    "jsqr": "^1.4.0"
+    "jsqr": "^1.4.0",
+    "typescript": "^7.0.2"
   }
 }
