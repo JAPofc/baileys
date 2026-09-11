@@ -4,6 +4,8 @@
  * `npm run test:types` (also wired into CI). Compile-only, never executed.
  */
 import makeWASocket, {
+    makeWASocketAuto, autoReconnect,
+    type AutoReconnectOptions, type AutoReconnectManager,
     // core
     initAuthCreds, fetchBestWaVersion, fetchLatestWaWebVersion, DisconnectReason,
     // builders
@@ -55,4 +57,14 @@ async function compileOnly(): Promise<void> {
     console.log(methods, code, v, web, reason, m.length, term, svg, png.length, pair,
         o1, o2, o3, o4, bot, voip, node, card, Button, Poll, Carousel, AIRich, A2UI);
 }
+async function compileOnly2(): Promise<void> {
+    const sock = await makeWASocketAuto({ printQRInTerminal: true });
+    const opts: AutoReconnectOptions = { maxAttempts: 5, baseDelayMs: 500, onLoggedOut: () => { } };
+    const mgr: AutoReconnectManager = autoReconnect(() => makeWASocketAuto({}), opts);
+    const started = await mgr.start();
+    const n: number = mgr.attempts;
+    await mgr.stop();
+    console.log(sock, started, n);
+}
 void compileOnly;
+void compileOnly2;

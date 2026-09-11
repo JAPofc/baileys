@@ -14,6 +14,8 @@
 </p>
 <p>
 <a href="https://github.com/JAPofc/baileys/actions/workflows/ci.yml" target="_blank"><img src="https://img.shields.io/github/actions/workflow/status/JAPofc/baileys/ci.yml?branch=main&style=flat-square&label=CI&color=2ecc71" alt="CI status"/></a>
+<a href="https://japofc.github.io/baileys/" target="_blank"><img src="https://img.shields.io/badge/docs-typedoc-8e44ad?style=flat-square" alt="API docs"/></a>
+<img src="https://img.shields.io/badge/npm-provenance%20attested-2ecc71?style=flat-square&logo=npm&logoColor=white" alt="npm provenance"/>
 <img src="https://img.shields.io/badge/tests-174%20passing-2ecc71?style=flat-square" alt="Tests"/>
 <img src="https://img.shields.io/badge/tsc%20--strict-clean-3178c6?style=flat-square&logo=typescript&logoColor=white" alt="tsc strict clean"/>
 <img src="https://img.shields.io/github/last-commit/JAPofc/baileys?color=9b59b6&style=flat-square" alt="Last commit"/>
@@ -351,11 +353,14 @@ Everything below is **optional** — the socket works without any of them. Insta
 ## 🚀 Quick Start
 
 ```js
-import { makeWASocket, useMultiFileAuthState } from '@japofc/baileys'
+import { makeWASocketAuto, useMultiFileAuthState } from '@japofc/baileys'
 
 const { state, saveCreds } = await useMultiFileAuthState('auth_info')
 
-const sock = makeWASocket({
+// makeWASocketAuto resolves the freshest WA Web version before connecting
+// (WA sw.js -> fork -> fallback), preventing stale-version pairing 405s.
+// Prefer sync? `makeWASocket({ auth: state })` still works exactly as before.
+const sock = await makeWASocketAuto({
     auth: state
 })
 
@@ -383,6 +388,24 @@ sock.ev.on('messages.upsert', ({ messages }) => {
     console.log('New message from', msg.key.remoteJid)
 })
 ```
+
+**Production tip** — wrap the socket in `autoReconnect()` and disconnect handling is done for you (exponential backoff, never reconnects on `loggedOut`, immediate reconnect after pairing):
+
+```js
+import { makeWASocketAuto, autoReconnect, useMultiFileAuthState } from '@japofc/baileys'
+
+const { state, saveCreds } = await useMultiFileAuthState('auth_info')
+const manager = autoReconnect(() => makeWASocketAuto({ auth: state, printQRInTerminal: true }), {
+    onSocket: sock => {
+        sock.ev.on('creds.update', saveCreds)
+        sock.ev.on('messages.upsert', handler) // re-attached on every reconnect
+    },
+    onLoggedOut: () => console.log('delete auth_info/ and re-pair'),
+})
+await manager.start()
+```
+
+Full runnable version: [`examples/auto-reconnect-bot.js`](./examples/auto-reconnect-bot.js).
 
 ---
 

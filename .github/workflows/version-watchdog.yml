@@ -1,0 +1,85 @@
+name: WA version watchdog
+
+# Weekly check: compares WhatsApp Web's live client_revision against the
+# hardcoded fallback in lib/Defaults/index.js. When they drift apart it opens
+# (or updates) a single tracking issue so the fallback + proto get bumped
+# before stale-version pairing rejections (upstream#2370/#2485) can bite.
+# Runtime users are already protected by fetchBestWaVersion(); this guards
+# the offline fallback and reminds us to re-sync WAProto.
+
+on:
+  schedule:
+    - cron: '0 3 * * 1' # every Monday 03:00 UTC
+  workflow_dispatch: {} # manual run button
+
+permissions:
+  issues: write
+  contents: read
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Compare live WA Web revision vs hardcoded fallback
+        id: cmp
+        run: |
+          node --input-type=module -e "
+          import fs from 'node:fs';
+          const src = fs.readFileSync('lib/Defaults/index.js', 'utf8');
+          const m = src.match(/const version = \[2, 3000, (\d+)\]/);
+          if (!m) { console.error('cannot find fallback version'); process.exit(1); }
+          const fallback = Number(m[1]);
+          const res = await fetch('https://web.whatsapp.com/sw.js', { headers: {
+            'sec-fetch-site': 'none',
+            'user-agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36'
+          }});
+          const text = await res.text();
+          const rev = text.match(/\\\\?\"client_revision\\\\?\":\s*(\d+)/)?.[1];
+          if (!rev) { console.error('client_revision not found (WA changed sw.js?) — flagging'); }
+          const live = Number(rev ?? 0);
+          const drift = live > fallback;
+          fs.appendFileSync(process.env.GITHUB_OUTPUT, 'fallback=' + fallback + '\n' + 'live=' + live + '\n' + 'drift=' + (drift || !rev) + '\n');
+          console.log({ fallback, live, drift });
+          "
+      - name: Open/update tracking issue when drifted
+        if: steps.cmp.outputs.drift == 'true'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const title = 'chore: WA Web version fallback is stale — bump Defaults + re-sync WAProto';
+            const body = [
+              'The weekly watchdog found drift between WhatsApp Web and this repo:',
+              '',
+              '| | client_revision |',
+              '|---|---|',
+              '| live web.whatsapp.com | `' + '${{ steps.cmp.outputs.live }}' + '` |',
+              '| lib/Defaults fallback | `' + '${{ steps.cmp.outputs.fallback }}' + '` |',
+              '',
+              'Runtime users are safe (fetchBestWaVersion resolves live), but the offline fallback should be bumped and WAProto re-synced against current WA Web. Checklist:',
+              '- [ ] Update `const version` in `lib/Defaults/index.js`',
+              '- [ ] Diff current WA Web proto vs `WAProto/` and merge new fields',
+              '- [ ] `npm test` (proto-regression suite must stay green)',
+              '- [ ] Release a patch version',
+              '',
+              '_Auto-filed by `.github/workflows/version-watchdog.yml` — this issue is updated, not duplicated, on later runs._',
+            ].join('\n');
+            const { data: issues } = await github.rest.issues.listForRepo({
+              owner: context.repo.owner, repo: context.repo.repo,
+              state: 'open', labels: 'wa-version-drift',
+            });
+            if (issues.length > 0) {
+              await github.rest.issues.createComment({
+                owner: context.repo.owner, repo: context.repo.repo,
+                issue_number: issues[0].number,
+                body: 'Still drifted as of ' + new Date().toISOString().slice(0, 10) + ': live `' + '${{ steps.cmp.outputs.live }}' + '` vs fallback `' + '${{ steps.cmp.outputs.fallback }}' + '`.',
+              });
+            } else {
+              await github.rest.issues.create({
+                owner: context.repo.owner, repo: context.repo.repo,
+                title, body, labels: ['wa-version-drift', 'maintenance'],
+              });
+            }

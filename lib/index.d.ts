@@ -14,5 +14,6 @@ export type { VoipClientConfig, AnswerCallOptions, JoinGroupCallOptions, StartGr
 export type { UsernameSocketMethods, SetUsernameOptions, CheckUsernameResult, FoundUsernameUser } from "./Socket/username.js";
 export * from "./Builders/index.js";
 export { makeWASocket };
+export { makeWASocketAuto } from "./Socket/index.js";
 export default makeWASocket;
 import makeWASocket from './Socket/index.js';

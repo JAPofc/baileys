@@ -3,6 +3,22 @@
 All notable changes to `@japofc/baileys` are documented here.
 Format follows [Keep a Changelog](https://keepachangelog.com/); versioning follows [SemVer](https://semver.org/).
 
+## [2.2.0] - 2026-09-11
+
+### Added
+- **`makeWASocketAuto()`** — async root-level factory that resolves the freshest WA Web version via `fetchBestWaVersion()` before connecting (pinned `version` arrays pass through untouched). `makeWASocket({ version: 'auto' })` now throws a helpful error pointing at the async factory instead of failing the handshake later.
+- **`autoReconnect(factory, options)`** — drop-in supervision for direct socket users (the Framework `Bot` already had this): exponential backoff with jitter, never reconnects on `loggedOut` (fires `onLoggedOut` for cleanup), immediate reconnect on `restartRequired`, `stop()` cancels cleanly. New example: `examples/auto-reconnect-bot.js`.
+- **API docs site** — typedoc generated from the package's full `.d.ts` surface, deployed to GitHub Pages on every push (`.github/workflows/docs.yml`): https://japofc.github.io/baileys/
+- **WA version watchdog** — weekly scheduled workflow compares live `web.whatsapp.com` `client_revision` against the hardcoded fallback and files/updates a tracking issue on drift (`.github/workflows/version-watchdog.yml`).
+- **Examples guarded in CI** — `tests/examples-lint.test.js` fails the build if any example stops parsing or imports a name the package root no longer exports.
+- `SECURITY.md` + GitHub issue templates (bug/feature/private-vulnerability contact links).
+
+### Changed
+- **jimp is now lazy-loaded** in `media-messages.js` (profile-picture helpers): ~200ms faster startup and ~11MB less heap for every bot that never changes profile pictures, and fixes the `ESModulesLinkingError` browser-bundler false alarm caused by jimp 1.6.x's empty browser stub. First profile-picture call pays the load once per process; repeat calls hit the module cache.
+- WA Web fallback version bumped `1046350168` → `1047296119` (live revision at release time; runtime users were already auto-resolving).
+- Quick Start now leads with `makeWASocketAuto` + an `autoReconnect` production tip.
+- devDependencies: `typescript` pinned to 6.0.x (typedoc compatibility); `typedoc` added.
+
 ## [2.1.0] - 2026-09-11
 
 ### Added

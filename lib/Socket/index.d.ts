@@ -1,4 +1,6 @@
 export { Dugong } from "./dugong.js";
+/** Async factory: resolves the freshest WA Web version via fetchBestWaVersion() before connecting. Pinned version arrays pass through untouched. */
+export declare function makeWASocketAuto(config?: any): Promise<ReturnType<typeof makeWASocket>>;
 export default makeWASocket;
 declare function makeWASocket(config: any): {
     communityQuery: (jid: any, type: any, content: any) => Promise<any>;

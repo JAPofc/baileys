@@ -1,0 +1,15 @@
+{
+    "$schema": "https://typedoc.org/schema.json",
+    "name": "@japofc/baileys",
+    "entryPoints": ["lib/index.d.ts"],
+    "out": "docs-dist",
+    "readme": "README.md",
+    "includeVersion": true,
+    "excludeExternals": true,
+    "excludePrivate": true,
+    "skipErrorChecking": true,
+    "navigationLinks": {
+        "GitHub": "https://github.com/JAPofc/baileys",
+        "npm": "https://www.npmjs.com/package/@japofc/baileys"
+    }
+}

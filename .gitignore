@@ -4,3 +4,4 @@ auth_sessions/
 auth_*/
 *.log
 .DS_Store
+docs-dist/

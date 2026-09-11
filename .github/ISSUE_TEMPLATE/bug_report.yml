@@ -1,0 +1,42 @@
+name: 🐞 Bug report
+description: Something broken in @japofc/baileys
+labels: [bug]
+body:
+  - type: input
+    id: version
+    attributes:
+      label: Package version
+      description: Output of `npm ls @japofc/baileys` (or the version in your package.json)
+      placeholder: "2.1.0"
+    validations:
+      required: true
+  - type: input
+    id: node
+    attributes:
+      label: Node.js version
+      placeholder: "v22.x (must be >=20)"
+    validations:
+      required: true
+  - type: textarea
+    id: repro
+    attributes:
+      label: Minimal reproduction
+      description: Smallest code snippet that triggers the bug. Remove tokens/credentials!
+      render: js
+    validations:
+      required: true
+  - type: textarea
+    id: logs
+    attributes:
+      label: Error / logs
+      description: Full error output. **Redact phone numbers and session data.**
+      render: shell
+  - type: checkboxes
+    id: checks
+    attributes:
+      label: Checklist
+      options:
+        - label: I ran `npm ci` (or a fresh `npm install`) before reporting
+          required: true
+        - label: I am NOT reporting an account ban (that is WhatsApp server policy, not a library bug)
+          required: true
