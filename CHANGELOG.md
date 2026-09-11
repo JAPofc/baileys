@@ -3,6 +3,18 @@
 All notable changes to `@japofc/baileys` are documented here.
 Format follows [Keep a Changelog](https://keepachangelog.com/); versioning follows [SemVer](https://semver.org/).
 
+## [Unreleased]
+
+### Fixed
+- **auto-reconnect race condition** — a socket emitting `close` twice scheduled two parallel reconnect chains, and a late `close`/`open` from an already-replaced socket spawned ghost sockets / corrupted the backoff counter. Handlers now ignore stale sockets and de-duplicate `close` per socket. Regression-locked in `tests/reconnect-stress.test.js`.
+- **VoIP call recovery** — the media watchdog retried rekey+offer forever on a dead relay with no signal to the caller. Recovery now has a bounded per-call budget (`watchdogMaxRecoveries`, default 3): `call-degraded` events carry `{ attempt, maxRecoveries }`, exhausting the budget emits `call-unrecoverable` and force-ends the call (reason `"unrecoverable"`) so upper layers can redial; a healthy relay resets the budget. `recoverCall()` now throws when no engine is connected instead of silently reporting a fake success.
+
+### Added
+- **WhatsApp integration test suite** (`tests/integration.test.js`) — pairing-code flow (random Crockford + custom 8-char codes), binary-node wire codec round-trips, message pipeline → protobuf wire, multi-file auth-state persistence, connection lifecycle.
+- **VoIP end-to-end coverage** (`tests/voip-e2e.test.js`) — full outbound `call()` pipeline on injected fakes (LID resolve → device discovery → sessions → tctoken → `startCall`), watchdog recovery-budget behaviour, `recoverCall` guard rails.
+- **Reconnect race regression + stress tests** (`tests/reconnect-stress.test.js`) — double-close, stale-close, stale-open, 50 rapid crash cycles, `maxAttempts`, `stop()` during backoff.
+- **Release verification workflow** (`.github/workflows/release-verification.yml`) — runs after every successful npm publish (or on demand): confirms the version is live, `npm audit signatures` (provenance), clean install into a blank project, runtime smoke of the published tarball, and `tsc --strict` against the published `.d.ts`.
+
 ## [2.2.0] - 2026-09-11
 
 ### Added
