@@ -22,12 +22,12 @@ describe('music message (experimental)', () => {
 describe('payments', () => {
     it('requestPayment builds + converts amount→amount1000', async () => {
         const m = await generateWAMessage(JID, {
-            requestPayment: { currency: 'IDR', amount: 50.5, note: 'kopi', requestFrom: '62812@s.whatsapp.net' }
+            requestPayment: { currency: 'IDR', amount: 50.5, note: 'coffee', requestFrom: '62812@s.whatsapp.net' }
         }, OPTS);
         const r = m.message.requestPaymentMessage;
         assert.equal(r.currencyCodeIso4217, 'IDR');
         assert.equal(r.amount1000, 50500);
-        assert.equal(r.noteMessage.conversation, 'kopi');
+        assert.equal(r.noteMessage.conversation, 'coffee');
     });
     it('requestPayment rejects bad currency/amount', async () => {
         await assert.rejects(generateWAMessage(JID, { requestPayment: { amount: 5 } }, OPTS), /currency/);

@@ -118,14 +118,14 @@ describe('integration: message pipeline → protobuf wire', () => {
 
     it('text message survives generate → encode → decode intact', async () => {
         const m = await generateWAMessage('628@s.whatsapp.net', {
-            text: 'halo dari suite integrasi 🇮🇩',
+            text: 'hello from the integration suite 🌐',
         }, OPTS);
         const wire = proto.WebMessageInfo.encode(m).finish();
         const back = proto.WebMessageInfo.decode(wire);
         assert.equal(back.key.remoteJid, '628@s.whatsapp.net');
         assert.equal(back.key.fromMe, true);
         const text = back.message.extendedTextMessage?.text ?? back.message.conversation;
-        assert.equal(text, 'halo dari suite integrasi 🇮🇩');
+        assert.equal(text, 'hello from the integration suite 🌐');
         assert.ok(Number(back.messageTimestamp) > 0);
     });
 

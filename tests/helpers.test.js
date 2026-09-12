@@ -40,8 +40,8 @@ describe('transcribe', () => {
     it('customProvider + transcribeAudio roundtrip', async () => {
         const provider = customProvider(async (buf) => ({ text: `len=${buf.length}` }));
         assert.deepEqual(await transcribeAudio(Buffer.alloc(10), { provider }), { text: 'len=10' });
-        const strProvider = customProvider(async () => 'halo');
-        assert.deepEqual(await transcribeAudio(Buffer.alloc(3), { provider: strProvider }), { text: 'halo' });
+        const strProvider = customProvider(async () => 'hello');
+        assert.deepEqual(await transcribeAudio(Buffer.alloc(3), { provider: strProvider }), { text: 'hello' });
         await assert.rejects(transcribeAudio(Buffer.alloc(1), {}), /provider/);
         await assert.rejects(transcribeAudio('nope', { provider }), /Buffer/);
     });

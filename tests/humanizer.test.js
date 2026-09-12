@@ -12,7 +12,7 @@ const FAST = { minDelayMs: 5, maxDelayMs: 10 };
 describe('sendHumanized', () => {
     it('types, waits, sends, pauses', async () => {
         const log = [];
-        await sendHumanized(fakeSock(log), '1@s.whatsapp.net', { text: 'halo apa kabar' }, FAST);
+        await sendHumanized(fakeSock(log), '1@s.whatsapp.net', { text: 'hello how are you' }, FAST);
         const kinds = log.map((e) => e[0]);
         assert.deepEqual(kinds, ['sub', 'composing', 'send', 'paused']);
     });

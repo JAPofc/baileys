@@ -10,7 +10,7 @@ const fakeSock = (sent) => ({
 
 describe('buildTagContent', () => {
     it('lists visible @tags', () => {
-        const c = buildTagContent(PARTS, 'Halo');
+        const c = buildTagContent(PARTS, 'Hello');
         assert.equal(c.mentions.length, 3);
         assert.ok(c.text.includes('@1') && c.text.includes('@3'));
     });
@@ -27,7 +27,7 @@ describe('buildTagContent', () => {
 describe('tagAll / hideTag', () => {
     it('tagAll sends mentions', async () => {
         const sent = [];
-        await tagAll(fakeSock(sent), '1@g.us', 'Rapat!');
+        await tagAll(fakeSock(sent), '1@g.us', 'Meeting!');
         assert.equal(sent[0][0], '1@g.us');
         assert.equal(sent[0][1].mentions.length, 3);
     });

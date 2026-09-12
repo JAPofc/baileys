@@ -18,7 +18,7 @@ describe('askMetaAI', () => {
     it('sends + resolves reply text', async () => {
         const sent = [];
         const sock = fakeSock(sent);
-        const p = askMetaAI(sock, 'halo', { timeoutMs: 2000 });
+        const p = askMetaAI(sock, 'hello', { timeoutMs: 2000 });
         await new Promise((r) => setTimeout(r, 10)); // let askMetaAI register its listener first
         sock.ev.emit('messages.upsert', { messages: [reply('hai juga!')] });
         const { text } = await p;
@@ -28,7 +28,7 @@ describe('askMetaAI', () => {
     it('ignores own messages', async () => {
         const sent = [];
         const sock = fakeSock(sent);
-        const p = askMetaAI(sock, 'halo', { timeoutMs: 2000 });
+        const p = askMetaAI(sock, 'hello', { timeoutMs: 2000 });
         await new Promise((r) => setTimeout(r, 10));
         sock.ev.emit('messages.upsert', { messages: [reply('mine', { key: { remoteJid: META_AI_JID, fromMe: true, id: 'm' } })] });
         sock.ev.emit('messages.upsert', { messages: [reply('real')] });
@@ -37,7 +37,7 @@ describe('askMetaAI', () => {
     });
     it('times out', async () => {
         const sock = fakeSock([]);
-        await assert.rejects(askMetaAI(sock, 'halo?', { timeoutMs: 30 }), /timed out/);
+        await assert.rejects(askMetaAI(sock, 'hello?', { timeoutMs: 30 }), /timed out/);
     });
     it('validates input', async () => {
         await assert.rejects(askMetaAI(null, 'x'), /active Baileys socket/);

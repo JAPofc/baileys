@@ -123,7 +123,7 @@ How `@japofc/baileys` stacks up against other Baileys libraries:
 | Built-in QR render (terminal/SVG/PNG, zero deps) | ✅ | ❌ needs `qrcode-terminal` |
 | Auto WA Web version resolution | ✅ | ❌ hardcoded |
 
-> Tabel ini menggambarkan fitur di level package, bukan benchmark performa. PR untuk memperbarui/mengoreksi tabel ini dipersilakan lewat [Contributing](#-contributing).
+> This table describes package-level features, not performance benchmarks. PRs to update or correct it are welcome via [Contributing](#-contributing).
 
 ---
 
@@ -544,7 +544,7 @@ import { Poll } from '@japofc/baileys'
 
 await new Poll(sock)
     .setName('Mau makan apa hari ini?')
-    .addOptions(['Nasi Goreng', 'Mie Ayam', 'Bakso'])
+    .addOptions(['Fried Rice', 'Chicken Noodles', 'Meatballs'])
     .setSelectable(1)
     .send(jid)
 ```
@@ -580,14 +580,14 @@ await new Carousel(sock)
 import { AIRich } from '@japofc/baileys'
 
 await new AIRich(sock)
-    .addHeading('Ringkasan Order')
-    .addText('Pesananmu sedang diproses.')
+    .addHeading('Order Summary')
+    .addText('Your order is being processed.')
     .addTable([
         ['Item', 'Qty'],
-        ['Kopi Susu', '2']
+        ['Iced Latte', '2']
     ])
-    .addTip('Pesanan biasanya siap dalam 15 menit')
-    .addSuggest('Lacak Order')
+    .addTip('Orders are usually ready in 15 minutes')
+    .addSuggest('Track Order')
     .send(jid)
 ```
 
@@ -626,7 +626,7 @@ await vx.button()
 
 await vx.poll()
     .setName('Mau makan apa hari ini?')
-    .addOptions(['Nasi Goreng', 'Mie Ayam'])
+    .addOptions(['Fried Rice', 'Chicken Noodles'])
     .send(jid)
 ```
 
@@ -646,11 +646,11 @@ await sock.sendUnkeep(jid, msg.key)
 
 ```js
 await sock.sendEvent(jid, {
-    name: 'Rapat Mingguan',
+    name: 'Weekly Meeting',
     description: 'Bahas progres bot',
     startDate: new Date('2026-09-15T10:00:00+07:00'),
     endDate: new Date('2026-09-15T11:00:00+07:00'),
-    location: { name: 'Kantor', address: 'Jakarta' },
+    location: { name: 'Office', address: 'Jakarta' },
     extraGuestsAllowed: true
 })
 ```
@@ -702,11 +702,11 @@ High-level one-liners for modern message types — validated, with friendly alia
 
 ```js
 await sock.sendLocation(jid, { lat: -6.2, lng: 106.8, name: 'Jakarta' });
-await sock.sendContact(jid, { name: 'Budi', vcard: 'BEGIN:VCARD\n...' });
-await sock.sendGroupInvite(jid, { code: 'AbC123', jid: groupJid, subject: 'Komunitas' });
-await sock.sendPaymentRequest(jid, { currency: 'IDR', amount: 50000, note: 'kopi ☕' });
+await sock.sendContact(jid, { name: 'John', vcard: 'BEGIN:VCARD\n...' });
+await sock.sendGroupInvite(jid, { code: 'AbC123', jid: groupJid, subject: 'Community' });
+await sock.sendPaymentRequest(jid, { currency: 'IDR', amount: 50000, note: 'coffee ☕' });
 await sock.sendInvoice(jid, { note: 'INV-001' });
-await sock.sendPollOption(jid, pollKey, ['Opsi baru']);
+await sock.sendPollOption(jid, pollKey, ['New option']);
 await sock.sendEventInvite(jid, { eventTitle: 'Party', startTime: new Date(...) });
 await sock.sendNewsletterInvite(jid, { newsletterJid, newsletterName: 'News' });
 
@@ -842,7 +842,7 @@ await sock.editPoll(jid, sent.key, { name: 'Jam berapa?', values: ['Pagi', 'Sian
 ### Mass mention (`sendMentionAll`)
 
 ```js
-await sock.sendMentionAll(groupJid, 'Pengumuman: rapat jam 9!');
+await sock.sendMentionAll(groupJid, 'Announcement: meeting at 9!');
 ```
 
 > In groups with 32+ members `@all` is admin-only and the rule is enforced
@@ -853,7 +853,7 @@ await sock.sendMentionAll(groupJid, 'Pengumuman: rapat jam 9!');
 ```js
 await sock.sendMessage(jid, {
   event: {
-    title: 'Rapat', description: 'Q3', startDate: new Date('2026-09-15T09:00:00+07:00'),
+    title: 'Meeting', description: 'Q3', startDate: new Date('2026-09-15T09:00:00+07:00'),
     reminder: true, reminderOffsetSec: 1800, // remind 30 min before start
   }
 });
@@ -916,25 +916,25 @@ One-liners for daily bot work (also usable standalone — see `examples/`):
 
 ```js
 // 📊 Poll (chats/groups) + Quiz (channels only)
-await sock.sendPoll(jid, { name: 'Makan apa?', options: ['Nasi', 'Mie'] })
-await sock.sendQuiz(channelJid, { name: 'Kuis', options: ['A', 'B'], correctAnswer: 'A' })
+await sock.sendPoll(jid, { name: 'What to eat?', options: ['Rice', 'Noodles'] })
+await sock.sendQuiz(channelJid, { name: 'Quiz', options: ['A', 'B'], correctAnswer: 'A' })
 
 // 🎙️ Voice note — auto-converts mp3/wav/… to Opus PTT (needs fluent-ffmpeg)
 await sock.sendVoiceNote(jid, './hello.mp3') // path | Buffer | { url }
 
 // 📞 Tag everyone (visible @list vs hidden)
-await sock.tagAll(groupJid, 'Rapat jam 10!')
-await sock.hideTag(groupJid, 'Pengumuman 📢')
+await sock.tagAll(groupJid, 'Meeting at 10!')
+await sock.hideTag(groupJid, 'Announcement 📢')
 
 // 🔍 LID → phone number (best-effort, null when unknown)
 await sock.getPhoneNumber('12345@lid') // → '62812…'
 await sock.getLidForPhone('62812…')    // reverse lookup
 
 // 🧍 Humanized send — typing… + natural delay + per-chat queue
-await sock.sendHumanized(jid, { text: 'Halo!' })
+await sock.sendHumanized(jid, { text: 'Hello!' })
 
 // 🤖 Meta AI chat (experimental — needs Meta AI on the account/region)
-const { text } = await sock.askMetaAI('Jelaskan black hole!')
+const { text } = await sock.askMetaAI('Explain black holes!')
 ```
 
 **Command router** for prefix bots (`!menu`, `.sticker`) with middleware + auto-help:
@@ -1001,7 +1001,7 @@ voip.getPendingCalls() // → [{ callId, from, isGroupCall, ... }]
 **Group / multi-party calls:**
 
 ```js
-const gcall = await voip.startGroupCall(groupJid, ['62812…', '62813…'], { chatName: 'Rapat' })
+const gcall = await voip.startGroupCall(groupJid, ['62812…', '62813…'], { chatName: 'Meeting' })
 await voip.inviteToGroupCall('62814…')
 await voip.removeGroupParticipant('62813@s.whatsapp.net')
 await voip.rejoinGroupCall() // recovery after a drop
@@ -1184,42 +1184,42 @@ Full `.d.ts`: every shipped `.js` file has a matching TypeScript declaration (gu
 ## ❓ FAQ & Troubleshooting
 
 <details>
-<summary><b>Koneksi terus putus / reconnect loop</b></summary>
+<summary><b>Connection keeps dropping / reconnect loop</b></summary>
 <br/>
 
-Cek `connection.update` untuk field `lastDisconnect.error`. Kalau status code-nya `401` (loggedOut), sesi memang sudah invalid dan perlu scan ulang QR — jangan auto-reconnect di kondisi ini. Untuk status lain (`428`, `440`, dsb.), reconnect dengan backoff biasanya cukup.
+Check the `lastDisconnect.error` field on `connection.update`. If the status code is `401` (loggedOut), the session really is invalid and needs a fresh QR scan — do not auto-reconnect in that state. For other codes (`428`, `440`, etc.), reconnecting with backoff is usually enough.
 
 </details>
 
 <details>
-<summary><b>QR tidak muncul / tidak ke-scan</b></summary>
+<summary><b>QR not showing / not scanning</b></summary>
 <br/>
 
-Di upstream Baileys `printQRInTerminal` sudah dihapus, tapi di paket ini opsi tersebut **berfungsi lagi** — QR digambar otomatis oleh renderer bawaan (vendored [qrcodegen](https://github.com/nayuki/QR-Code-generator), tanpa dependency tambahan). Bisa juga render manual dari event `qr` dengan `renderQRToTerminal(qr)` / `qrToSVG(qr)` / `qrToPNG(qr)` / `qrToMatrix(qr)`. Kalau QR muncul tapi gagal linking, biasanya karena versi WA Web (`version` di `makeWASocket`) sudah kedaluwarsa; fetch versi terbaru lewat `fetchBestWaVersion()` (chain: sw.js WA → fork baileys → fallback). Framework `Bot` sudah melakukannya otomatis tiap `start()`/reconnect (matikan dengan `versionCheck: false`). QR kelihatan "kebalik" di terminal tema terang? Pakai `renderQRToTerminal(qr, { inverted: true })`.
+Upstream Baileys removed `printQRInTerminal`, but in this package the option **works again** — the QR is drawn automatically by the built-in renderer (vendored [qrcodegen](https://github.com/nayuki/QR-Code-generator), zero extra dependencies). You can also render manually from the `qr` event with `renderQRToTerminal(qr)` / `qrToSVG(qr)` / `qrToPNG(qr)` / `qrToMatrix(qr)`. If the QR shows but linking fails, the WA Web version (`version` in `makeWASocket`) is usually stale; fetch the latest via `fetchBestWaVersion()` (chain: WA's sw.js → baileys forks → fallback). The `Bot` framework already does this automatically on every `start()`/reconnect (disable with `versionCheck: false`). QR looks "inverted" on a light terminal theme? Use `renderQRToTerminal(qr, { inverted: true })`.
 
 </details>
 
 <details>
-<summary><b>Error "Bad MAC" / pesan gagal didekripsi</b></summary>
+<summary><b>"Bad MAC" errors / messages fail to decrypt</b></summary>
 <br/>
 
-Umumnya terjadi kalau folder auth state korup atau sesi dipakai di lebih dari satu proses secara bersamaan. Pastikan hanya satu instance yang menulis ke folder auth state yang sama, dan pertimbangkan `pruneStaleAuthFiles()` untuk membersihkan sender-key lama secara berkala.
+This usually happens when the auth state folder is corrupted or the session is used by more than one process at the same time. Make sure only one instance writes to a given auth state folder, and consider `pruneStaleAuthFiles()` to clean up stale sender keys periodically.
 
 </details>
 
 <details>
-<summary><b>Memory terus naik di bot yang jalan lama</b></summary>
+<summary><b>Memory keeps growing on long-running bots</b></summary>
 <br/>
 
-Kalau pakai `makeInMemoryStore()`, cache chat/message/contact akan terus tumbuh tanpa batas. Untuk bot yang jalan lama, pertimbangkan pindah ke salah satu backend `makePersistentStore()` (SQLite/Redis/dst) dan pakai `event-buffer` untuk meredam lonjakan event di trafik tinggi.
+With `makeInMemoryStore()`, the chat/message/contact caches grow without bound. For long-running bots, consider switching to one of the `makePersistentStore()` backends (SQLite/Redis/etc.) and use `event-buffer` to absorb event bursts under high traffic.
 
 </details>
 
 <details>
-<summary><b>Voice call gagal connect</b></summary>
+<summary><b>Voice call fails to connect</b></summary>
 <br/>
 
-Fitur ini masih experimental dan butuh peer dependency `@roamhq/wrtc` — pastikan sudah terinstall dan platform kamu didukung native binding-nya. Cek event `call.on('ended', reason => ...)` untuk detail penyebab gagalnya.
+This feature is still experimental and needs the `@roamhq/wrtc` peer dependency — make sure it's installed and that its native bindings support your platform. Check the `call.on('ended', reason => ...)` event for details on why it failed.
 
 </details>
 
@@ -1243,14 +1243,14 @@ The banner shows once per process and only on an interactive terminal (never in 
 
 ## 🤝 Contributing
 
-Kontribusi dipersilakan, terutama untuk perbaikan bug, dokumentasi, dan enhancement pada `MessageBuilder` / `AIRich`.
+Contributions are welcome — especially bug fixes, documentation, and enhancements to `MessageBuilder` / `AIRich`.
 
-1. Fork repo ini, buat branch dari `main` (`feat/nama-fitur` atau `fix/nama-bug`)
-2. Pastikan perubahan tetap ESM-only dan menyertakan/menyesuaikan `.d.ts` terkait
-3. Uji perubahan pada minimal satu jalur auth state + satu store backend sebelum PR
-4. Buka Pull Request dengan deskripsi singkat: apa yang berubah dan kenapa
+1. Fork this repo and branch off `main` (`feat/feature-name` or `fix/bug-name`)
+2. Keep changes ESM-only and add/update the matching `.d.ts` declarations
+3. Test your change against at least one auth state path + one store backend before opening a PR
+4. Open a Pull Request with a short description: what changed and why
 
-Untuk laporan bug, sertakan versi Node.js, cara reproduksi, dan potongan log `lastDisconnect.error` bila relevan.
+For bug reports, include your Node.js version, reproduction steps, and the relevant `lastDisconnect.error` log snippet.
 
 ---
 
@@ -1292,14 +1292,14 @@ Use responsibly and follow WhatsApp Terms of Service.
 
 ## 📝 v2.1.0 Patch Notes
 
-> Ringkasan — detail lengkap di [CHANGELOG.md](./CHANGELOG.md).
+> Summary — full details in [CHANGELOG.md](./CHANGELOG.md).
 
-- **QR bawaan, nol dependency**: vendored [qrcodegen](https://github.com/nayuki/QR-Code-generator) (Nayuki, MIT) + renderer sendiri — `renderQRToTerminal` (half-block `▀▄█`, setengah tinggi renderer klasik), `qrToSVG`, `qrToPNG` (encoder PNG hand-rolled di atas zlib Node), `qrToMatrix`, `formatPairingCode`. Round-trip diverifikasi decoder independen (jsQR) di CI.
-- **`printQRInTerminal` berfungsi lagi** — bukan warning deprecated: QR digambar otomatis di terminal tiap `connection.update`.
-- **Fix spam VoIP `VoipStatsTracker is not a constructor`**: shim Metro di `worker-bootstrap.js` menggeser `module`/`exports` satu posisi (argumen ke-5 `null`). Diperbaiki untuk kedua konvensi export bundle FB Comet (flag-66 → arg 6, flag-98 → arg 7, 124/204 modul) + fallback `?.exports` di loader. Diverifikasi worker asli boot sampai `worker_ready` tanpa error shim.
-- **Auto WA-version di Framework `Bot`**: tiap `start()`/reconnect resolve versi tersegar via `fetchBestWaVersion()` (sw.js WA → fork → fallback), mencegah 405 pairing gara-gara versi basi. Opt-out: `versionCheck: false` atau pin `socketConfig.version`.
-- **Full `.d.ts` beneran**: setiap `.js` yang di-ship punya deklarasi pasangan, dijaga test parity + harness `tsc --strict` di CI.
-- **CI + release automation**: GitHub Actions (test di Node 20/22, type-check, pack sanity) dan publish workflow ber-provenance yang terpicu tag `v*`.
+- **Built-in QR, zero dependencies**: vendored [qrcodegen](https://github.com/nayuki/QR-Code-generator) (Nayuki, MIT) + our own renderer — `renderQRToTerminal` (half-block `▀▄█`, half the height of classic renderers), `qrToSVG`, `qrToPNG` (hand-rolled PNG encoder on top of Node's zlib), `qrToMatrix`, `formatPairingCode`. Round-trip verified against an independent decoder (jsQR) in CI.
+- **`printQRInTerminal` works again** — not a deprecation warning: the QR is drawn automatically in the terminal on every `connection.update`.
+- **Fixed the VoIP `VoipStatsTracker is not a constructor` spam**: the Metro shim in `worker-bootstrap.js` shifted `module`/`exports` by one position (5th argument `null`). Fixed for both FB Comet bundle export conventions (flag-66 → arg 6, flag-98 → arg 7, 124/204 modules) + an `?.exports` fallback in the loader. Verified the real worker boots all the way to `worker_ready` with no shim errors.
+- **Auto WA-version in the `Bot` framework**: every `start()`/reconnect resolves a fresh version via `fetchBestWaVersion()` (WA's sw.js → forks → fallback), preventing 405 pairing failures caused by stale versions. Opt-out: `versionCheck: false` or pin `socketConfig.version`.
+- **Genuinely full `.d.ts`**: every shipped `.js` has a matching declaration file, enforced by a parity test + a `tsc --strict` harness in CI.
+- **CI + release automation**: GitHub Actions (tests on Node 20/22, type-check, pack sanity) and a provenance-attested publish workflow triggered by `v*` tags.
 
 ---
 

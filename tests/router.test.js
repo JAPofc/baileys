@@ -43,10 +43,10 @@ describe('createRouter', () => {
     it('supports aliases + arrays of prefixes', async () => {
         let ran = '';
         const r = createRouter({ prefix: ['!', '.'], help: false });
-        r.command(['hi', 'halo'], async (ctx) => { ran = ctx.command; });
+        r.command(['hi', 'hello'], async (ctx) => { ran = ctx.command; });
         const sock = fakeSock([]);
-        assert.equal(await r.handle(sock, msg('.HALO x')), true);
-        assert.equal(ran, 'halo');
+        assert.equal(await r.handle(sock, msg('.HELLO x')), true);
+        assert.equal(ran, 'hello');
     });
     it('runs middleware in order', async () => {
         const order = [];

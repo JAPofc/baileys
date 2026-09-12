@@ -59,7 +59,7 @@ describe('message regression: flows (interactive/nativeFlow)', () => {
     });
     it('single_select flow keeps sections through the wire', async () => {
         const params = JSON.stringify({
-            title: 'Menu', sections: [{ title: 'Makanan', rows: [{ title: 'Nasi', id: 'n1' }] }],
+            title: 'Menu', sections: [{ title: 'Food', rows: [{ title: 'Rice', id: 'n1' }] }],
         });
         const m = await generateWAMessage(JID, {
             text: 'menu hari ini',
@@ -103,11 +103,11 @@ describe('message regression: carousel', () => {
 describe('message regression: poll / quiz', () => {
     it('single-select poll → pollCreationMessageV3 with options intact', async () => {
         const m = await generateWAMessage(JID, {
-            poll: { name: 'Makan apa?', values: ['Nasi', 'Mie'], selectableCount: 1 },
+            poll: { name: 'What to eat?', values: ['Rice', 'Noodles'], selectableCount: 1 },
         }, OPTS);
         const w = wire(m);
-        assert.equal(w.pollCreationMessageV3.name, 'Makan apa?');
-        assert.deepEqual(w.pollCreationMessageV3.options.map((o) => o.optionName), ['Nasi', 'Mie']);
+        assert.equal(w.pollCreationMessageV3.name, 'What to eat?');
+        assert.deepEqual(w.pollCreationMessageV3.options.map((o) => o.optionName), ['Rice', 'Noodles']);
         assert.equal(w.pollCreationMessageV3.selectableOptionsCount, 1);
         // polls are E2E-keyed: messageContextInfo must carry a secret
         assert.ok(m.message.messageContextInfo?.messageSecret?.length >= 32);
@@ -160,13 +160,13 @@ describe('message regression: location / contact', () => {
         assert.equal(w.locationMessage.name, 'Monas');
     });
     it('contactMessage vcard string is byte-identical after the wire', async () => {
-        const vcard = 'BEGIN:VCARD\nVERSION:3.0\nFN:Budi\nTEL;type=CELL:+628111\nEND:VCARD';
+        const vcard = 'BEGIN:VCARD\nVERSION:3.0\nFN:John\nTEL;type=CELL:+628111\nEND:VCARD';
         const m = await generateWAMessage(JID, {
-            contacts: { displayName: 'Budi', contacts: [{ vcard }] },
+            contacts: { displayName: 'John', contacts: [{ vcard }] },
         }, OPTS);
         const w = wire(m);
         assert.equal(w.contactMessage.vcard, vcard);
-        assert.equal(w.contactMessage.displayName, 'Budi');
+        assert.equal(w.contactMessage.displayName, 'John');
     });
 });
 

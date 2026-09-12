@@ -29,7 +29,7 @@ const setup = () => {
 const seed = (store, ev, key = DEVICE_KEY) => {
     ev.emit('messages.upsert', {
         type: 'notify',
-        messages: [{ key, message: { conversation: 'halo' }, messageTimestamp: 1 }],
+        messages: [{ key, message: { conversation: 'hello' }, messageTimestamp: 1 }],
     });
     assert.ok(store.messages[NORM]?.get(key.id), 'seed message stored under the normalized jid');
 };

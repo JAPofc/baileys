@@ -50,17 +50,17 @@ describe('pin / keep', () => {
 describe('event', () => {
     it('builds eventMessage', async () => {
         const m = await generateWAMessage(JID, {
-            event: { name: 'Rapat', startDate: new Date('2026-09-15T10:00:00+07:00'), location: { name: 'Kantor' } }
+            event: { name: 'Meeting', startDate: new Date('2026-09-15T10:00:00+07:00'), location: { name: 'Office' } }
         }, OPTS);
-        assert.equal(m.message.eventMessage.name, 'Rapat');
+        assert.equal(m.message.eventMessage.name, 'Meeting');
         assert.ok(m.message.eventMessage.startTime > 0);
     });
 });
 
 describe('poll / quiz content', () => {
     it('builds pollCreationMessage', async () => {
-        const m = await generateWAMessage(JID, { poll: { name: 'Makan?', values: ['A', 'B'] } }, OPTS);
-        assert.equal(m.message.pollCreationMessage.name, 'Makan?');
+        const m = await generateWAMessage(JID, { poll: { name: 'Lunch?', values: ['A', 'B'] } }, OPTS);
+        assert.equal(m.message.pollCreationMessage.name, 'Lunch?');
         assert.equal(m.message.pollCreationMessage.options.length, 2);
     });
     it('builds quiz with correctAnswer', async () => {

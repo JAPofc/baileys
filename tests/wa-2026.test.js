@@ -10,7 +10,7 @@ const FAKE_KEY = { remoteJid: JID, fromMe: false, id: 'ABC123' };
 describe('event reminders (WA 2026)', () => {
     it('sets hasReminder + reminderOffsetSec', async () => {
         const m = await generateWAMessage(JID, {
-            event: { title: 'Rapat', description: 'd', startDate: new Date('2026-09-15T09:00:00+07:00'), reminder: true, reminderOffsetSec: 1800 }
+            event: { title: 'Meeting', description: 'd', startDate: new Date('2026-09-15T09:00:00+07:00'), reminder: true, reminderOffsetSec: 1800 }
         }, OPTS);
         const ev = m.message.eventMessage;
         assert.equal(ev.hasReminder, true);
@@ -30,7 +30,7 @@ describe('event reminders (WA 2026)', () => {
 
 describe('mention-all', () => {
     it('mentionAll flag → nonJidMentions=1', async () => {
-        const m = await generateWAMessage(JID, { text: 'Halo semua', mentionAll: true }, OPTS);
+        const m = await generateWAMessage(JID, { text: 'Hello everyone', mentionAll: true }, OPTS);
         assert.equal(m.message.extendedTextMessage.contextInfo.nonJidMentions, 1);
     });
 });

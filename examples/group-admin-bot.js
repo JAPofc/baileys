@@ -36,7 +36,7 @@ const start = async () => {
         for (const user of participants || []) {
             const tag = `@${user.split('@')[0]}`;
             if (action === 'add') {
-                await sock.sendMessage(id, { text: `Selamat datang ${tag}! 🎉`, mentions: [user] });
+                await sock.sendMessage(id, { text: `Welcome ${tag}! 🎉`, mentions: [user] });
             } else if (action === 'remove') {
                 await sock.sendMessage(id, { text: `Dadah ${tag} 👋`, mentions: [user] });
             }
@@ -63,12 +63,12 @@ const start = async () => {
         await sock.tagAll(ctx.jid, ctx.args.join(' ') || 'Perhatian semuanya!');
     }, { desc: 'Tag semua anggota (admin)' });
     router.command('hidetag', async (ctx) => {
-        await sock.hideTag(ctx.jid, ctx.args.join(' ') || 'Pengumuman 📢');
+        await sock.hideTag(ctx.jid, ctx.args.join(' ') || 'Announcement 📢');
     }, { desc: 'Tag semua tanpa tampil (admin)' });
     router.command('poll', async (ctx) => {
-        // !poll Makan apa? | Nasi | Mie | Bakso
+        // !poll What should we eat? | Rice | Noodles | Meatballs
         const [name, ...values] = ctx.args.join(' ').split('|').map((s) => s.trim()).filter(Boolean);
-        await sock.sendPoll(ctx.jid, { name: name || 'Polling', values: values.length >= 2 ? values : ['Ya', 'Tidak'] });
+        await sock.sendPoll(ctx.jid, { name: name || 'Poll', values: values.length >= 2 ? values : ['Yes', 'No'] });
     }, { desc: 'Buat polling (admin)' });
     router.use(adminOnly); // applies to tagall/hidetag/poll above AND help below
     router.attach(sock);

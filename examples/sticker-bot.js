@@ -29,7 +29,7 @@ const start = async () => {
         const direct = ctx.msg.message?.imageMessage || ctx.msg.message?.videoMessage;
         const target = direct ? ctx.msg : quoted ? { key: ctx.key, message: quoted } : null;
         if (!target?.message?.imageMessage && !target?.message?.videoMessage) {
-            await ctx.reply('Kirim gambar/video dengan caption `!sticker`, atau reply media pakai `!sticker` 🖼️');
+            await ctx.reply('Send an image/video with the caption `!sticker`, or reply to media with `!sticker` 🖼️');
             return;
         }
         await ctx.react('⏳');
