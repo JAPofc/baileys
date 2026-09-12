@@ -3,7 +3,13 @@
 All notable changes to `@japofc/baileys` are documented here.
 Format follows [Keep a Changelog](https://keepachangelog.com/); versioning follows [SemVer](https://semver.org/).
 
-## [2.3.1] - 2026-09-12
+## [2.4.0] - 2026-09-12
+
+### Added
+- **`checkEnvironment()` / `printEnvironmentReport()` (doctor)** — one call that answers "why doesn't X work on my machine?": Node version, every optional dependency (installed / missing / installed-but-failing-to-load, with the feature each unlocks), the resolved ffmpeg path, the active image backend (sharp → @napi-rs/image → jimp), Termux detection, and actionable warnings. Never throws, performs no writes. Fully typed (`EnvironmentReport`). New suite `tests/doctor.test.js`.
+- **Runtime startup banner** — a JAP wordmark with a 256-color gradient shown ONCE per process on the first `makeWASocket()` call, replacing the removed postinstall banner. Strictly polite: TTY-only (never appears in CI/pm2/piped logs), and disabled by `printBanner: false` in the socket config, `JAP_NO_BANNER=1`, or `NO_COLOR`. Exported as `printBanner()` for manual use.
+- **Indonesian documentation** (`README.id.md`) — a full manual translation of the entire README (code comments included), cross-linked with the English one. Most of the Baileys user base is Indonesian; almost no fork ships first-class ID docs.
+- **Auto GitHub Release notes** (`.github/workflows/github-release.yml`) — every `v*` tag push now creates a GitHub Release whose body is that version's CHANGELOG section (previously tags were bare).
 
 ### Fixed
 - **`sharp` peer dependency was not marked optional** — `peerDependencies` listed `sharp: "*"` without an `optional: true` meta entry, so npm 7+ auto-installed the heavy native `sharp` module into *every* consumer project even though the code treats it as a soft fallback (`import('sharp').catch(...)` → `@napi-rs/image` → `jimp`). On platforms without a sharp prebuild (some Termux/Alpine setups) this could fail the whole install. Now correctly optional, matching how the code actually behaves.
@@ -11,6 +17,8 @@ Format follows [Keep a Changelog](https://keepachangelog.com/); versioning follo
 ### Changed
 - **Removed all npm install scripts** (`preinstall` Node check + `postinstall` banner). Install scripts are the #1 supply-chain attack vector and security scanners (Socket.dev etc.) penalize any package that has them — they're also silently skipped by `npm ci --ignore-scripts`, which many CIs use, so the Node check wasn't even reliable. The Node 20+ gate moved to import time (`lib/node-version-check.js`, first import in the package) with a clearer error that also catches running an installed package on an old Node — something `preinstall` never could. The install banner is gone entirely.
 - **README redesigned to stand apart from upstream/other forks** — replaced the shared capsule-render/typing-SVG hero template with a custom in-repo SVG banner (`Media/banner.svg`, no external services), removed the contribution-snake animation and visitor counter, fixed the stale tests badge (174 → 272), added the live Socket.dev score badge, and rewrote "Why this fork" around what's actually different (audited core with grep-able `JAP@Fix` markers, 272-test CI, observability, supply-chain posture) instead of generic fork marketing.
+
+> Note: 2.3.1 was prepared but never published — its changes ship as part of 2.4.0.
 
 ## [2.3.0] - 2026-09-12
 

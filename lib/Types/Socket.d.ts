@@ -61,6 +61,12 @@ export type SocketConfig = {
      * `renderQRToTerminal` in Utils for manual/custom rendering).
      */
     printQRInTerminal?: boolean;
+    /**
+     * Show the one-time startup banner on an interactive terminal.
+     * Default: auto (TTY only; also silenced by JAP_NO_BANNER / NO_COLOR).
+     * Set false to disable unconditionally.
+     */
+    printBanner?: boolean;
     /** should events be emitted for actions done by this socket connection */
     emitOwnEvents: boolean;
     /** custom upload hosts to upload media to */

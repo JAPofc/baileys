@@ -12,7 +12,7 @@
 <a href="https://github.com/JAPofc/baileys/actions/workflows/ci.yml" target="_blank"><img src="https://img.shields.io/github/actions/workflow/status/JAPofc/baileys/ci.yml?branch=main&style=flat-square&label=CI&color=2ecc71" alt="CI status"/></a>
 <a href="https://japofc.github.io/baileys/" target="_blank"><img src="https://img.shields.io/badge/docs-typedoc-8e44ad?style=flat-square" alt="API docs"/></a>
 <img src="https://img.shields.io/badge/npm-provenance%20attested-2ecc71?style=flat-square&logo=npm&logoColor=white" alt="npm provenance"/>
-<img src="https://img.shields.io/badge/tests-272%20passing-2ecc71?style=flat-square" alt="Tests"/>
+<img src="https://img.shields.io/badge/tests-278%20passing-2ecc71?style=flat-square" alt="Tests"/>
 <a href="https://socket.dev/npm/package/@japofc/baileys" target="_blank"><img src="https://socket.dev/api/badge/npm/package/@japofc/baileys" alt="Socket badge"/></a>
 <img src="https://img.shields.io/badge/tsc%20--strict-clean-3178c6?style=flat-square&logo=typescript&logoColor=white" alt="tsc strict clean"/>
 <img src="https://img.shields.io/github/last-commit/JAPofc/baileys?color=9b59b6&style=flat-square" alt="Last commit"/>
@@ -23,6 +23,8 @@
 <img src="https://img.shields.io/badge/license-see%20NOTICE-lightgrey?style=flat-square" alt="License"/>
 </p>
 
+
+[🇬🇧 English](./README.md) · **[🇮🇩 Bahasa Indonesia](./README.id.md)**
 
 <p>
 <a href="#-why-this-fork">About</a> &#xa0;|&#xa0;
@@ -92,7 +94,7 @@ Most Baileys forks are the upstream code with a renamed package and a couple of 
 | | |
 |---|---|
 | 🔬 | **Audited core, not just re-exported** — store consistency, reconnect lifecycle, Signal session recovery and retry-receipt parsing all had real reproduced bugs fixed here, each locked in by a regression test |
-| 🧪 | **272 tests + `tsc --strict` in CI** — message shapes round-trip through real protobuf encode→decode; a published-package smoke test runs after every npm release |
+| 🧪 | **278 tests + `tsc --strict` in CI** — message shapes round-trip through real protobuf encode→decode; a published-package smoke test runs after every npm release |
 | 📊 | **Built-in observability** — `createDebugMonitor()` gives connection state, message latency percentiles, Signal error tallies and retry stats, with secrets structurally redacted |
 | 🎯 | Extended native flow support, carousel, AIRich cards, mini-apps |
 | 🗄️ | Multiple auth & store backends out of the box (file, SQLite, MongoDB, MySQL, PostgreSQL, Redis) |
@@ -360,6 +362,18 @@ pkg install ffmpeg
 ```
 
 If nothing is found, the feature fails with a per-platform install hint instead of a cryptic `spawn ffmpeg ENOENT`.
+
+#### Check your environment (doctor)
+
+Wondering why some feature doesn't work? One call diagnoses everything — Node version, which optional deps are installed, where ffmpeg was found, the active image backend:
+
+```js
+import { printEnvironmentReport } from '@japofc/baileys'
+await printEnvironmentReport() // prints a full report + returns the snapshot
+// or the raw-data version without printing:
+import { checkEnvironment } from '@japofc/baileys'
+const env = await checkEnvironment() // { ok, platform, node, ffmpeg, imageBackend, optionalDeps, warnings }
+```
 
 ---
 
@@ -1136,6 +1150,7 @@ A sample of the utilities exported from `lib/Utils` beyond the message builders 
 | `vcard` | Build vCard (contact card) payloads |
 | `status` | Post and manage WhatsApp Status updates |
 | `event-buffer` | Buffers/coalesces high-volume socket events for heavier bots |
+| `doctor` | `checkEnvironment()` / `printEnvironmentReport()` — one-call environment diagnostics |
 
 Every module above ships a matching `.d.ts`, so your editor will show full hover-docs regardless of which ones you import.
 
@@ -1196,6 +1211,22 @@ Kalau pakai `makeInMemoryStore()`, cache chat/message/contact akan terus tumbuh 
 <br/>
 
 Fitur ini masih experimental dan butuh peer dependency `@roamhq/wrtc` — pastikan sudah terinstall dan platform kamu didukung native binding-nya. Cek event `call.on('ended', reason => ...)` untuk detail penyebab gagalnya.
+
+</details>
+
+<details>
+<summary><b>Media features failing / "ffmpeg not found"</b></summary>
+<br/>
+
+Run `printEnvironmentReport()` (see [doctor](#check-your-environment-doctor)) — it shows exactly what's missing. For ffmpeg: on servers `npm i ffmpeg-static`, on Termux `pkg install ffmpeg` — both auto-detected with zero config.
+
+</details>
+
+<details>
+<summary><b>Startup banner is in the way / want it off</b></summary>
+<br/>
+
+The banner shows once per process and only on an interactive terminal (never in CI/pm2/piped logs). Disable it with any of: `makeWASocket({ printBanner: false })`, the `JAP_NO_BANNER=1` env var, or `NO_COLOR=1`.
 
 </details>
 

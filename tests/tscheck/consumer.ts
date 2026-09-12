@@ -8,6 +8,7 @@ import makeWASocket, {
     type AutoReconnectOptions, type AutoReconnectManager,
     createDebugMonitor, type DebugInfo, type DebugMonitor,
     setFfmpegPath, resolveFfmpegPath, requireFfmpegPath, ffmpegInstallHint,
+    checkEnvironment, printEnvironmentReport, printBanner, type EnvironmentReport,
     // core
     initAuthCreds, fetchBestWaVersion, fetchLatestWaWebVersion, DisconnectReason,
     // builders
@@ -78,6 +79,17 @@ async function compileOnly2(): Promise<void> {
     await mgr.stop();
     console.log(sock, started, n);
 }
+async function compileOnly4(): Promise<void> {
+    const env: EnvironmentReport = await checkEnvironment();
+    const ok: boolean = env.ok;
+    const ff: string | null = env.ffmpeg.path;
+    const backend: 'sharp' | '@napi-rs/image' | 'jimp' | null = env.imageBackend;
+    await printEnvironmentReport();
+    printBanner({ enabled: false });
+    const sockB = makeWASocket({ printBanner: false });
+    console.log(ok, ff, backend, sockB);
+}
+void compileOnly4;
 async function compileOnly3(): Promise<void> {
     setFfmpegPath('/usr/bin/ffmpeg');
     setFfmpegPath(null);
