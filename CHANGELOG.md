@@ -3,6 +3,15 @@
 All notable changes to `@japofc/baileys` are documented here.
 Format follows [Keep a Changelog](https://keepachangelog.com/); versioning follows [SemVer](https://semver.org/).
 
+## [2.4.1] - 2026-09-12
+
+### Fixed
+- **CLI no longer executes on import** — `lib/cli.js` printed help output as a side effect when imported (e.g. by a bundler or module walker). The runner now only executes when the file is the actual process entry point; `node lib/cli.js` and the `japofc-baileys` bin shim both still work (verified against a real tarball install).
+
+### Changed
+- **English-only codebase and docs** — translated all remaining Indonesian text to English: the English README (comparison-table note, troubleshooting entries, Contributing section, v2.1.0 patch notes, code-sample strings), code comments in `lib/`, user-facing AIRich fallback strings (`[ Sedang diproses... ]` → `[ Processing... ]`, media-load fallbacks), builder error messages, JSDoc examples, example bots, and test fixtures. Indonesian remains only where it belongs: `README.id.md` and the Indonesian half of `MIGRATION.md`.
+- **NOTICE.md rewritten** — accurate upstream base (WhiskeySockets/Baileys), a clear "this fork's own work" section, corrected builder lineage, added the missing Nayuki qrcodegen attribution, and removed placeholder credits.
+
 ## [2.4.0] - 2026-09-12
 
 ### Added
