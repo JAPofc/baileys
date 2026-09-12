@@ -270,6 +270,7 @@ declare function makeWASocket(config: any): {
     sendHumanized: (jid: any, content: any, humanOpts?: any, sendOptions?: any) => Promise<any>;
     editPoll: (jid: any, key: any, poll: any, options?: any) => Promise<any>;
     sendMentionAll: (jid: any, text: string, options?: any) => Promise<any>;
+    sendStatusMention: (content: any, mentions: string | string[], options?: any) => Promise<any>;
     sendLocation: (jid: any, location: any, options?: any) => Promise<any>;
     sendContact: (jid: any, contact: any, options?: any) => Promise<any>;
     sendGroupInvite: (jid: any, invite: any, options?: any) => Promise<any>;

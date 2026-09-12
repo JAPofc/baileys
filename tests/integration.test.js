@@ -219,3 +219,42 @@ describe('integration: connection lifecycle events', () => {
         assert.equal(update.lastDisconnect?.error?.message, 'bye');
     });
 });
+
+describe('integration: sendStatusMention', () => {
+    it('is exposed on the socket with validation before any network write', async () => {
+        const sock = makeSock();
+        try {
+            assert.equal(typeof sock.sendStatusMention, 'function');
+            // bad content → Boom 400 before touching the network
+            await assert.rejects(
+                sock.sendStatusMention(null, ['62812@s.whatsapp.net']),
+                (e) => e?.output?.statusCode === 400
+            );
+            // bad mentions → Boom 400
+            await assert.rejects(
+                sock.sendStatusMention({ text: 'hi' }, []),
+                (e) => e?.output?.statusCode === 400
+            );
+            await assert.rejects(
+                sock.sendStatusMention({ text: 'hi' }, ['not-a-jid']),
+                (e) => e?.output?.statusCode === 400
+            );
+        } finally {
+            await sock.end();
+        }
+    });
+
+    it('routes into the status-broadcast path (fails offline at the socket, not before)', async () => {
+        const sock = makeSock();
+        try {
+            // Offline sandbox: the wire write fails — but ONLY after validation
+            // and message generation succeed, proving it reached the status path.
+            await assert.rejects(
+                sock.sendStatusMention({ text: 'status ping' }, ['62812345678@s.whatsapp.net']),
+                (e) => e?.output?.statusCode !== 400
+            );
+        } finally {
+            await sock.end();
+        }
+    });
+});

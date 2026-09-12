@@ -5,6 +5,9 @@ Format follows [Keep a Changelog](https://keepachangelog.com/); versioning follo
 
 ## [2.4.1] - 2026-09-12
 
+### Added
+- **`sendStatusMention(content, mentions, options?)`** — post a status and notify specific users or whole groups with the "mentioned you in their status" bubble (upstream 7.0.0-rc10 parity). Works with any status content type; fan-out pacing via `{ delayMs }`. The underlying status-mention wire path (protocolMessage type 25 + `is_status_mention` meta node) already existed; this adds the named, validated, typed API on the socket.
+
 ### Fixed
 - **CLI no longer executes on import** — `lib/cli.js` printed help output as a side effect when imported (e.g. by a bundler or module walker). The runner now only executes when the file is the actual process entry point; `node lib/cli.js` and the `japofc-baileys` bin shim both still work (verified against a real tarball install).
 

@@ -12,7 +12,7 @@
 <a href="https://github.com/JAPofc/baileys/actions/workflows/ci.yml" target="_blank"><img src="https://img.shields.io/github/actions/workflow/status/JAPofc/baileys/ci.yml?branch=main&style=flat-square&label=CI&color=2ecc71" alt="CI status"/></a>
 <a href="https://japofc.github.io/baileys/" target="_blank"><img src="https://img.shields.io/badge/docs-typedoc-8e44ad?style=flat-square" alt="API docs"/></a>
 <img src="https://img.shields.io/badge/npm-provenance%20attested-2ecc71?style=flat-square&logo=npm&logoColor=white" alt="npm provenance"/>
-<img src="https://img.shields.io/badge/tests-282%20passing-2ecc71?style=flat-square" alt="Tests"/>
+<img src="https://img.shields.io/badge/tests-284%20passing-2ecc71?style=flat-square" alt="Tests"/>
 <a href="https://socket.dev/npm/package/@japofc/baileys" target="_blank"><img src="https://socket.dev/api/badge/npm/package/@japofc/baileys" alt="Socket badge"/></a>
 <img src="https://img.shields.io/badge/tsc%20--strict-clean-3178c6?style=flat-square&logo=typescript&logoColor=white" alt="tsc strict clean"/>
 <img src="https://img.shields.io/github/last-commit/JAPofc/baileys?color=9b59b6&style=flat-square" alt="Last commit"/>
@@ -94,7 +94,7 @@ Most Baileys forks are the upstream code with a renamed package and a couple of 
 | | |
 |---|---|
 | 🔬 | **Audited core, not just re-exported** — store consistency, reconnect lifecycle, Signal session recovery and retry-receipt parsing all had real reproduced bugs fixed here, each locked in by a regression test |
-| 🧪 | **282 tests + `tsc --strict` in CI** — message shapes round-trip through real protobuf encode→decode; a published-package smoke test runs after every npm release |
+| 🧪 | **284 tests + `tsc --strict` in CI** — message shapes round-trip through real protobuf encode→decode; a published-package smoke test runs after every npm release |
 | 📊 | **Built-in observability** — `createDebugMonitor()` gives connection state, message latency percentiles, Signal error tallies and retry stats, with secrets structurally redacted |
 | 🎯 | Extended native flow support, carousel, AIRich cards, mini-apps |
 | 🗄️ | Multiple auth & store backends out of the box (file, SQLite, MongoDB, MySQL, PostgreSQL, Redis) |
@@ -122,6 +122,7 @@ How `@japofc/baileys` stacks up against other Baileys libraries:
 | Bot framework (middleware, session, stats) | ✅ | ❌ |
 | Built-in QR render (terminal/SVG/PNG, zero deps) | ✅ | ❌ needs `qrcode-terminal` |
 | Auto WA Web version resolution | ✅ | ❌ hardcoded |
+| Status mentions (notify users/groups of your status) | ✅ | ❌ |
 
 > This table describes package-level features, not performance benchmarks. PRs to update or correct it are welcome via [Contributing](#-contributing).
 
@@ -847,6 +848,25 @@ await sock.sendMentionAll(groupJid, 'Announcement: meeting at 9!');
 
 > In groups with 32+ members `@all` is admin-only and the rule is enforced
 > server-side — non-admin calls are silently dropped by WhatsApp.
+
+### Status mentions (`sendStatusMention`)
+
+Post a status and notify specific users or whole groups — they get the
+"mentioned you in their status" bubble linking to your status:
+
+```js
+// text status, mention two users
+await sock.sendStatusMention({ text: 'Big announcement! 🎉' }, [
+    '62812xxx@s.whatsapp.net',
+    '62813xxx@s.whatsapp.net',
+])
+
+// image status, mention an entire group (every member is notified)
+await sock.sendStatusMention({ image: buffer, caption: 'New drop 🔥' }, [groupJid])
+```
+
+Works with any status content (`text`, `image`, `video`, `audio`). Pace the
+notification fan-out with `{ delayMs }` in options (default 1500 ms per jid).
 
 ### Event reminders
 
