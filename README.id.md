@@ -12,7 +12,7 @@
 <a href="https://github.com/JAPofc/baileys/actions/workflows/ci.yml" target="_blank"><img src="https://img.shields.io/github/actions/workflow/status/JAPofc/baileys/ci.yml?branch=main&style=flat-square&label=CI&color=2ecc71" alt="status CI"/></a>
 <a href="https://japofc.github.io/baileys/" target="_blank"><img src="https://img.shields.io/badge/docs-typedoc-8e44ad?style=flat-square" alt="Dokumentasi API"/></a>
 <img src="https://img.shields.io/badge/npm-provenance%20attested-2ecc71?style=flat-square&logo=npm&logoColor=white" alt="npm provenance"/>
-<img src="https://img.shields.io/badge/tests-278%20passing-2ecc71?style=flat-square" alt="Tes"/>
+<img src="https://img.shields.io/badge/tests-282%20passing-2ecc71?style=flat-square" alt="Tes"/>
 <a href="https://socket.dev/npm/package/@japofc/baileys" target="_blank"><img src="https://socket.dev/api/badge/npm/package/@japofc/baileys" alt="Socket badge"/></a>
 <img src="https://img.shields.io/badge/tsc%20--strict-clean-3178c6?style=flat-square&logo=typescript&logoColor=white" alt="tsc strict bersih"/>
 <img src="https://img.shields.io/badge/node-%3E%3D20-brightgreen?style=flat-square" alt="Node >=20"/>
@@ -44,7 +44,7 @@ Kebanyakan fork Baileys cuma kode upstream yang di-rename plus beberapa snippet 
 | | |
 |---|---|
 | 🔬 | **Inti yang diaudit, bukan sekadar re-export** — konsistensi store, lifecycle reconnect, pemulihan sesi Signal, dan parsing retry-receipt semuanya punya bug nyata yang direproduksi lalu diperbaiki di sini, masing-masing dikunci regression test |
-| 🧪 | **278 tes + `tsc --strict` di CI** — bentuk pesan diuji round-trip lewat encode→decode protobuf sungguhan; smoke test paket terpublish jalan otomatis setelah tiap rilis npm |
+| 🧪 | **282 tes + `tsc --strict` di CI** — bentuk pesan diuji round-trip lewat encode→decode protobuf sungguhan; smoke test paket terpublish jalan otomatis setelah tiap rilis npm |
 | 📊 | **Observability bawaan** — `createDebugMonitor()` memberi status koneksi, persentil latensi pesan, hitungan error Signal, dan statistik retry, dengan rahasia (QR/kunci/token) diredaksi secara struktural |
 | 🎯 | Dukungan native flow diperluas, carousel, kartu AIRich, mini-app |
 | 🗄️ | Banyak backend auth & store langsung tersedia (file, SQLite, MongoDB, MySQL, PostgreSQL, Redis) |
@@ -254,6 +254,8 @@ npm install github:JAPofc/baileys
 
 > Butuh **Node.js 20+** — dicek saat import dengan pesan error yang jelas (tanpa install script: paket ini sengaja **nol** hook `preinstall`/`postinstall`, jadi `npm ci --ignore-scripts` dan kebijakan supply-chain ketat langsung jalan).
 
+> **Pindahan dari `@whiskeysockets/baileys`?** Migrasi biasanya cuma ganti satu baris import — lihat [MIGRATION.md](./MIGRATION.md).
+
 ### Peer dependency opsional
 
 Semua di bawah ini **opsional** — socket tetap jalan tanpa satu pun. Install hanya yang dibutuhkan fitur yang kamu pakai; yang belum terinstall akan gagal dengan petunjuk install yang jelas, bukan crash diam-diam.
@@ -303,6 +305,13 @@ await printEnvironmentReport() // cetak laporan lengkap + return snapshot-nya
 // atau versi data mentah tanpa cetak:
 import { checkEnvironment } from '@japofc/baileys'
 const env = await checkEnvironment() // { ok, platform, node, ffmpeg, imageBackend, optionalDeps, warnings }
+```
+
+Atau langsung dari terminal, tanpa nulis kode:
+
+```sh
+npx @japofc/baileys doctor    # exit code 0 = semua beres, 1 = ada warning
+npx @japofc/baileys version
 ```
 
 ---

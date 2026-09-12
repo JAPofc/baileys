@@ -6,6 +6,9 @@
   "main": "./lib/index.js",
   "module": "./lib/index.js",
   "types": "./lib/index.d.ts",
+  "bin": {
+    "japofc-baileys": "./lib/cli.js"
+  },
   "exports": {
     ".": {
       "types": "./lib/index.d.ts",
@@ -29,7 +32,9 @@
   "files": [
     "lib/**/*",
     "WAProto/**/*",
-    "NOTICE.md"
+    "NOTICE.md",
+    "MIGRATION.md",
+    "README.id.md"
   ],
   "keywords": [
     "japofc",
