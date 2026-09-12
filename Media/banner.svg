@@ -1,0 +1,49 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="880" height="220" viewBox="0 0 880 220" role="img" aria-label="@japofc/baileys — WhatsApp Web API, typed, extended, battle-tested">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#0d1117"/>
+      <stop offset="1" stop-color="#101820"/>
+    </linearGradient>
+    <linearGradient id="accent" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#2ecc71"/>
+      <stop offset="1" stop-color="#1d6a23"/>
+    </linearGradient>
+  </defs>
+
+  <!-- background -->
+  <rect width="880" height="220" rx="14" fill="url(#bg)"/>
+  <rect x="1" y="1" width="878" height="218" rx="13" fill="none" stroke="#1f2a33" stroke-width="2"/>
+  <!-- top accent line -->
+  <rect x="0" y="0" width="880" height="5" rx="2.5" fill="url(#accent)"/>
+
+  <!-- terminal window chrome -->
+  <circle cx="30" cy="32" r="6" fill="#e74c3c"/>
+  <circle cx="52" cy="32" r="6" fill="#f1c40f"/>
+  <circle cx="74" cy="32" r="6" fill="#2ecc71"/>
+  <text x="440" y="37" font-family="ui-monospace,SFMono-Regular,Menlo,Consolas,monospace" font-size="13" fill="#5c6a76" text-anchor="middle">~/bot — node</text>
+
+  <!-- terminal body -->
+  <g font-family="ui-monospace,SFMono-Regular,Menlo,Consolas,monospace">
+    <text x="34" y="84" font-size="15" fill="#5c6a76">$ <tspan fill="#c9d1d9">npm i</tspan> <tspan fill="#2ecc71">@japofc/baileys</tspan></text>
+
+    <text x="34" y="126" font-size="34" font-weight="bold" fill="#e6edf3">@japofc/<tspan fill="#2ecc71">baileys</tspan></text>
+
+    <text x="34" y="156" font-size="15" fill="#8b949e">WhatsApp Web API — typed · extended · battle-tested</text>
+
+    <text x="34" y="192" font-size="13" fill="#5c6a76">
+      <tspan fill="#2ecc71">✓</tspan> interactive messages
+      <tspan dx="14" fill="#2ecc71">✓</tspan> native flows
+      <tspan dx="14" fill="#2ecc71">✓</tspan> VoIP
+      <tspan dx="14" fill="#2ecc71">✓</tspan> bot framework
+      <tspan dx="14" fill="#2ecc71">✓</tspan> 272 tests
+    </text>
+  </g>
+
+  <!-- WhatsApp-ish chat bubble motif, right side -->
+  <g transform="translate(700,70)">
+    <rect x="0" y="0" width="140" height="44" rx="12" fill="#152a1e" stroke="#2ecc71" stroke-opacity="0.45"/>
+    <text x="14" y="27" font-family="ui-monospace,SFMono-Regular,Menlo,Consolas,monospace" font-size="13" fill="#2ecc71">connection: open</text>
+    <rect x="24" y="56" width="116" height="40" rx="12" fill="#11202b" stroke="#3498db" stroke-opacity="0.35"/>
+    <text x="38" y="80" font-family="ui-monospace,SFMono-Regular,Menlo,Consolas,monospace" font-size="12" fill="#7fb3d5">272/272 ✓</text>
+  </g>
+</svg>

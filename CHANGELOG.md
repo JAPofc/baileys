@@ -3,6 +3,15 @@
 All notable changes to `@japofc/baileys` are documented here.
 Format follows [Keep a Changelog](https://keepachangelog.com/); versioning follows [SemVer](https://semver.org/).
 
+## [2.3.1] - 2026-09-12
+
+### Fixed
+- **`sharp` peer dependency was not marked optional** — `peerDependencies` listed `sharp: "*"` without an `optional: true` meta entry, so npm 7+ auto-installed the heavy native `sharp` module into *every* consumer project even though the code treats it as a soft fallback (`import('sharp').catch(...)` → `@napi-rs/image` → `jimp`). On platforms without a sharp prebuild (some Termux/Alpine setups) this could fail the whole install. Now correctly optional, matching how the code actually behaves.
+
+### Changed
+- **Removed all npm install scripts** (`preinstall` Node check + `postinstall` banner). Install scripts are the #1 supply-chain attack vector and security scanners (Socket.dev etc.) penalize any package that has them — they're also silently skipped by `npm ci --ignore-scripts`, which many CIs use, so the Node check wasn't even reliable. The Node 20+ gate moved to import time (`lib/node-version-check.js`, first import in the package) with a clearer error that also catches running an installed package on an old Node — something `preinstall` never could. The install banner is gone entirely.
+- **README redesigned to stand apart from upstream/other forks** — replaced the shared capsule-render/typing-SVG hero template with a custom in-repo SVG banner (`Media/banner.svg`, no external services), removed the contribution-snake animation and visitor counter, fixed the stale tests badge (174 → 272), added the live Socket.dev score badge, and rewrote "Why this fork" around what's actually different (audited core with grep-able `JAP@Fix` markers, 272-test CI, observability, supply-chain posture) instead of generic fork marketing.
+
 ## [2.3.0] - 2026-09-12
 
 ### Added

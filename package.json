@@ -1,6 +1,6 @@
 {
   "name": "@japofc/baileys",
-  "version": "2.3.0",
+  "version": "2.3.1",
   "description": "Feature-rich WhatsApp Multi-Device library for Node.js — interactive messages, native flows, polls, newsletters, VoIP, mini-apps and everyday bot utilities.",
   "type": "module",
   "main": "./lib/index.js",
@@ -15,8 +15,6 @@
     "./package.json": "./package.json"
   },
   "scripts": {
-    "preinstall": "node ./engine-requirements.js",
-    "postinstall": "node ./postinstall-banner.js",
     "voip:fetch-wasm": "node --experimental-websocket ./scripts/fetch-wasm-resources.mjs",
     "test": "node --test",
     "test:types": "tsc -p tests/tscheck/tsconfig.json"
@@ -31,8 +29,6 @@
   "files": [
     "lib/**/*",
     "WAProto/**/*",
-    "engine-requirements.js",
-    "postinstall-banner.js",
     "NOTICE.md"
   ],
   "keywords": [
@@ -144,6 +140,9 @@
       "optional": true
     },
     "node-webpmux": {
+      "optional": true
+    },
+    "sharp": {
       "optional": true
     }
   },

@@ -1,10 +1,6 @@
 <div align="center" id="top">
 
-<img src="https://capsule-render.vercel.app/api?type=waving&color=0:2ecc71,100:1d6a23&height=180&section=header&text=%40japofc%2Fbaileys&fontSize=48&fontColor=ffffff&animation=fadeIn&fontAlignY=35&desc=WhatsApp%20Web%20API%20%E2%80%94%20typed%2C%20extended%2C%20battle-tested&descSize=16&descAlignY=55" width="100%" alt="@japofc/baileys banner"/>
-
-<p>
-  <img src="https://readme-typing-svg.demolab.com?font=Fira+Code&size=18&pause=1200&color=2ECC71&center=true&vCenter=true&width=650&lines=Extended+interactive+messages+%26+native+flow;Status+tools+%2B+quality-of-life+fixes;WhatsApp+automation+toolkit" alt="Typing SVG" />
-</p>
+<img src="https://raw.githubusercontent.com/JAPofc/baileys/main/Media/banner.svg" width="100%" alt="@japofc/baileys — WhatsApp Web API, typed, extended, battle-tested"/>
 
 <p>
 <a href="https://www.npmjs.com/package/@japofc/baileys" target="_blank"><img src="https://img.shields.io/npm/v/@japofc/baileys?color=2ecc71&label=npm&style=for-the-badge" alt="npm version"/></a>
@@ -16,7 +12,8 @@
 <a href="https://github.com/JAPofc/baileys/actions/workflows/ci.yml" target="_blank"><img src="https://img.shields.io/github/actions/workflow/status/JAPofc/baileys/ci.yml?branch=main&style=flat-square&label=CI&color=2ecc71" alt="CI status"/></a>
 <a href="https://japofc.github.io/baileys/" target="_blank"><img src="https://img.shields.io/badge/docs-typedoc-8e44ad?style=flat-square" alt="API docs"/></a>
 <img src="https://img.shields.io/badge/npm-provenance%20attested-2ecc71?style=flat-square&logo=npm&logoColor=white" alt="npm provenance"/>
-<img src="https://img.shields.io/badge/tests-174%20passing-2ecc71?style=flat-square" alt="Tests"/>
+<img src="https://img.shields.io/badge/tests-272%20passing-2ecc71?style=flat-square" alt="Tests"/>
+<a href="https://socket.dev/npm/package/@japofc/baileys" target="_blank"><img src="https://socket.dev/api/badge/npm/package/@japofc/baileys" alt="Socket badge"/></a>
 <img src="https://img.shields.io/badge/tsc%20--strict-clean-3178c6?style=flat-square&logo=typescript&logoColor=white" alt="tsc strict clean"/>
 <img src="https://img.shields.io/github/last-commit/JAPofc/baileys?color=9b59b6&style=flat-square" alt="Last commit"/>
 <img src="https://img.shields.io/github/languages/code-size/JAPofc/baileys?color=e67e22&style=flat-square" alt="Code size"/>
@@ -26,9 +23,6 @@
 <img src="https://img.shields.io/badge/license-see%20NOTICE-lightgrey?style=flat-square" alt="License"/>
 </p>
 
-<p>
-<img src="https://komarev.com/ghpvc/?username=JAPofc&repo=baileys&color=2ecc71&style=for-the-badge&label=Repo+Views" alt="Visitor count"/>
-</p>
 
 <p>
 <a href="#-why-this-fork">About</a> &#xa0;|&#xa0;
@@ -93,18 +87,18 @@
 
 ## 🍃 Why this fork?
 
-This fork focuses on:
+Most Baileys forks are the upstream code with a renamed package and a couple of copied snippets. **This one is a maintained divergence** — the socket core is audited and patched (with each fix marked `JAP@Fix` in the source so you can grep every change), and whole subsystems exist here that upstream doesn't have:
 
 | | |
 |---|---|
-| 🚀 | Better developer experience |
-| 🎯 | Extended native flow support |
-| 📢 | Advanced status & broadcast features |
-| 🧩 | More interactive message types |
-| ⚡ | Cleaner implementation for bot developers |
-| 🔧 | Extra utilities not available in standard Baileys forks |
+| 🔬 | **Audited core, not just re-exported** — store consistency, reconnect lifecycle, Signal session recovery and retry-receipt parsing all had real reproduced bugs fixed here, each locked in by a regression test |
+| 🧪 | **272 tests + `tsc --strict` in CI** — message shapes round-trip through real protobuf encode→decode; a published-package smoke test runs after every npm release |
+| 📊 | **Built-in observability** — `createDebugMonitor()` gives connection state, message latency percentiles, Signal error tallies and retry stats, with secrets structurally redacted |
+| 🎯 | Extended native flow support, carousel, AIRich cards, mini-apps |
 | 🗄️ | Multiple auth & store backends out of the box (file, SQLite, MongoDB, MySQL, PostgreSQL, Redis) |
-| 📞 | Experimental voice-call (VoIP) support |
+| 📞 | Experimental voice-call (VoIP) support — WASM call stack + WebRTC relay |
+| 🎞️ | ffmpeg auto-detection — `ffmpeg-static`, `@ffmpeg-installer` or system binary, Termux-aware install hints |
+| 🔒 | **Supply-chain friendly** — zero install scripts, npm provenance attested, honest docs (protocol gaps are documented as limitations, never faked) |
 
 ---
 
@@ -326,7 +320,7 @@ Directly from GitHub:
 npm install github:JAPofc/baileys
 ```
 
-> Requires **Node.js 20+** — install will refuse to run below that (checked by `engine-requirements.js` on `preinstall`).
+> Requires **Node.js 20+** — enforced at import time with a clear error (no install scripts: this package deliberately ships **zero** `preinstall`/`postinstall` hooks, so `npm ci --ignore-scripts` and strict supply-chain policies work out of the box).
 
 ### Optional peer dependencies
 
@@ -1079,10 +1073,6 @@ const recs = await sock.getUsernameRecommendations()
 
 ---
 
-<div align="center">
-<img src="https://capsule-render.vercel.app/api?type=soft&color=0:2ecc71,100:1d6a23&height=70&section=header" width="100%"/>
-</div>
-
 ## 🤖 Bot Framework
 
 An optional, higher-level layer on top of the raw socket: middleware routing, a `!command` dispatcher, a message queue that survives disconnects, exponential-backoff auto-reconnect, per-JID session storage, group activity stats, and media (sticker/voice-note) conversion helpers — so a new bot project doesn't have to hand-roll session/context management every time.
@@ -1251,10 +1241,6 @@ Full details and license terms per component: see [`NOTICE.md`](./NOTICE.md).
 </tr>
 </table>
 
-<p align="center">
-<img src="https://raw.githubusercontent.com/JAPofc/JAPofc/output/github-contribution-grid-snake.svg" width="100%" alt="Contribution snake animation"/>
-</p>
-
 ---
 
 ## ⚠️ Disclaimer
@@ -1314,10 +1300,6 @@ Use responsibly and follow WhatsApp Terms of Service.
 Made with 🍃 by **JAP**
 
 Thanks for visiting, bye 👋
-
-<img src="https://capsule-render.vercel.app/api?type=waving&color=0:2ecc71,100:1d6a23&height=100&section=footer" width="100%"/>
-
-
 
 <a href="#top">⬆️ Back to top</a>
 
