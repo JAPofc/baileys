@@ -85,8 +85,8 @@ async function compileOnly4(): Promise<void> {
     const ff: string | null = env.ffmpeg.path;
     const backend: 'sharp' | '@napi-rs/image' | 'jimp' | null = env.imageBackend;
     await printEnvironmentReport();
-    printBanner({ enabled: false });
-    const sockB = makeWASocket({ printBanner: false });
+    printBanner(); // permanent — takes no options
+    const sockB = makeWASocket({});
     console.log(ok, ff, backend, sockB);
 }
 void compileOnly4;

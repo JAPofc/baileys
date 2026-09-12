@@ -16,12 +16,6 @@ export interface BotConfig {
      * Default true; set false or pin `socketConfig.version` to opt out.
      */
     versionCheck?: boolean;
-    /**
-     * Convenience mirror of `socketConfig.printBanner` — disable the one-time
-     * startup banner with `new Bot({ printBanner: false })`. An explicit
-     * `socketConfig.printBanner` wins over this flag.
-     */
-    printBanner?: boolean;
     logger?: any;
 }
 

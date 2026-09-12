@@ -37,7 +37,7 @@ event names, and message content shapes are all unchanged.
 | Node >= 20 not checked at runtime | Checked at **import time** with a clear error | Nothing — just don't run Node < 20 |
 | `sharp` optional, `jimp` fallback | Same chain plus `@napi-rs/image` in the middle | Nothing |
 | ffmpeg looked up on `PATH` only | Central resolver: `setFfmpegPath()`/`FFMPEG_PATH` → `ffmpeg-static` → `@ffmpeg-installer` → `PATH` | Optional: `npm i ffmpeg-static` for zero-config media |
-| No startup banner | One-time TTY-only banner on first `makeWASocket()` | Optional: `printBanner: false` / `JAP_NO_BANNER=1` to disable |
+| No startup banner | One-time banner on first `makeWASocket()` (full on TTY, single plain line on CI/pipes) | Permanent package signature — `NO_COLOR=1` strips styling only |
 
 Everything else — reconnect handling, store binding, group metadata, media
 upload/download — behaves the same or strictly better (bug fixes are listed in
@@ -122,7 +122,7 @@ nama event, dan bentuk konten pesan semuanya tidak berubah.
 | Node >= 20 tidak dicek di runtime | Dicek saat **import** dengan error yang jelas | Tidak ada — asal jangan jalankan Node < 20 |
 | `sharp` opsional, fallback `jimp` | Rantai sama plus `@napi-rs/image` di tengah | Tidak ada |
 | ffmpeg dicari di `PATH` saja | Resolver terpusat: `setFfmpegPath()`/`FFMPEG_PATH` → `ffmpeg-static` → `@ffmpeg-installer` → `PATH` | Opsional: `npm i ffmpeg-static` (server) / `pkg install ffmpeg` (Termux) |
-| Tanpa banner startup | Banner sekali-per-proses, hanya di TTY, saat `makeWASocket()` pertama | Opsional: `printBanner: false` / `JAP_NO_BANNER=1` untuk mematikan |
+| Tanpa banner startup | Banner sekali-per-proses saat `makeWASocket()` pertama (penuh di TTY, satu baris polos di CI/pipe) | Tanda tangan permanen paket — `NO_COLOR=1` hanya menghapus pewarnaan |
 
 Sisanya — penanganan reconnect, binding store, metadata grup, upload/download media —
 berperilaku sama atau lebih baik (perbaikan bug tercatat di

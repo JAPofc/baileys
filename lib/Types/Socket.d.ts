@@ -62,12 +62,6 @@ export type SocketConfig = {
      */
     printQRInTerminal?: boolean;
     /**
-     * Show the one-time startup banner on an interactive terminal.
-     * Default: auto (TTY only; also silenced by JAP_NO_BANNER / NO_COLOR).
-     * Set false to disable unconditionally.
-     */
-    printBanner?: boolean;
-    /**
      * Override the captured GraphQL query_ids used by the username APIs
      * (checkUsername/setUsername/...). WhatsApp rotates these server-side;
      * a rotated id fails with "GraphQL server error: Bad Request" and can be

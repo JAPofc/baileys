@@ -51,44 +51,32 @@ describe('banner: printBanner()', () => {
         return chunks.join('');
     };
 
-    it('prints once with force, and only once per process', () => {
-        const first = capture(() => printBanner({ force: true }));
+    it('always prints, and only once per process', () => {
+        const first = capture(() => printBanner());
         assert.match(first, /@japofc\/baileys/);
-        assert.match(first, /JAP_NO_BANNER/);
-        const second = capture(() => printBanner({ force: true }));
+        assert.match(first, /J\.AP/);
+        const second = capture(() => printBanner());
         assert.equal(second, ''); // once-per-process guard
     });
 
-    it('never prints when stdout is not a TTY (default path in tests/CI)', () => {
-        // node:test pipes stdout, so isTTY is falsy here — the default path must be silent
+    it('non-TTY (CI/pipes) gets a single plain signature line with no ANSI codes', () => {
+        // node:test pipes stdout, so isTTY is falsy here — the plain path
         const out = capture(() => printBanner());
-        assert.equal(out, '');
+        assert.match(out, /@japofc\/baileys/);
+        assert.match(out, /github\.com\/JAPofc\/baileys/);
+        assert.ok(!out.includes('\x1b['), 'no ANSI escapes on non-TTY output');
+        assert.equal(out.trim().split('\n').length, 1, 'exactly one line');
     });
 
-    it('enabled:false always wins, even on a TTY', () => {
-        const out = capture(() => printBanner({ enabled: false }));
-        assert.equal(out, '');
-    });
-});
-
-describe('banner: Bot framework forwards printBanner', () => {
-    it('top-level printBanner:false reaches the socketConfig', async () => {
-        const { resolveSocketVersionConfig } = await import('../lib/Framework/Bot.js');
-        const noop = { info: () => {}, warn: () => {} };
-        const cfg = await resolveSocketVersionConfig({ printBanner: false, versionCheck: false }, noop);
-        assert.equal(cfg.printBanner, false, 'new Bot({ printBanner: false }) must disable the banner');
-    });
-    it('socketConfig.printBanner stays the explicit override', async () => {
-        const { resolveSocketVersionConfig } = await import('../lib/Framework/Bot.js');
-        const noop = { info: () => {}, warn: () => {} };
-        const cfg = await resolveSocketVersionConfig({
-            printBanner: false, versionCheck: false,
-            socketConfig: { printBanner: true }
-        }, noop);
-        assert.equal(cfg.printBanner, true, 'socketConfig wins over the top-level flag');
-        // and the caller's object is never mutated
-        const userCfg = { printBanner: false, versionCheck: false, socketConfig: {} };
-        await resolveSocketVersionConfig(userCfg, noop);
-        assert.deepEqual(userCfg.socketConfig, {}, 'copy-on-write: no mutation of caller config');
+    it('cannot be disabled: no opt-out via env or options', () => {
+        process.env.JAP_NO_BANNER = '1';
+        process.env.NO_COLOR = '1';
+        try {
+            const out = capture(() => printBanner({ enabled: false }));
+            assert.match(out, /@japofc\/baileys/, 'banner prints regardless of env vars and options');
+        } finally {
+            delete process.env.JAP_NO_BANNER;
+            delete process.env.NO_COLOR;
+        }
     });
 });

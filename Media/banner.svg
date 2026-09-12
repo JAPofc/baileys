@@ -35,7 +35,7 @@
       <tspan dx="14" fill="#2ecc71">✓</tspan> native flows
       <tspan dx="14" fill="#2ecc71">✓</tspan> VoIP
       <tspan dx="14" fill="#2ecc71">✓</tspan> bot framework
-      <tspan dx="14" fill="#2ecc71">✓</tspan> 288 tests
+      <tspan dx="14" fill="#2ecc71">✓</tspan> 286 tests
     </text>
   </g>
 
@@ -44,6 +44,6 @@
     <rect x="0" y="0" width="140" height="44" rx="12" fill="#152a1e" stroke="#2ecc71" stroke-opacity="0.45"/>
     <text x="14" y="27" font-family="ui-monospace,SFMono-Regular,Menlo,Consolas,monospace" font-size="13" fill="#2ecc71">connection: open</text>
     <rect x="24" y="56" width="116" height="40" rx="12" fill="#11202b" stroke="#3498db" stroke-opacity="0.35"/>
-    <text x="38" y="80" font-family="ui-monospace,SFMono-Regular,Menlo,Consolas,monospace" font-size="12" fill="#7fb3d5">288/288 ✓</text>
+    <text x="38" y="80" font-family="ui-monospace,SFMono-Regular,Menlo,Consolas,monospace" font-size="12" fill="#7fb3d5">286/286 ✓</text>
   </g>
 </svg>
