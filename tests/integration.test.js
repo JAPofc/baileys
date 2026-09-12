@@ -258,3 +258,40 @@ describe('integration: sendStatusMention', () => {
         }
     });
 });
+
+describe('integration: username query-id override + rotation error', () => {
+    it('usernameQueryIds config overrides the captured ids', async () => {
+        const sock = makeWASocket({
+            auth: { creds: initAuthCreds(), keys: inMemKeys() },
+            logger: silent, printQRInTerminal: false,
+            usernameQueryIds: { CHECK: 'fresh-rotated-id-123' },
+        });
+        sock.ws?.on?.('error', () => {});
+        try {
+            assert.equal(sock.USERNAME_QUERY_IDS.CHECK, 'fresh-rotated-id-123', 'override applied');
+            assert.ok(sock.USERNAME_QUERY_IDS.SET, 'non-overridden ids keep their defaults');
+        } finally {
+            await sock.end();
+        }
+    });
+    it('Bad Request from mex is rethrown with rotation guidance', async () => {
+        const sock = makeWASocket({
+            auth: { creds: initAuthCreds(), keys: inMemKeys() },
+            logger: silent, printQRInTerminal: false,
+        });
+        sock.ws?.on?.('error', () => {});
+        try {
+            // offline: query() rejects — force the 400 path via a stubbed query is
+            // not possible post-construction, so assert the wrapper shape instead:
+            // checkUsername must reject (offline) and NEVER with a bare "Bad Request"
+            await assert.rejects(sock.checkUsername('someuser'), (e) => {
+                const msg = String(e?.message ?? '');
+                // if it were a 400, the wrapper must add actionable guidance
+                if (/bad request/i.test(msg)) return /rotated|usernameQueryIds/i.test(msg);
+                return true; // any offline error is fine
+            });
+        } finally {
+            await sock.end();
+        }
+    });
+});

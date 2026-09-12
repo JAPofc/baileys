@@ -9,6 +9,8 @@ Format follows [Keep a Changelog](https://keepachangelog.com/); versioning follo
 - **`sendStatusMention(content, mentions, options?)`** — post a status and notify specific users or whole groups with the "mentioned you in their status" bubble (upstream 7.0.0-rc10 parity). Works with any status content type; fan-out pacing via `{ delayMs }`. The underlying status-mention wire path (protocolMessage type 25 + `is_status_mention` meta node) already existed; this adds the named, validated, typed API on the socket.
 
 ### Fixed
+- **Banner could not be disabled through the `Bot` framework** — `new Bot({ printBanner: false })` was silently ignored because only `socketConfig.*` was forwarded to the socket. The top-level flag now reaches the socket (an explicit `socketConfig.printBanner` still wins). `makeWASocket({ printBanner: false })`, `JAP_NO_BANNER=1` and `NO_COLOR=1` were unaffected.
+- **Username APIs: actionable error + runtime override for rotated query IDs** — WhatsApp rotates the GraphQL query_ids behind `checkUsername`/`setUsername`/etc. server-side; a rotated id failed with an opaque `GraphQL server error: Bad Request`. Bad Request failures now explain the rotation and how to fix it, and a new `usernameQueryIds` socket-config option hot-patches any rotated id without waiting for a package update.
 - **CLI no longer executes on import** — `lib/cli.js` printed help output as a side effect when imported (e.g. by a bundler or module walker). The runner now only executes when the file is the actual process entry point; `node lib/cli.js` and the `japofc-baileys` bin shim both still work (verified against a real tarball install).
 
 ### Changed

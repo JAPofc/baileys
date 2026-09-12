@@ -70,3 +70,25 @@ describe('banner: printBanner()', () => {
         assert.equal(out, '');
     });
 });
+
+describe('banner: Bot framework forwards printBanner', () => {
+    it('top-level printBanner:false reaches the socketConfig', async () => {
+        const { resolveSocketVersionConfig } = await import('../lib/Framework/Bot.js');
+        const noop = { info: () => {}, warn: () => {} };
+        const cfg = await resolveSocketVersionConfig({ printBanner: false, versionCheck: false }, noop);
+        assert.equal(cfg.printBanner, false, 'new Bot({ printBanner: false }) must disable the banner');
+    });
+    it('socketConfig.printBanner stays the explicit override', async () => {
+        const { resolveSocketVersionConfig } = await import('../lib/Framework/Bot.js');
+        const noop = { info: () => {}, warn: () => {} };
+        const cfg = await resolveSocketVersionConfig({
+            printBanner: false, versionCheck: false,
+            socketConfig: { printBanner: true }
+        }, noop);
+        assert.equal(cfg.printBanner, true, 'socketConfig wins over the top-level flag');
+        // and the caller's object is never mutated
+        const userCfg = { printBanner: false, versionCheck: false, socketConfig: {} };
+        await resolveSocketVersionConfig(userCfg, noop);
+        assert.deepEqual(userCfg.socketConfig, {}, 'copy-on-write: no mutation of caller config');
+    });
+});

@@ -12,7 +12,7 @@
 <a href="https://github.com/JAPofc/baileys/actions/workflows/ci.yml" target="_blank"><img src="https://img.shields.io/github/actions/workflow/status/JAPofc/baileys/ci.yml?branch=main&style=flat-square&label=CI&color=2ecc71" alt="status CI"/></a>
 <a href="https://japofc.github.io/baileys/" target="_blank"><img src="https://img.shields.io/badge/docs-typedoc-8e44ad?style=flat-square" alt="Dokumentasi API"/></a>
 <img src="https://img.shields.io/badge/npm-provenance%20attested-2ecc71?style=flat-square&logo=npm&logoColor=white" alt="npm provenance"/>
-<img src="https://img.shields.io/badge/tests-284%20passing-2ecc71?style=flat-square" alt="Tes"/>
+<img src="https://img.shields.io/badge/tests-288%20passing-2ecc71?style=flat-square" alt="Tes"/>
 <a href="https://socket.dev/npm/package/@japofc/baileys" target="_blank"><img src="https://socket.dev/api/badge/npm/package/@japofc/baileys" alt="Socket badge"/></a>
 <img src="https://img.shields.io/badge/tsc%20--strict-clean-3178c6?style=flat-square&logo=typescript&logoColor=white" alt="tsc strict bersih"/>
 <img src="https://img.shields.io/badge/node-%3E%3D20-brightgreen?style=flat-square" alt="Node >=20"/>
@@ -44,7 +44,7 @@ Kebanyakan fork Baileys cuma kode upstream yang di-rename plus beberapa snippet 
 | | |
 |---|---|
 | 🔬 | **Inti yang diaudit, bukan sekadar re-export** — konsistensi store, lifecycle reconnect, pemulihan sesi Signal, dan parsing retry-receipt semuanya punya bug nyata yang direproduksi lalu diperbaiki di sini, masing-masing dikunci regression test |
-| 🧪 | **284 tes + `tsc --strict` di CI** — bentuk pesan diuji round-trip lewat encode→decode protobuf sungguhan; smoke test paket terpublish jalan otomatis setelah tiap rilis npm |
+| 🧪 | **288 tes + `tsc --strict` di CI** — bentuk pesan diuji round-trip lewat encode→decode protobuf sungguhan; smoke test paket terpublish jalan otomatis setelah tiap rilis npm |
 | 📊 | **Observability bawaan** — `createDebugMonitor()` memberi status koneksi, persentil latensi pesan, hitungan error Signal, dan statistik retry, dengan rahasia (QR/kunci/token) diredaksi secara struktural |
 | 🎯 | Dukungan native flow diperluas, carousel, kartu AIRich, mini-app |
 | 🗄️ | Banyak backend auth & store langsung tersedia (file, SQLite, MongoDB, MySQL, PostgreSQL, Redis) |
@@ -1014,7 +1014,18 @@ Protokol yang tersedia: `USyncContactProtocol`, `USyncDeviceProtocol`, `USyncSta
 
 ## 👤 Manajemen Username
 
-Wrapper level tinggi di atas fitur username WhatsApp (handle `@username` yang bisa kamu pakai supaya nomor tidak terekspos), di atas `USyncUsernameProtocol`. Query ID di-capture dari sesi WA Web live — kalau sebuah panggilan mulai melempar `unexpected response structure`, berarti WA merotasinya dan perlu di-capture ulang.
+Wrapper level tinggi di atas fitur username WhatsApp (handle `@username` yang bisa kamu pakai supaya nomor tidak terekspos), di atas `USyncUsernameProtocol`.
+
+> ⚠️ **Rotasi query-ID.** Query ID GraphQL di balik panggilan-panggilan ini di-capture dari sesi WA Web live, dan WhatsApp merotasinya sewaktu-waktu. Kalau itu terjadi, panggilan gagal dengan `GraphQL server error: Bad Request` (atau `unexpected response structure`). Tidak perlu menunggu update paket — hot-patch ID yang dirotasi langsung saat runtime:
+>
+> ```js
+> const sock = makeWASocket({
+>     usernameQueryIds: { CHECK: '<id-baru>', SET: '<id-baru>' } // bisa override:
+>     // CHECK, CHECK_MULTI, SET, GET, GET_RECOMMENDATIONS, PIN_SET
+> })
+> ```
+>
+> ID baru bisa di-capture dari sesi WA Web live (DevTools → Network → WS frames → cari query `xmlns="w:mex"`).
 
 ```js
 // Cek ketersediaan + dapatkan saran kalau sudah dipakai
@@ -1186,7 +1197,7 @@ Jalankan `printEnvironmentReport()` (lihat [doctor](#cek-lingkunganmu-doctor)) �
 <summary><b>Banner startup mengganggu / mau dimatikan</b></summary>
 <br/>
 
-Banner hanya tampil sekali per proses dan hanya di terminal interaktif (tidak pernah di log CI/pm2/pipe). Matikan dengan salah satu: `makeWASocket({ printBanner: false })`, env var `JAP_NO_BANNER=1`, atau `NO_COLOR=1`.
+Banner hanya tampil sekali per proses dan hanya di terminal interaktif (tidak pernah di log CI/pm2/pipe). Matikan dengan salah satu: `makeWASocket({ printBanner: false })`, `new Bot({ printBanner: false })` kalau pakai framework, env var `JAP_NO_BANNER=1`, atau `NO_COLOR=1`.
 
 </details>
 

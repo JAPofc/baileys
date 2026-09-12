@@ -67,6 +67,14 @@ export type SocketConfig = {
      * Set false to disable unconditionally.
      */
     printBanner?: boolean;
+    /**
+     * Override the captured GraphQL query_ids used by the username APIs
+     * (checkUsername/setUsername/...). WhatsApp rotates these server-side;
+     * a rotated id fails with "GraphQL server error: Bad Request" and can be
+     * hot-patched here without waiting for a package update.
+     * Keys: CHECK, CHECK_MULTI, SET, GET, GET_RECOMMENDATIONS, PIN_SET.
+     */
+    usernameQueryIds?: Partial<Record<'CHECK' | 'CHECK_MULTI' | 'SET' | 'GET' | 'GET_RECOMMENDATIONS' | 'PIN_SET', string>>;
     /** should events be emitted for actions done by this socket connection */
     emitOwnEvents: boolean;
     /** custom upload hosts to upload media to */

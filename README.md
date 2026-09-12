@@ -12,7 +12,7 @@
 <a href="https://github.com/JAPofc/baileys/actions/workflows/ci.yml" target="_blank"><img src="https://img.shields.io/github/actions/workflow/status/JAPofc/baileys/ci.yml?branch=main&style=flat-square&label=CI&color=2ecc71" alt="CI status"/></a>
 <a href="https://japofc.github.io/baileys/" target="_blank"><img src="https://img.shields.io/badge/docs-typedoc-8e44ad?style=flat-square" alt="API docs"/></a>
 <img src="https://img.shields.io/badge/npm-provenance%20attested-2ecc71?style=flat-square&logo=npm&logoColor=white" alt="npm provenance"/>
-<img src="https://img.shields.io/badge/tests-284%20passing-2ecc71?style=flat-square" alt="Tests"/>
+<img src="https://img.shields.io/badge/tests-288%20passing-2ecc71?style=flat-square" alt="Tests"/>
 <a href="https://socket.dev/npm/package/@japofc/baileys" target="_blank"><img src="https://socket.dev/api/badge/npm/package/@japofc/baileys" alt="Socket badge"/></a>
 <img src="https://img.shields.io/badge/tsc%20--strict-clean-3178c6?style=flat-square&logo=typescript&logoColor=white" alt="tsc strict clean"/>
 <img src="https://img.shields.io/github/last-commit/JAPofc/baileys?color=9b59b6&style=flat-square" alt="Last commit"/>
@@ -94,7 +94,7 @@ Most Baileys forks are the upstream code with a renamed package and a couple of 
 | | |
 |---|---|
 | 🔬 | **Audited core, not just re-exported** — store consistency, reconnect lifecycle, Signal session recovery and retry-receipt parsing all had real reproduced bugs fixed here, each locked in by a regression test |
-| 🧪 | **284 tests + `tsc --strict` in CI** — message shapes round-trip through real protobuf encode→decode; a published-package smoke test runs after every npm release |
+| 🧪 | **288 tests + `tsc --strict` in CI** — message shapes round-trip through real protobuf encode→decode; a published-package smoke test runs after every npm release |
 | 📊 | **Built-in observability** — `createDebugMonitor()` gives connection state, message latency percentiles, Signal error tallies and retry stats, with secrets structurally redacted |
 | 🎯 | Extended native flow support, carousel, AIRich cards, mini-apps |
 | 🗄️ | Multiple auth & store backends out of the box (file, SQLite, MongoDB, MySQL, PostgreSQL, Redis) |
@@ -1083,7 +1083,18 @@ Available protocols: `USyncContactProtocol`, `USyncDeviceProtocol`, `USyncStatus
 
 ## 👤 Username Management
 
-High-level wrappers around WhatsApp's username feature (the `@username` handle you can set instead of exposing your phone number), sitting on top of `USyncUsernameProtocol`. Query IDs are captured from live WA Web sessions — if a call starts throwing `unexpected response structure`, WA has rotated them and they need re-capturing.
+High-level wrappers around WhatsApp's username feature (the `@username` handle you can set instead of exposing your phone number), sitting on top of `USyncUsernameProtocol`.
+
+> ⚠️ **Query-ID rotation.** The GraphQL query IDs behind these calls are captured from live WA Web sessions and WhatsApp rotates them from time to time. When that happens calls fail with `GraphQL server error: Bad Request` (or `unexpected response structure`). You don't have to wait for a package update — hot-patch the rotated ID at runtime:
+>
+> ```js
+> const sock = makeWASocket({
+>     usernameQueryIds: { CHECK: '<fresh-id>', SET: '<fresh-id>' } // override any of:
+>     // CHECK, CHECK_MULTI, SET, GET, GET_RECOMMENDATIONS, PIN_SET
+> })
+> ```
+>
+> Fresh IDs can be captured from a live WA Web session (DevTools → Network → WS frames → look for `xmlns="w:mex"` queries).
 
 ```js
 // Check availability + get suggestions if taken
@@ -1255,7 +1266,7 @@ Run `printEnvironmentReport()` (see [doctor](#check-your-environment-doctor)) �
 <summary><b>Startup banner is in the way / want it off</b></summary>
 <br/>
 
-The banner shows once per process and only on an interactive terminal (never in CI/pm2/piped logs). Disable it with any of: `makeWASocket({ printBanner: false })`, the `JAP_NO_BANNER=1` env var, or `NO_COLOR=1`.
+The banner shows once per process and only on an interactive terminal (never in CI/pm2/piped logs). Disable it with any of: `makeWASocket({ printBanner: false })`, `new Bot({ printBanner: false })` when using the framework, the `JAP_NO_BANNER=1` env var, or `NO_COLOR=1`.
 
 </details>
 
