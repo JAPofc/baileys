@@ -12,7 +12,7 @@
 <a href="https://github.com/JAPofc/baileys/actions/workflows/ci.yml" target="_blank"><img src="https://img.shields.io/github/actions/workflow/status/JAPofc/baileys/ci.yml?branch=main&style=flat-square&label=CI&color=2ecc71" alt="CI status"/></a>
 <a href="https://japofc.github.io/baileys/" target="_blank"><img src="https://img.shields.io/badge/docs-typedoc-8e44ad?style=flat-square" alt="API docs"/></a>
 <img src="https://img.shields.io/badge/npm-provenance%20attested-2ecc71?style=flat-square&logo=npm&logoColor=white" alt="npm provenance"/>
-<img src="https://img.shields.io/badge/tests-286%20passing-2ecc71?style=flat-square" alt="Tests"/>
+<img src="https://img.shields.io/badge/tests-302%20passing-2ecc71?style=flat-square" alt="Tests"/>
 <a href="https://socket.dev/npm/package/@japofc/baileys" target="_blank"><img src="https://socket.dev/api/badge/npm/package/@japofc/baileys" alt="Socket badge"/></a>
 <img src="https://img.shields.io/badge/tsc%20--strict-clean-3178c6?style=flat-square&logo=typescript&logoColor=white" alt="tsc strict clean"/>
 <img src="https://img.shields.io/github/last-commit/JAPofc/baileys?color=9b59b6&style=flat-square" alt="Last commit"/>
@@ -94,7 +94,7 @@ Most Baileys forks are the upstream code with a renamed package and a couple of 
 | | |
 |---|---|
 | 🔬 | **Audited core, not just re-exported** — store consistency, reconnect lifecycle, Signal session recovery and retry-receipt parsing all had real reproduced bugs fixed here, each locked in by a regression test |
-| 🧪 | **286 tests + `tsc --strict` in CI** — message shapes round-trip through real protobuf encode→decode; a published-package smoke test runs after every npm release |
+| 🧪 | **302 tests + `tsc --strict` in CI** — message shapes round-trip through real protobuf encode→decode; a published-package smoke test runs after every npm release |
 | 📊 | **Built-in observability** — `createDebugMonitor()` gives connection state, message latency percentiles, Signal error tallies and retry stats, with secrets structurally redacted |
 | 🎯 | Extended native flow support, carousel, AIRich cards, mini-apps |
 | 🗄️ | Multiple auth & store backends out of the box (file, SQLite, MongoDB, MySQL, PostgreSQL, Redis) |
@@ -952,6 +952,18 @@ await sock.getLidForPhone('62812…')    // reverse lookup
 
 // 🧍 Humanized send — typing… + natural delay + per-chat queue
 await sock.sendHumanized(jid, { text: 'Hello!' })
+
+// 📣 Broadcast to many jids — paced, per-jid outcomes, never dies mid-run
+const report = await sock.sendBroadcast(jids, { text: 'promo!' }, { delayMs: 1500 })
+// { sent: [...], failed: [{ jid, error }], total }
+
+// 🔗 Group invite links
+extractGroupInviteCode('https://chat.whatsapp.com/AbCdEf…') // 'AbCdEf…'
+await sock.joinGroupViaLink('https://chat.whatsapp.com/AbCdEf…')
+
+// 🏷️ Parse @mentions out of text → ready for sendMessage
+const mentions = parseMentions(text) // ['62812…@s.whatsapp.net', …]
+await sock.sendMessage(jid, { text, mentions })
 
 // 🤖 Meta AI chat (experimental — needs Meta AI on the account/region)
 const { text } = await sock.askMetaAI('Explain black holes!')

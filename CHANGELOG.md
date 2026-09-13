@@ -6,6 +6,7 @@ Format follows [Keep a Changelog](https://keepachangelog.com/); versioning follo
 ## [2.4.1] - 2026-09-12
 
 ### Added
+- **Everyday text/broadcast helpers (`lib/Utils/text-tools.js`)** — `parseMentions(text)` (extract `@62812…` mentions into ready-to-use jids, de-duplicated), `extractGroupInviteCode(link)` (any chat.whatsapp.com URL shape), `sock.joinGroupViaLink(linkOrCode)`, and `sock.sendBroadcast(jids, content, { delayMs, onProgress })` — paced multi-jid sending with per-jid outcomes that never dies mid-run. All pure logic is dependency-free; 16 dedicated unit tests.
 - **`sendStatusMention(content, mentions, options?)`** — post a status and notify specific users or whole groups with the "mentioned you in their status" bubble (upstream 7.0.0-rc10 parity). Works with any status content type; fan-out pacing via `{ delayMs }`. The underlying status-mention wire path (protocolMessage type 25 + `is_status_mention` meta node) already existed; this adds the named, validated, typed API on the socket.
 
 ### Fixed

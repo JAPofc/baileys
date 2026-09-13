@@ -9,6 +9,7 @@ import makeWASocket, {
     createDebugMonitor, type DebugInfo, type DebugMonitor,
     setFfmpegPath, resolveFfmpegPath, requireFfmpegPath, ffmpegInstallHint,
     checkEnvironment, printEnvironmentReport, printBanner, type EnvironmentReport,
+    parseMentions, extractGroupInviteCode, sendBroadcast, type BroadcastReport,
     // core
     initAuthCreds, fetchBestWaVersion, fetchLatestWaWebVersion, DisconnectReason,
     // builders
@@ -86,6 +87,10 @@ async function compileOnly4(): Promise<void> {
     const backend: 'sharp' | '@napi-rs/image' | 'jimp' | null = env.imageBackend;
     await printEnvironmentReport();
     printBanner(); // permanent — takes no options
+    const mentions: string[] = parseMentions('hi @62812345678');
+    const code: string | null = extractGroupInviteCode('https://chat.whatsapp.com/AbCdEfGh12345678');
+    const report: BroadcastReport = await sendBroadcast({} as any, ['1@s.whatsapp.net'], { text: 'x' }, { delayMs: 0 });
+    console.log(mentions, code, report.sent.length, report.failed.length);
     const sockB = makeWASocket({});
     console.log(ok, ff, backend, sockB);
 }

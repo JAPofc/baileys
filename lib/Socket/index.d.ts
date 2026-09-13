@@ -268,6 +268,8 @@ declare function makeWASocket(config: any): {
     getLidForPhone: (phone: string) => Promise<string | null>;
     askMetaAI: (prompt: string, opts?: any) => Promise<any>;
     sendHumanized: (jid: any, content: any, humanOpts?: any, sendOptions?: any) => Promise<any>;
+    sendBroadcast: (jids: string[], content: any, options?: import('../Utils/text-tools.js').BroadcastOptions) => Promise<import('../Utils/text-tools.js').BroadcastReport>;
+    joinGroupViaLink: (linkOrCode: string) => Promise<any>;
     editPoll: (jid: any, key: any, poll: any, options?: any) => Promise<any>;
     sendMentionAll: (jid: any, text: string, options?: any) => Promise<any>;
     sendStatusMention: (content: any, mentions: string | string[], options?: any) => Promise<any>;
