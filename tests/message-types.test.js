@@ -17,6 +17,58 @@ describe('music message (experimental)', () => {
     it('rejects empty music', async () => {
         await assert.rejects(generateWAMessage(JID, { music: {} }, OPTS), /songUri/);
     });
+    it('rejects embeddedMusic fields the wire would silently drop', async () => {
+        await assert.rejects(
+            generateWAMessage(JID, {
+                music: { songUri: 'x', embeddedMusic: { title: 'T', durationSeconds: 30 } }
+            }, OPTS),
+            /unsupported field.*durationSeconds/
+        );
+    });
+    it('every supported embeddedMusic field survives a real wire round-trip', async () => {
+        const { proto } = await import('../lib/index.js');
+        const embeddedMusic = {
+            musicContentMediaId: 'mid', songId: 'sid', author: 'A', title: 'T',
+            artworkDirectPath: '/d', artistAttribution: 'attr', isExplicit: true,
+        };
+        const m = await generateWAMessage(JID, { music: { songUri: 's', embeddedMusic } }, OPTS);
+        const enc = proto.Message.encode(proto.Message.fromObject(m.message)).finish();
+        const dec = proto.Message.toObject(proto.Message.decode(enc), { defaults: false });
+        assert.deepEqual(dec.musicMessage.embeddedMusic, embeddedMusic);
+    });
+});
+
+describe('status music attribution (withMusicAttribution)', () => {
+    it('attaches a MUSIC (type 3) StatusAttribution that round-trips the wire', async () => {
+        const { withMusicAttribution, proto } = await import('../lib/index.js');
+        const status = withMusicAttribution(
+            { text: 'vibes' },
+            { title: 'Song', authorName: 'Artist', songId: 'catalog1', isExplicit: false, actionUrl: 'https://open.spotify.com/track/x' }
+        );
+        assert.equal(status.text, 'vibes');
+        assert.equal(status.contextInfo.statusAttributionType, 3);
+        const attr = status.contextInfo.statusAttributions[0];
+        assert.equal(attr.type, 3);
+        assert.equal(attr.music.title, 'Song');
+        // proto wire round-trip of the exact contextInfo we build
+        const C = proto.ContextInfo;
+        const dec = C.toObject(C.decode(C.encode(C.fromObject(status.contextInfo)).finish()), { defaults: false });
+        assert.equal(dec.statusAttributionType, 3);
+        assert.equal(dec.statusAttributions[0].music.title, 'Song');
+        assert.equal(dec.statusAttributions[0].music.authorName, 'Artist');
+        assert.equal(dec.statusAttributions[0].actionUrl, 'https://open.spotify.com/track/x');
+    });
+    it('merges with existing contextInfo and validates input', async () => {
+        const { withMusicAttribution } = await import('../lib/index.js');
+        const out = withMusicAttribution(
+            { text: 'x', contextInfo: { mentionedJid: ['1@s.whatsapp.net'] } },
+            { songId: 'c1' }
+        );
+        assert.deepEqual(out.contextInfo.mentionedJid, ['1@s.whatsapp.net']);
+        assert.equal(out.contextInfo.statusAttributions.length, 1);
+        assert.throws(() => withMusicAttribution(null, { title: 't' }), /content/);
+        assert.throws(() => withMusicAttribution({ text: 'x' }, {}), /title.*songId|songId.*title/);
+    });
 });
 
 describe('payments', () => {

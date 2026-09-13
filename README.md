@@ -12,7 +12,7 @@
 <a href="https://github.com/JAPofc/baileys/actions/workflows/ci.yml" target="_blank"><img src="https://img.shields.io/github/actions/workflow/status/JAPofc/baileys/ci.yml?branch=main&style=flat-square&label=CI&color=2ecc71" alt="CI status"/></a>
 <a href="https://japofc.github.io/baileys/" target="_blank"><img src="https://img.shields.io/badge/docs-typedoc-8e44ad?style=flat-square" alt="API docs"/></a>
 <img src="https://img.shields.io/badge/npm-provenance%20attested-2ecc71?style=flat-square&logo=npm&logoColor=white" alt="npm provenance"/>
-<img src="https://img.shields.io/badge/tests-302%20passing-2ecc71?style=flat-square" alt="Tests"/>
+<img src="https://img.shields.io/badge/tests-306%20passing-2ecc71?style=flat-square" alt="Tests"/>
 <a href="https://socket.dev/npm/package/@japofc/baileys" target="_blank"><img src="https://socket.dev/api/badge/npm/package/@japofc/baileys" alt="Socket badge"/></a>
 <img src="https://img.shields.io/badge/tsc%20--strict-clean-3178c6?style=flat-square&logo=typescript&logoColor=white" alt="tsc strict clean"/>
 <img src="https://img.shields.io/github/last-commit/JAPofc/baileys?color=9b59b6&style=flat-square" alt="Last commit"/>
@@ -94,7 +94,7 @@ Most Baileys forks are the upstream code with a renamed package and a couple of 
 | | |
 |---|---|
 | 🔬 | **Audited core, not just re-exported** — store consistency, reconnect lifecycle, Signal session recovery and retry-receipt parsing all had real reproduced bugs fixed here, each locked in by a regression test |
-| 🧪 | **302 tests + `tsc --strict` in CI** — message shapes round-trip through real protobuf encode→decode; a published-package smoke test runs after every npm release |
+| 🧪 | **306 tests + `tsc --strict` in CI** — message shapes round-trip through real protobuf encode→decode; a published-package smoke test runs after every npm release |
 | 📊 | **Built-in observability** — `createDebugMonitor()` gives connection state, message latency percentiles, Signal error tallies and retry stats, with secrets structurally redacted |
 | 🎯 | Extended native flow support, carousel, AIRich cards, mini-apps |
 | 🗄️ | Multiple auth & store backends out of the box (file, SQLite, MongoDB, MySQL, PostgreSQL, Redis) |
@@ -922,7 +922,11 @@ await sock.updateMemberLabel({ groupJid, lid, label: 'Admin' });
   (Spotify/Apple) plus an artwork upload flow that official clients negotiate privately;
   no public capture exists (re-verified Sep 2026). Messages built with made-up IDs render
   as a plain preview or nothing at all on official clients — treat `sendMusic()` as
-  experimental and test against a real device before shipping.
+  experimental and test against a real device before shipping. What v2.4.1 *does* fix:
+  unknown `embeddedMusic` fields used to be silently dropped by the proto encoder
+  (a typo'd key just vanished from the wire) — they now throw a clear 400 listing the
+  supported field names. For the modern music-on-status surface, see
+  `withMusicAttribution()` below.
 - **`mediaKeyDomain` — IMPLEMENTED.** Backported from rc14 onto all 5 media types
   (`Audio/Document/Image/Sticker/VideoMessage`, enum `UNSET/E2EE_CHAT/STATUS/CAPI/BOT`)
   with a send passthrough: `sendMessage(jid, { image: buf, mediaKeyDomain: 1 })`.
@@ -986,7 +990,24 @@ new StatusScheduler(sock).schedule(StatusHelper.text('Pagi! ☀️'), new Date('
 new ChannelScheduler(sock).schedule(channelJid, { text: 'Update' }, Date.now() + 3600_000)
 ```
 
-`npm test` runs the offline suite (`tests/`, 68 asserts, no network needed).
+**Music attribution on statuses** (`StatusAttribution.Type.MUSIC` — the official
+Dec-2025 "add music to your status" surface, wire-verified against WAProto):
+
+```js
+import { StatusHelper, withMusicAttribution } from '@japofc/baileys'
+
+const status = withMusicAttribution(
+  StatusHelper.text('vibes 🎵'),
+  { title: 'Song Name', authorName: 'Artist', songId: '<catalog-id>' }
+)
+await StatusHelper.send(sock, status, jidList)
+```
+
+> Official clients resolve the song via Meta's licensed catalog, so `songId`
+> must be a real catalog id for the music chip to render there. The attribution
+> struct itself is wire-correct either way (round-trip covered by tests).
+
+`npm test` runs the offline suite (`tests/`, 306 tests, no network needed).
 
 ---
 

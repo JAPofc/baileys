@@ -9,6 +9,7 @@ import makeWASocket, {
     createDebugMonitor, type DebugInfo, type DebugMonitor,
     setFfmpegPath, resolveFfmpegPath, requireFfmpegPath, ffmpegInstallHint,
     checkEnvironment, printEnvironmentReport, printBanner, type EnvironmentReport,
+    withMusicAttribution, type StatusMusicAttribution,
     parseMentions, extractGroupInviteCode, sendBroadcast, type BroadcastReport,
     // core
     initAuthCreds, fetchBestWaVersion, fetchLatestWaWebVersion, DisconnectReason,
@@ -87,6 +88,10 @@ async function compileOnly4(): Promise<void> {
     const backend: 'sharp' | '@napi-rs/image' | 'jimp' | null = env.imageBackend;
     await printEnvironmentReport();
     printBanner(); // permanent — takes no options
+const musicStatus = withMusicAttribution({ text: 'vibes' }, { title: 'Song', authorName: 'Artist', songId: 'c1' });
+void musicStatus;
+const musicMeta: StatusMusicAttribution = { title: 't', isExplicit: false };
+void musicMeta;
     const mentions: string[] = parseMentions('hi @62812345678');
     const code: string | null = extractGroupInviteCode('https://chat.whatsapp.com/AbCdEfGh12345678');
     const report: BroadcastReport = await sendBroadcast({} as any, ['1@s.whatsapp.net'], { text: 'x' }, { delayMs: 0 });

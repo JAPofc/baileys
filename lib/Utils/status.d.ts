@@ -37,6 +37,22 @@ export declare const createImageStatus: (media: Buffer | string, options?: Media
 export declare const createVideoStatus: (media: Buffer | string, options?: MediaStatusOptions) => AnyMessageContent;
 export declare const createAudioStatus: (media: Buffer | string, options?: MediaStatusOptions) => AnyMessageContent;
 export declare const getStatusJid: () => string;
+/** Music metadata for a status music attribution (official Dec-2025 surface). */
+export type StatusMusicAttribution = {
+    title?: string;
+    authorName?: string;
+    /** Meta licensed-catalog song id — required for official clients to render the music chip. */
+    songId?: string;
+    artistAttribution?: string;
+    isExplicit?: boolean;
+    actionUrl?: string;
+};
+/**
+ * Attach a MUSIC StatusAttribution (enum 3) to a status content object.
+ * Wire-verified against WAProto ContextInfo.statusAttributions[].
+ * Needs at least { title } or { songId }.
+ */
+export declare const withMusicAttribution: (content: AnyMessageContent, music: StatusMusicAttribution) => AnyMessageContent;
 export declare const StatusHelper: {
     text: (text: string, backgroundColor?: string, font?: StatusFont) => AnyMessageContent;
     image: (buffer: Buffer, caption?: string) => AnyMessageContent;
