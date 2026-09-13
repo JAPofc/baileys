@@ -1,3 +1,8 @@
+/**
+ * Profile picture IQ content builder — nests the tctoken INSIDE the <picture>
+ * node (WA Web behaviour, upstream 731cd6b) instead of appending as a sibling.
+ */
+export function buildProfilePictureQueryContent(type: 'preview' | 'image', tcTokenContent?: import('../WABinary/index.js').BinaryNode[]): import('../WABinary/index.js').BinaryNode[];
 export function makeChatsSocket(config: any): {
     findUserId: (pnLid: any) => Promise<{
         lid: undefined;

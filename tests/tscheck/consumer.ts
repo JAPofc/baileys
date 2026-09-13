@@ -10,6 +10,8 @@ import makeWASocket, {
     setFfmpegPath, resolveFfmpegPath, requireFfmpegPath, ffmpegInstallHint,
     checkEnvironment, printEnvironmentReport, printBanner, type EnvironmentReport,
     withMusicAttribution, type StatusMusicAttribution,
+    useRedisAuthState, useMongoAuthState, usePostgresAuthState, useMySQLAuthState,
+    makeAuthStateFromStore, type AuthKVStore, type DBAuthState,
     parseMentions, extractGroupInviteCode, sendBroadcast, type BroadcastReport,
     // core
     initAuthCreds, fetchBestWaVersion, fetchLatestWaWebVersion, DisconnectReason,
@@ -92,6 +94,24 @@ const musicStatus = withMusicAttribution({ text: 'vibes' }, { title: 'Song', aut
 void musicStatus;
 const musicMeta: StatusMusicAttribution = { title: 't', isExplicit: false };
 void musicMeta;
+// DB auth adapters — compile checks only (no live DBs)
+async function _dbAuthChecks() {
+    const fakeStore: AuthKVStore = {
+        read: async () => null,
+        readMany: async () => ({}),
+        write: async () => {},
+        apply: async () => {},
+        clear: async () => {}
+    };
+    const fromStore: DBAuthState = await makeAuthStateFromStore(fakeStore);
+    await fromStore.saveCreds();
+    const r = await useRedisAuthState({ client: {}, session: 's', prefix: 'p' });
+    const m = await useMongoAuthState({ collection: {}, session: 's' });
+    const p = await usePostgresAuthState({ client: {}, table: 't', session: 's' });
+    const q = await useMySQLAuthState({ client: {}, table: 't', session: 's' });
+    void r.state.creds; void m; void p; void q;
+}
+void _dbAuthChecks;
     const mentions: string[] = parseMentions('hi @62812345678');
     const code: string | null = extractGroupInviteCode('https://chat.whatsapp.com/AbCdEfGh12345678');
     const report: BroadcastReport = await sendBroadcast({} as any, ['1@s.whatsapp.net'], { text: 'x' }, { delayMs: 0 });
