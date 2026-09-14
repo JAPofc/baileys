@@ -38,6 +38,12 @@ export interface AIRichEditOptions {
 /** AI rich-response builder (Meta AI / GenAI message primitives). */
 export class AIRich extends BaseBuilder {
     constructor(client: any);
+    /** Schema-backed primitives — safe to build on. */
+    static STABLE_METHODS: Set<string>;
+    /** Reverse-engineered primitives — may break after a WhatsApp client update. */
+    static EXPERIMENTAL_METHODS: Set<string>;
+    /** True when `name` is a reverse-engineered primitive with no public schema backing. */
+    static isExperimental(name: string): boolean;
     addSubmessage(submessage: Record<string, any>): this;
     addSection(section: Record<string, any>): this;
     addText(text: string, options?: AddTextOptions): this;

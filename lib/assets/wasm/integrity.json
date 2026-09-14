@@ -1,0 +1,13 @@
+{
+  "generatedAt": "2026-09-14T04:25:26.277590+00:00",
+  "files": {
+    "whatsapp.wasm": {
+      "sha256": "5f1350997c0bf3213782a7bdd3c846529d328552bfa7b87f10224f021346ce35",
+      "size": 9819554
+    },
+    "worker-modules.js": {
+      "sha256": "5f796684bf5590f4d48c1418cf4625e93d359c774a7c994df882be7a3a09d9d8",
+      "size": 826343
+    }
+  }
+}

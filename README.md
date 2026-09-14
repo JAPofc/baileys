@@ -331,23 +331,26 @@ npm install github:JAPofc/baileys
 
 Everything below is **optional** — the socket works without any of them. Install only what the features you use need; missing ones fail with a clear install hint instead of a silent crash.
 
-| Package | Unlocks |
-|---|---|
-| `sharp` | Fast image resizing/processing (used by the message builders' `Toolkit.resize`) |
-| `@napi-rs/image` | Lighter native alternative to `sharp` for image ops |
-| `jimp` | Pure-JS image fallback when neither of the above is installed |
-| `fluent-ffmpeg` | Audio/video conversion for media messages |
-| `ffmpeg-static` | Bundled ffmpeg **binary** — auto-detected, zero config (~80MB; not available for Termux/Android, use `pkg install ffmpeg` there) |
-| `@ffmpeg-installer/ffmpeg` | Alternative bundled ffmpeg binary — also auto-detected |
-| `audio-decode` | Audio waveform/duration extraction (voice notes, VoIP capture) |
-| `link-preview-js` | Rich link previews for URLs in outgoing text messages |
-| `better-sqlite3` | SQLite auth state, SQLite store adapter, **and** the [Bot Framework](#-bot-framework)'s `SQLiteStore`/`StatsManager` |
-| `node-webpmux` | Packname/author EXIF metadata on stickers made via `MediaManager.convertToSticker()` — not needed for plain sticker conversion |
-| `mongodb` | MongoDB store adapter |
-| `mysql2` | MySQL store adapter |
-| `pg` | PostgreSQL store adapter |
-| `ioredis` | Redis store adapter |
-| `@roamhq/wrtc` | Native WebRTC bindings for [voice calling](#-voice--video-calls) |
+| Package | Compatible versions | Unlocks |
+|---|---|---|
+| `sharp` | any | Fast image resizing/processing (used by the message builders' `Toolkit.resize`) |
+| `@napi-rs/image` | `~1.12.x` | Lighter native alternative to `sharp` for image ops |
+| `jimp` | bundled (`^1.6.x`) | Pure-JS image fallback when neither of the above is installed — ships as a regular dependency, nothing to install |
+| `fluent-ffmpeg` | `^2.1.3` | Audio/video conversion for media messages |
+| `ffmpeg-static` | `>=5.0.0` | Bundled ffmpeg **binary** — auto-detected, zero config (~80MB; not available for Termux/Android, use `pkg install ffmpeg` there) |
+| `@ffmpeg-installer/ffmpeg` | `>=1.1.0` | Alternative bundled ffmpeg binary — also auto-detected |
+| `audio-decode` | `^2.2.3` | Audio waveform/duration extraction (voice notes, VoIP capture) |
+| `link-preview-js` | `^3.x` | Rich link previews for URLs in outgoing text messages |
+| `better-sqlite3` | `^11.x` (Node 20 ABI) | SQLite auth state, SQLite store adapter, **and** the [Bot Framework](#-bot-framework)'s `SQLiteStore`/`StatsManager` |
+| `node-webpmux` | `^3.2.x` | Packname/author EXIF metadata on stickers made via `MediaManager.convertToSticker()` — not needed for plain sticker conversion |
+| `mongodb` | `^6.10+` | MongoDB store adapter |
+| `mysql2` | `^3.11+` | MySQL store adapter |
+| `pg` | `^8.13+` | PostgreSQL store adapter |
+| `ioredis` | `^5.4+` | Redis store adapter |
+| `@roamhq/wrtc` | any (platform-dependent native bindings) | Native WebRTC bindings for [voice calling](#-voice--video-calls) |
+| `axios` | any (optional) | Fallback HTTP client for URL thumbnails in button messages — **not required**: the built-in `fetch` (Node 18+) is used first |
+
+The version column mirrors this package's `peerDependencies` ranges — those are the ranges the test suite runs against. Newer majors usually work but aren't verified; `npm ls <pkg>` + `printEnvironmentReport()` (below) will tell you what you actually have.
 
 #### ffmpeg: how it's found
 

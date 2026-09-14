@@ -44,6 +44,11 @@ export interface MakePersistentStoreConfig {
 	logger?: any;
 	chatKey?: any;
 	labelAssociationKey?: any;
+	/**
+	 * Max messages hydrated into memory per chat at startup (newest first).
+	 * Older history stays in the backend. Default 1000; 0 = unlimited.
+	 */
+	maxMessagesPerChat?: number;
 }
 
 /**
@@ -55,6 +60,8 @@ export interface MakePersistentStoreConfig {
 export function makePersistentStore(config: MakePersistentStoreConfig): Promise<
 	ReturnType<typeof import('../Store/make-in-memory-store.js').makeInMemoryStore> & {
 		adapter: StoreAdapter;
+		/** Await all pending write-through persistence (use before shutdown). */
+		flush(): Promise<void>;
 		close(): Promise<void>;
 	}
 >;

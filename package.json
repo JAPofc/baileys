@@ -1,7 +1,7 @@
 {
   "name": "@japofc/baileys",
   "version": "2.4.1",
-  "description": "Feature-rich WhatsApp Multi-Device library for Node.js — interactive messages, native flows, polls, newsletters, VoIP, mini-apps and everyday bot utilities.",
+  "description": "Feature-rich WhatsApp Multi-Device library for Node.js \u2014 interactive messages, native flows, polls, newsletters, VoIP, mini-apps and everyday bot utilities.",
   "type": "module",
   "main": "./lib/index.js",
   "module": "./lib/index.js",
@@ -105,7 +105,8 @@
     "mysql2": "^3.11.0",
     "node-webpmux": "^3.2.0",
     "pg": "^8.13.0",
-    "sharp": "*"
+    "sharp": "*",
+    "axios": "*"
   },
   "peerDependenciesMeta": {
     "@napi-rs/image": {
@@ -148,6 +149,9 @@
       "optional": true
     },
     "sharp": {
+      "optional": true
+    },
+    "axios": {
       "optional": true
     }
   },

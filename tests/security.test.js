@@ -84,13 +84,17 @@ describe('security: encrypted auth-state backends', () => {
         await saveCreds();
         assert.ok(isEncryptedPayload((await fs.readFile(join(dir, 'creds.json'), 'utf8')).trim()));
     });
-    it('multi-file: wrong password yields fresh creds + clearState works', async () => {
+    it('multi-file: wrong password REFUSES to open (protects the real session)', async () => {
         const dir = await mkTmp('jap-enc-wrong-');
         const s1 = await useEncryptedFileAuthState(dir, { password: PW });
         s1.state.creds.me = { id: '1@s.whatsapp.net', name: 'X' };
         await s1.saveCreds();
-        const s2 = await useEncryptedFileAuthState(dir, { password: 'wrong', logger: { warn() {} } });
-        assert.equal(s2.state.creds.me, undefined);
+        // A wrong password must throw — NOT mint fresh creds that would
+        // overwrite the real session on the next saveCreds().
+        await assert.rejects(useEncryptedFileAuthState(dir, { password: 'wrong', logger: { warn() {} } }), /cannot decrypt creds\.json|wrong password/);
+        // the real session survives untouched and still opens with the right password
+        const s2 = await useEncryptedFileAuthState(dir, { password: PW });
+        assert.equal(s2.state.creds.me.id, '1@s.whatsapp.net');
         await s2.clearState();
         assert.deepEqual(await fs.readdir(dir), []);
     });

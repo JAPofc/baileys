@@ -6,6 +6,7 @@
  * Usage: node --experimental-websocket scripts/fetch-wasm-resources.mjs
  */
 import { writeFileSync } from "fs";
+import { createHash } from "crypto";
 import { resolve, dirname } from "path";
 import { fileURLToPath } from "url";
 
@@ -73,8 +74,25 @@ async function main() {
   console.log("Fetching whatsapp.wasm from:", resourceInfo.wasmUrl);
   const wasmResp = await fetch(resourceInfo.wasmUrl);
   const wasmBuffer = Buffer.from(await wasmResp.arrayBuffer());
+  // JAP@Add (WASM integrity): refuse to overwrite the bundled binary with a
+  // truncated/HTML-error response — check the wasm magic before writing.
+  if (wasmBuffer.length < 8 || wasmBuffer.readUInt32LE(0) !== 0x6d736100) {
+    throw new Error(`fetched whatsapp.wasm is not a valid wasm binary (${wasmBuffer.length} bytes) — refusing to overwrite`);
+  }
   writeFileSync(resolve(RESOURCES_DIR, "whatsapp.wasm"), wasmBuffer);
   console.log(`  Written: whatsapp.wasm (${wasmBuffer.length} bytes)`);
+
+  // JAP@Add (WASM integrity): pinned-hash manifest, verified at engine init.
+  const sha = (buf) => createHash("sha256").update(buf).digest("hex");
+  const manifest = {
+    generatedAt: new Date().toISOString(),
+    files: {
+      "whatsapp.wasm": { sha256: sha(wasmBuffer), size: wasmBuffer.length },
+      "worker-modules.js": { sha256: sha(Buffer.from(workerCode)), size: Buffer.byteLength(workerCode) }
+    }
+  };
+  writeFileSync(resolve(RESOURCES_DIR, "integrity.json"), JSON.stringify(manifest, null, 2));
+  console.log("  Written: integrity.json (pinned sha256 manifest)");
 
   ws.close();
   console.log("\nDone! Resources updated.");

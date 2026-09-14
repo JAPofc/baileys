@@ -16,6 +16,12 @@ export interface BotConfig {
      * Default true; set false or pin `socketConfig.version` to opt out.
      */
     versionCheck?: boolean;
+    /**
+     * Path for durable message-queue persistence. When set, messages queued
+     * while disconnected survive a process restart (restored on start()).
+     * Default: null (in-memory only).
+     */
+    queueFile?: string | null;
     logger?: any;
 }
 
