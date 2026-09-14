@@ -1,7 +1,7 @@
 import { describe, it } from 'node:test';
 import assert from 'node:assert/strict';
 
-describe('WIN_HYBRID web sub-platform (upstream 0af2386 backport)', () => {
+describe('WIN_HYBRID web sub-platform fix', () => {
     it('generateLoginNode advertises WIN_HYBRID (5), never retired WIN32 (4), for Windows Desktop', async () => {
         const { generateLoginNode, proto } = await import('../lib/index.js');
         const node = generateLoginNode('628123456789:1@s.whatsapp.net', {
@@ -26,7 +26,7 @@ describe('WIN_HYBRID web sub-platform (upstream 0af2386 backport)', () => {
     });
 });
 
-describe('profile picture tctoken nesting (upstream 731cd6b backport)', () => {
+describe('profile picture tctoken nesting fix', () => {
     it('buildProfilePictureQueryContent without token: bare picture node', async () => {
         const { buildProfilePictureQueryContent } = await import('../lib/Socket/chats.js');
         assert.deepEqual(buildProfilePictureQueryContent('preview'), [
