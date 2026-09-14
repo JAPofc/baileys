@@ -12,6 +12,8 @@ import makeWASocket, {
     withMusicAttribution, type StatusMusicAttribution,
     useRedisAuthState, useMongoAuthState, usePostgresAuthState, useMySQLAuthState,
     makeAuthStateFromStore, type AuthKVStore, type DBAuthState,
+    exportChatAsText, exportChatAsJSON, exportChatAsCSV, chatStatistics,
+    classifyExportMessage, type ExportMessageKind, type ChatStatistics, type ExportedChatRow,
     parseMentions, extractGroupInviteCode, sendBroadcast, type BroadcastReport,
     // core
     initAuthCreds, fetchBestWaVersion, fetchLatestWaWebVersion, DisconnectReason,
@@ -112,6 +114,13 @@ async function _dbAuthChecks() {
     void r.state.creds; void m; void p; void q;
 }
 void _dbAuthChecks;
+// chat export — compile checks
+const transcript: string = exportChatAsText([], { mediaPlaceholders: 'descriptive', includeReactions: true, header: '' });
+const rows: ExportedChatRow[] = exportChatAsJSON([], { resolveName: (jid) => jid });
+const csv: string = exportChatAsCSV([]);
+const stats: ChatStatistics = chatStatistics([], { topWords: 5, minWordLength: 4 });
+const kind: ExportMessageKind = classifyExportMessage({} as any);
+void transcript; void rows; void csv; void stats; void kind;
     const mentions: string[] = parseMentions('hi @62812345678');
     const code: string | null = extractGroupInviteCode('https://chat.whatsapp.com/AbCdEfGh12345678');
     const report: BroadcastReport = await sendBroadcast({} as any, ['1@s.whatsapp.net'], { text: 'x' }, { delayMs: 0 });
