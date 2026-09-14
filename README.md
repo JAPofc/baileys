@@ -12,7 +12,7 @@
 <a href="https://github.com/JAPofc/baileys/actions/workflows/ci.yml" target="_blank"><img src="https://img.shields.io/github/actions/workflow/status/JAPofc/baileys/ci.yml?branch=main&style=flat-square&label=CI&color=2ecc71" alt="CI status"/></a>
 <a href="https://japofc.github.io/baileys/" target="_blank"><img src="https://img.shields.io/badge/docs-typedoc-8e44ad?style=flat-square" alt="API docs"/></a>
 <img src="https://img.shields.io/badge/npm-provenance%20attested-2ecc71?style=flat-square&logo=npm&logoColor=white" alt="npm provenance"/>
-<img src="https://img.shields.io/badge/tests-335%20passing-2ecc71?style=flat-square" alt="Tests"/>
+<img src="https://img.shields.io/badge/tests-347%20passing-2ecc71?style=flat-square" alt="Tests"/>
 <a href="https://socket.dev/npm/package/@japofc/baileys" target="_blank"><img src="https://socket.dev/api/badge/npm/package/@japofc/baileys" alt="Socket badge"/></a>
 <img src="https://img.shields.io/badge/tsc%20--strict-clean-3178c6?style=flat-square&logo=typescript&logoColor=white" alt="tsc strict clean"/>
 <img src="https://img.shields.io/github/last-commit/JAPofc/baileys?color=9b59b6&style=flat-square" alt="Last commit"/>
@@ -94,7 +94,7 @@ Most Baileys forks are the upstream code with a renamed package and a couple of 
 | | |
 |---|---|
 | 🔬 | **Audited core, not just re-exported** — store consistency, reconnect lifecycle, Signal session recovery and retry-receipt parsing all had real reproduced bugs fixed here, each locked in by a regression test |
-| 🧪 | **335 tests + `tsc --strict` in CI** — message shapes round-trip through real protobuf encode→decode; a published-package smoke test runs after every npm release |
+| 🧪 | **347 tests + `tsc --strict` in CI** — message shapes round-trip through real protobuf encode→decode; a published-package smoke test runs after every npm release |
 | 📊 | **Built-in observability** — `createDebugMonitor()` gives connection state, message latency percentiles, Signal error tallies and retry stats, with secrets structurally redacted |
 | 🎯 | Extended native flow support, carousel, AIRich cards, mini-apps |
 | 🗄️ | Multiple auth & store backends out of the box (file, SQLite, MongoDB, MySQL, PostgreSQL, Redis) |
@@ -1042,7 +1042,29 @@ const stats = chatStatistics(messages)
 
 Also available with zero code: `npx @japofc/baileys export dump.json --format text|json|csv`.
 
-`npm test` runs the offline suite (`tests/`, 335 tests, no network needed).
+**Offline bot testing (`createMockSocket`)** — test your bot logic in CI with
+zero WhatsApp account, zero network, zero ban risk:
+
+```js
+import { createMockSocket, createRouter } from '@japofc/baileys'
+import assert from 'assert'
+
+const mock = createMockSocket()
+myBotSetup(mock.sock)              // your real bot code, unchanged
+
+await mock.receiveText('628xx@s.whatsapp.net', '!ping')
+const reply = await mock.waitForReply()
+assert.equal(reply.content.text, 'pong! 🏓')
+```
+
+Same `ev` surface and `sendMessage()` signature as the live socket; outgoing
+messages are REAL `proto.WebMessageInfo` objects built through the same
+`generateWAMessage()` pipeline. Supports group injection, quoted replies,
+connection lifecycle simulation, read-receipt/presence capture, and
+`reset()` between tests. Honest scope: it does not emulate WhatsApp servers —
+rate limits, sessions, and encryption are out of scope by design.
+
+`npm test` runs the offline suite (`tests/`, 347 tests, no network needed).
 
 ---
 

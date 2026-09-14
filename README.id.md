@@ -12,7 +12,7 @@
 <a href="https://github.com/JAPofc/baileys/actions/workflows/ci.yml" target="_blank"><img src="https://img.shields.io/github/actions/workflow/status/JAPofc/baileys/ci.yml?branch=main&style=flat-square&label=CI&color=2ecc71" alt="status CI"/></a>
 <a href="https://japofc.github.io/baileys/" target="_blank"><img src="https://img.shields.io/badge/docs-typedoc-8e44ad?style=flat-square" alt="Dokumentasi API"/></a>
 <img src="https://img.shields.io/badge/npm-provenance%20attested-2ecc71?style=flat-square&logo=npm&logoColor=white" alt="npm provenance"/>
-<img src="https://img.shields.io/badge/tests-335%20passing-2ecc71?style=flat-square" alt="Tes"/>
+<img src="https://img.shields.io/badge/tests-347%20passing-2ecc71?style=flat-square" alt="Tes"/>
 <a href="https://socket.dev/npm/package/@japofc/baileys" target="_blank"><img src="https://socket.dev/api/badge/npm/package/@japofc/baileys" alt="Socket badge"/></a>
 <img src="https://img.shields.io/badge/tsc%20--strict-clean-3178c6?style=flat-square&logo=typescript&logoColor=white" alt="tsc strict bersih"/>
 <img src="https://img.shields.io/badge/node-%3E%3D20-brightgreen?style=flat-square" alt="Node >=20"/>
@@ -44,7 +44,7 @@ Kebanyakan fork Baileys cuma kode upstream yang di-rename plus beberapa snippet 
 | | |
 |---|---|
 | 🔬 | **Inti yang diaudit, bukan sekadar re-export** — konsistensi store, lifecycle reconnect, pemulihan sesi Signal, dan parsing retry-receipt semuanya punya bug nyata yang direproduksi lalu diperbaiki di sini, masing-masing dikunci regression test |
-| 🧪 | **335 tes + `tsc --strict` di CI** — bentuk pesan diuji round-trip lewat encode→decode protobuf sungguhan; smoke test paket terpublish jalan otomatis setelah tiap rilis npm |
+| 🧪 | **347 tes + `tsc --strict` di CI** — bentuk pesan diuji round-trip lewat encode→decode protobuf sungguhan; smoke test paket terpublish jalan otomatis setelah tiap rilis npm |
 | 📊 | **Observability bawaan** — `createDebugMonitor()` memberi status koneksi, persentil latensi pesan, hitungan error Signal, dan statistik retry, dengan rahasia (QR/kunci/token) diredaksi secara struktural |
 | 🎯 | Dukungan native flow diperluas, carousel, kartu AIRich, mini-app |
 | 🗄️ | Banyak backend auth & store langsung tersedia (file, SQLite, MongoDB, MySQL, PostgreSQL, Redis) |
@@ -971,6 +971,28 @@ const stats = chatStatistics(messages)
 ```
 
 Bisa juga tanpa kode sama sekali: `npx @japofc/baileys export dump.json --format text|json|csv`.
+
+**Testing bot offline (`createMockSocket`)** — tes logika bot di CI tanpa akun
+WhatsApp, tanpa jaringan, tanpa risiko banned:
+
+```js
+import { createMockSocket, createRouter } from '@japofc/baileys'
+import assert from 'assert'
+
+const mock = createMockSocket()
+setupBotKu(mock.sock)              // kode bot asli, tanpa diubah
+
+await mock.receiveText('628xx@s.whatsapp.net', '!ping')
+const reply = await mock.waitForReply()
+assert.equal(reply.content.text, 'pong! 🏓')
+```
+
+Permukaan `ev` dan signature `sendMessage()` sama dengan socket asli; pesan
+keluar adalah `proto.WebMessageInfo` SUNGGUHAN lewat pipeline
+`generateWAMessage()` yang sama. Mendukung injeksi grup, quoted reply, simulasi
+lifecycle koneksi, capture read-receipt/presence, dan `reset()` antar tes.
+Scope jujur: TIDAK mengemulasi server WhatsApp — rate limit, sesi, dan enkripsi
+di luar cakupan by design.
 
 `npm test` menjalankan suite offline (`tests/`, tanpa jaringan).
 

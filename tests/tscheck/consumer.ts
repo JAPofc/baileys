@@ -14,6 +14,7 @@ import makeWASocket, {
     makeAuthStateFromStore, type AuthKVStore, type DBAuthState,
     exportChatAsText, exportChatAsJSON, exportChatAsCSV, chatStatistics,
     classifyExportMessage, type ExportMessageKind, type ChatStatistics, type ExportedChatRow,
+    createMockSocket, type MockWASocket, type MockOutboxEntry,
     parseMentions, extractGroupInviteCode, sendBroadcast, type BroadcastReport,
     // core
     initAuthCreds, fetchBestWaVersion, fetchLatestWaWebVersion, DisconnectReason,
@@ -121,6 +122,17 @@ const csv: string = exportChatAsCSV([]);
 const stats: ChatStatistics = chatStatistics([], { topWords: 5, minWordLength: 4 });
 const kind: ExportMessageKind = classifyExportMessage({} as any);
 void transcript; void rows; void csv; void stats; void kind;
+// mock socket — compile checks
+async function _mockChecks() {
+    const mock: MockWASocket = createMockSocket({ me: '1@s.whatsapp.net', pushName: 'T', autoConnect: false });
+    mock.connect();
+    await mock.receiveText('2@s.whatsapp.net', 'hi', { groupJid: '3@g.us', pushName: 'X' });
+    const entry: MockOutboxEntry = await mock.waitForReply((e) => e.jid.length > 0, 100);
+    void entry.message; void mock.outbox; void mock.connectionState;
+    mock.disconnect(new Error('bye'));
+    mock.reset();
+}
+void _mockChecks;
     const mentions: string[] = parseMentions('hi @62812345678');
     const code: string | null = extractGroupInviteCode('https://chat.whatsapp.com/AbCdEfGh12345678');
     const report: BroadcastReport = await sendBroadcast({} as any, ['1@s.whatsapp.net'], { text: 'x' }, { delayMs: 0 });
