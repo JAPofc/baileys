@@ -38,7 +38,14 @@ export function makeSocket(config: any): {
     uploadPreKeysToServerIfRequired: () => Promise<void>;
     digestKeyBundle: () => Promise<void>;
     rotateSignedPreKey: () => Promise<void>;
-    requestPairingCode: (phoneNumber: any, customPairingCode: any) => Promise<any>;
+    /**
+     * Request a phone-number pairing code. `phoneNumber` is normalized to digits
+     * (accepts `+`, spaces, dashes). `customPairingCode` (optional) must be 8
+     * Crockford base32 characters (1-9, A-Z excluding I/O/U); lowercase is
+     * accepted and uppercased. Safe to call right after socket creation — it
+     * waits for the connection to open before sending.
+     */
+    requestPairingCode: (phoneNumber: string | number, customPairingCode?: string) => Promise<string>;
     updateServerTimeOffset: ({ attrs }: {
         attrs: any;
     }) => void;

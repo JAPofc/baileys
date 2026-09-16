@@ -34,7 +34,12 @@ export function extractImageThumb(bufferOrFilePath: any, width?: number): Promis
     };
 }>;
 export function encodeBase64EncodedStringForUpload(b64: any): string;
-export function generateProfilePicture(mediaUpload: any, dimensions: any): Promise<{
+export function generateProfilePicture(mediaUpload: any, dimensions?: {
+    width?: number;
+    height?: number;
+    /** 'cover' (default, WhatsApp-style center crop) or 'contain' (full picture, letterboxed — no cropping) */
+    fit?: 'cover' | 'contain';
+}): Promise<{
     img: any;
 }>;
 export function mediaMessageSHA256B64(message: any): any;

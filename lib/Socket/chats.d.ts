@@ -42,7 +42,12 @@ export function makeChatsSocket(config: any): {
     fetchBlocklist: () => Promise<any>;
     fetchStatus: (...jids: any[]) => Promise<any>;
     fetchDisappearingDuration: (...jids: any[]) => Promise<any>;
-    updateProfilePicture: (jid: any, content: any, dimensions: any) => Promise<void>;
+    /** update the profile picture for yourself or a group; pass `{ fit: 'contain' }` in dimensions for a full-size (uncropped) picture */
+    updateProfilePicture: (jid: any, content: any, dimensions?: {
+        width?: number;
+        height?: number;
+        fit?: 'cover' | 'contain';
+    }) => Promise<void>;
     removeProfilePicture: (jid: any) => Promise<void>;
     updateProfileStatus: (status: any) => Promise<void>;
     updateProfileName: (name: any) => Promise<void>;
