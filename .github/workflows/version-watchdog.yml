@@ -41,9 +41,14 @@ jobs:
           const rev = text.match(/\\\\?\"client_revision\\\\?\":\s*(\d+)/)?.[1];
           if (!rev) { console.error('client_revision not found (WA changed sw.js?) — flagging'); }
           const live = Number(rev ?? 0);
-          const drift = live > fallback;
+          // WA bumps client_revision several times a DAY (~65k/day observed),
+          // so live > fallback is true almost always and flagging on it is
+          // pure noise. Only flag when the fallback lags far enough to be a
+          // real stale-version pairing risk (~2+ weeks of drift).
+          const DRIFT_THRESHOLD = 1_000_000;
+          const drift = live - fallback > DRIFT_THRESHOLD;
           fs.appendFileSync(process.env.GITHUB_OUTPUT, 'fallback=' + fallback + '\n' + 'live=' + live + '\n' + 'drift=' + (drift || !rev) + '\n');
-          console.log({ fallback, live, drift });
+          console.log({ fallback, live, delta: live - fallback, drift });
           "
       - name: Open/update tracking issue when drifted
         if: steps.cmp.outputs.drift == 'true'
@@ -81,5 +86,25 @@ jobs:
               await github.rest.issues.create({
                 owner: context.repo.owner, repo: context.repo.repo,
                 title, body, labels: ['wa-version-drift', 'maintenance'],
+              });
+            }
+      - name: Close tracking issue when drift is resolved
+        if: steps.cmp.outputs.drift != 'true'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const { data: issues } = await github.rest.issues.listForRepo({
+              owner: context.repo.owner, repo: context.repo.repo,
+              state: 'open', labels: 'wa-version-drift',
+            });
+            for (const issue of issues) {
+              await github.rest.issues.createComment({
+                owner: context.repo.owner, repo: context.repo.repo,
+                issue_number: issue.number,
+                body: 'Resolved: fallback `' + '${{ steps.cmp.outputs.fallback }}' + '` now matches or exceeds live `' + '${{ steps.cmp.outputs.live }}' + '`. Closing.',
+              });
+              await github.rest.issues.update({
+                owner: context.repo.owner, repo: context.repo.repo,
+                issue_number: issue.number, state: 'closed', state_reason: 'completed',
               });
             }
