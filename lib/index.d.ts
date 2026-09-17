@@ -7,6 +7,7 @@ export * from "./WABinary/index.js";
 export * from "./WAM/index.js";
 export * from "./WAUSync/index.js";
 export { Dugong } from "./Socket/dugong.js";
+export { USERNAME_QUERY_IDS, fetchLatestUsernameQueryIds } from "./Socket/username.js";
 export { Bot, Context, MediaManager, SessionManager, StatsManager, SQLiteStore } from "./Framework/index.js";
 export { VoipClient, ActiveCall, CallState, attachVoip, createWavRecorder } from "./VoIP/index.js";
 export type { BotConfig, BotMiddleware, BotCommandHandler, StickerMetadata, StatRow, GhostEntry } from "./Framework/index.js";

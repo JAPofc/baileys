@@ -13,6 +13,16 @@ export declare const USERNAME_QUERY_IDS: UsernameQueryIds;
 /** Type twin of the const above (lets `import('…').USERNAME_QUERY_IDS` resolve in type position). */
 export type USERNAME_QUERY_IDS = UsernameQueryIds;
 
+/**
+ * Fetch the freshest USERNAME_QUERY_IDS from the repo's main branch (used by
+ * `autoRotateQueryIds`). Never throws — resolves to the pinned fallback set
+ * (`isLatest: false`) on any failure.
+ */
+export declare const fetchLatestUsernameQueryIds: (options?: {
+    timeoutMs?: number;
+    dispatcher?: unknown;
+}) => Promise<{ queryIds: UsernameQueryIds; isLatest: boolean }>;
+
 export interface UsernameCheckResult {
     SUCCESS: 'SUCCESS';
     INVALID: 'INVALID';

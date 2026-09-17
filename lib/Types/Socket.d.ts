@@ -69,6 +69,12 @@ export type SocketConfig = {
      * Keys: CHECK, CHECK_MULTI, SET, GET, GET_RECOMMENDATIONS, PIN_SET.
      */
     usernameQueryIds?: Partial<Record<'CHECK' | 'CHECK_MULTI' | 'SET' | 'GET' | 'GET_RECOMMENDATIONS' | 'PIN_SET', string>>;
+    /**
+     * Auto-refresh the username GraphQL query_ids from the repo's main branch
+     * at socket creation (background, never throws, pinned IDs remain the
+     * fallback). Manual `usernameQueryIds` overrides always win. Default: false.
+     */
+    autoRotateQueryIds?: boolean;
     /** should events be emitted for actions done by this socket connection */
     emitOwnEvents: boolean;
     /** custom upload hosts to upload media to */
