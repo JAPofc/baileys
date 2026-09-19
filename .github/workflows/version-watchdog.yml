@@ -1,11 +1,14 @@
 name: WA version watchdog
 
-# Weekly check: compares WhatsApp Web's live client_revision against the
-# hardcoded fallback in lib/Defaults/index.js. When they drift apart it opens
-# (or updates) a single tracking issue so the fallback + proto get bumped
-# before stale-version pairing rejections (upstream#2370/#2485) can bite.
+# Weekly self-healing version sync: compares WhatsApp Web's live
+# client_revision against the hardcoded fallback in lib/Defaults/index.js.
+# When they drift far enough apart it AUTO-BUMPS the fallback and commits the
+# change directly to main — fetchLatestBaileysVersion() reads that file from
+# raw.githubusercontent.com, so every user on the fetch chain picks the fresh
+# version up immediately, no npm release needed. A tracking issue is only
+# opened when the auto-bump itself fails (e.g. sw.js format changed).
 # Runtime users are already protected by fetchBestWaVersion(); this guards
-# the offline fallback and reminds us to re-sync WAProto.
+# the offline fallback and the fetchLatestBaileysVersion() source of truth.
 
 on:
   schedule:
@@ -14,7 +17,7 @@ on:
 
 permissions:
   issues: write
-  contents: read
+  contents: write
 
 jobs:
   check:
@@ -41,34 +44,59 @@ jobs:
           const rev = text.match(/\\\\?\"client_revision\\\\?\":\s*(\d+)/)?.[1];
           if (!rev) { console.error('client_revision not found (WA changed sw.js?) — flagging'); }
           const live = Number(rev ?? 0);
-          // WA bumps client_revision several times a DAY (~65k/day observed),
-          // so live > fallback is true almost always and flagging on it is
-          // pure noise. Only flag when the fallback lags far enough to be a
-          // real stale-version pairing risk (~2+ weeks of drift).
-          const DRIFT_THRESHOLD = 1_000_000;
-          const drift = live - fallback > DRIFT_THRESHOLD;
-          fs.appendFileSync(process.env.GITHUB_OUTPUT, 'fallback=' + fallback + '\n' + 'live=' + live + '\n' + 'drift=' + (drift || !rev) + '\n');
-          console.log({ fallback, live, delta: live - fallback, drift });
+          // WA bumps client_revision several times a DAY (~65k/day observed).
+          // Auto-bump when the fallback lags more than ~2 days of drift so the
+          // committed fallback stays perpetually fresh without churn on every run.
+          const BUMP_THRESHOLD = 150_000;
+          const bump = !!rev && live - fallback > BUMP_THRESHOLD;
+          const parseFailed = !rev;
+          fs.appendFileSync(process.env.GITHUB_OUTPUT, 'fallback=' + fallback + '\n' + 'live=' + live + '\n' + 'bump=' + bump + '\n' + 'parse_failed=' + parseFailed + '\n');
+          console.log({ fallback, live, delta: live - fallback, bump, parseFailed });
           "
-      - name: Open/update tracking issue when drifted
-        if: steps.cmp.outputs.drift == 'true'
+      - name: Auto-bump fallback version and push to main
+        id: autobump
+        if: steps.cmp.outputs.bump == 'true'
+        run: |
+          set -e
+          TODAY="$(date -u +%Y-%m-%d)"
+          node --input-type=module -e "
+          import fs from 'node:fs';
+          const path = 'lib/Defaults/index.js';
+          const src = fs.readFileSync(path, 'utf8');
+          const updated = src.replace(
+            /const version = \[2, 3000, \d+\];[^\n]*/,
+            'const version = [2, 3000, ${{ steps.cmp.outputs.live }}]; // JAP@Update: auto-bumped by version-watchdog ($(date -u +%Y-%m-%d))'
+          );
+          if (updated === src) { console.error('replace failed'); process.exit(1); }
+          fs.writeFileSync(path, updated);
+          "
+          # keep the freshness-floor test honest: it asserts >= a fixed baseline, so no test edit needed
+          node --test tests/pairing-and-avatar.test.js
+          git config user.name "J.AP"
+          git config user.email "japofc@users.noreply.github.com"
+          git add lib/Defaults/index.js
+          git commit -m "chore: auto-bump WA web fallback to 2.3000.${{ steps.cmp.outputs.live }} [version-watchdog]"
+          git push origin HEAD:main
+      - name: Open/update tracking issue when automation cannot fix it
+        if: steps.cmp.outputs.parse_failed == 'true' || failure()
         uses: actions/github-script@v7
         with:
           script: |
-            const title = 'chore: WA Web version fallback is stale — bump Defaults + re-sync WAProto';
+            const title = 'chore: WA version watchdog needs attention (auto-bump failed or sw.js unparseable)';
             const body = [
-              'The weekly watchdog found drift between WhatsApp Web and this repo:',
+              'The weekly watchdog could not self-heal:',
               '',
               '| | client_revision |',
               '|---|---|',
               '| live web.whatsapp.com | `' + '${{ steps.cmp.outputs.live }}' + '` |',
               '| lib/Defaults fallback | `' + '${{ steps.cmp.outputs.fallback }}' + '` |',
               '',
-              'Runtime users are safe (fetchBestWaVersion resolves live), but the offline fallback should be bumped and WAProto re-synced against current WA Web. Checklist:',
+              'Either the sw.js client_revision format changed (parser needs an update in',
+              '`lib/Utils/generics.js` + this workflow), or the auto-bump commit/push failed',
+              '(check the run log). Manual checklist:',
               '- [ ] Update `const version` in `lib/Defaults/index.js`',
-              '- [ ] Diff current WA Web proto vs `WAProto/` and merge new fields',
               '- [ ] `npm test` (proto-regression suite must stay green)',
-              '- [ ] Release a patch version',
+              '- [ ] Fix whatever blocked the automation',
               '',
               '_Auto-filed by `.github/workflows/version-watchdog.yml` — this issue is updated, not duplicated, on later runs._',
             ].join('\n');
@@ -80,7 +108,7 @@ jobs:
               await github.rest.issues.createComment({
                 owner: context.repo.owner, repo: context.repo.repo,
                 issue_number: issues[0].number,
-                body: 'Still drifted as of ' + new Date().toISOString().slice(0, 10) + ': live `' + '${{ steps.cmp.outputs.live }}' + '` vs fallback `' + '${{ steps.cmp.outputs.fallback }}' + '`.',
+                body: 'Still failing as of ' + new Date().toISOString().slice(0, 10) + ': live `' + '${{ steps.cmp.outputs.live }}' + '` vs fallback `' + '${{ steps.cmp.outputs.fallback }}' + '`.',
               });
             } else {
               await github.rest.issues.create({
@@ -88,8 +116,8 @@ jobs:
                 title, body, labels: ['wa-version-drift', 'maintenance'],
               });
             }
-      - name: Close tracking issue when drift is resolved
-        if: steps.cmp.outputs.drift != 'true'
+      - name: Close tracking issue when healthy
+        if: steps.cmp.outputs.parse_failed != 'true' && success()
         uses: actions/github-script@v7
         with:
           script: |
@@ -101,7 +129,7 @@ jobs:
               await github.rest.issues.createComment({
                 owner: context.repo.owner, repo: context.repo.repo,
                 issue_number: issue.number,
-                body: 'Resolved: fallback `' + '${{ steps.cmp.outputs.fallback }}' + '` now matches or exceeds live `' + '${{ steps.cmp.outputs.live }}' + '`. Closing.',
+                body: 'Healthy: fallback `' + '${{ steps.cmp.outputs.fallback }}' + '`' + (${{ steps.cmp.outputs.bump == 'true' }} ? ' auto-bumped to `' + '${{ steps.cmp.outputs.live }}' + '`' : ' is fresh enough vs live `' + '${{ steps.cmp.outputs.live }}' + '`') + '. Closing.',
               });
               await github.rest.issues.update({
                 owner: context.repo.owner, repo: context.repo.repo,
