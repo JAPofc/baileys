@@ -29,6 +29,23 @@ export function decryptEventResponse({ encPayload, encIv }: {
     responderJid: any;
 }): any;
 /**
+ * Encrypt an event response (RSVP) — exact inverse of decryptEventResponse.
+ * Returns `{ encPayload, encIv }` ready for `encEventResponseMessage`.
+ */
+export function encryptEventResponse(response: {
+    response: number;
+    timestampMs?: number;
+    extraGuestCount?: number;
+}, ctx: {
+    eventCreatorJid: string;
+    eventMsgId: string;
+    eventEncKey: Uint8Array | Buffer;
+    responderJid: string;
+}): {
+    encPayload: Buffer;
+    encIv: Buffer;
+};
+/**
  * Decrypt a `secretEncryptedMessage` carrying a `MESSAGE_EDIT` payload.
  *
  * WhatsApp started wrapping message edits in an E2EE envelope (May 2026).

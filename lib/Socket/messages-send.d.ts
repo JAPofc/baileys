@@ -70,8 +70,27 @@ export function makeMessagesSocket(config: any): {
     sendInvoice: (jid: any, invoice: any, options?: any) => Promise<any>;
     sendPollOption: (jid: any, pollKey: any, options2: any, options?: any) => Promise<any>;
     sendEventInvite: (jid: any, invite: any, options?: any) => Promise<any>;
+    /**
+     * Respond to a group event (RSVP). Encrypts an EventResponseMessage with the
+     * event's messageSecret and relays it as encEventResponseMessage — the same
+     * envelope the official client sends.
+     * @param eventMessage the full event creation WAMessage (must carry messageContextInfo.messageSecret)
+     * @param response 'going' | 'not_going' | 'maybe' or a proto EventResponseType number
+     */
+    sendEventResponse: (eventMessage: any, response: 'going' | 'not_going' | 'maybe' | number, opts?: {
+        extraGuestCount?: number;
+    }) => Promise<{ key: any; response: number }>;
     sendNewsletterInvite: (jid: any, invite: any, options?: any) => Promise<any>;
-    downloadMedia: (message: any, type?: string, options?: {}) => Promise<any>;
+    /**
+     * Download media from a message. Retry-aware by default: on an expired-media
+     * error (HTTP 410/404) it automatically asks the phone to re-upload
+     * (updateMediaMessage) and retries the download once. Pass
+     * `options.disableRetry: true` to opt out of the recovery.
+     */
+    downloadMedia: (message: any, type?: 'buffer' | 'stream', options?: {
+        disableRetry?: boolean;
+        [k: string]: any;
+    }) => Promise<any>;
     copyNForward: (jid: any, message: any, forceForward?: boolean, options?: {}) => Promise<any>;
     executeWMexQuery: (variables: any, queryId: any, dataPath: any) => Promise<any>;
     newsletterCreate: (name: any, description: any) => Promise<{
