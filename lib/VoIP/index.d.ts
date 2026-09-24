@@ -64,6 +64,13 @@ export class ActiveCall extends EventEmitter {
     setHandRaised(raised: boolean): any;
     getDurationMs(): number;
     recordToFile(filePath: string, opts?: Record<string, any>): any;
+    /**
+     * Swap what the call is playing WITHOUT hanging up: a file path/URL,
+     * `{ data: Buffer, ext }`, a `lavfi:` graph, or `"silence"`. Returns true
+     * when a live decoder was swapped, false when audio capture has not
+     * started yet (the source is remembered for when it does).
+     */
+    setAudioSource(source: string | { data: Buffer; ext?: string }): boolean;
     waitForEnd(): Promise<any>;
 }
 
@@ -76,6 +83,8 @@ export class VoipClient extends EventEmitter {
     connectWithSocket(existingSock: any): Promise<void>;
     isBusy(): boolean;
     getActiveCall(): ActiveCall | null;
+    /** Swap the active call's uplink audio source mid-call. Throws when no call is active. */
+    setAudioSource(source: string | { data: Buffer; ext?: string }): boolean;
     getPendingCalls(): any[];
     rejectCall(callId: string, callFrom: string, options?: { text?: string }): Promise<any>;
     answerCall(callId: string, options?: AnswerCallOptions): Promise<any>;

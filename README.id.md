@@ -540,6 +540,18 @@ await new AIRich(sock)
 
 `AIRich` mendukung `{ id, insertAt }` di setiap panggilan `add*()`/`set*()`, jadi kamu bisa menyisipkan blok relatif terhadap blok yang sudah ditambahkan sebelumnya, bukan selalu menambah di akhir — praktis untuk respons gaya streaming/edit-di-tempat yang dikombinasikan dengan `sendEdit(jid, id)`.
 
+**`streamText()` — efek "AI lagi ngetik".** Satu bubble yang tumbuh lewat edit di tempat (persis cara Meta AI streaming jawabannya), bukan membanjiri chat:
+
+```js
+// kirim sekali, lalu patch bubble yang sama sampai teks lengkap keluar
+await new AIRich(sock).streamText(jid, jawabanPanjang, {
+    chunkSize: 120,  // ~karakter per tahap (dipotong di batas kata)
+    intervalMs: 900, // jeda antar edit (min 300)
+    cursor: ' ▍'     // tampil selama streaming, dihapus di akhir ('' menonaktifkan)
+})
+// bisa digabung blok lain: addHeading()/addTable() dulu, baru streamText()
+```
+
 Builder lain yang layak diketahui: **`ButtonV2`** (tombol quick-reply sederhana), **`ButtonV3`** (`loadFrom(msg)` untuk mengedit pesan template yang sudah ada), dan **`Toolkit`** (helper statis: `Toolkit.resize()`, `Toolkit.fetchBuffer()`, `Toolkit.waitAllPromises()`, `Toolkit.extractIE()` untuk mem-parse link/sitasi/LaTeX `[label](url)` dari teks biasa).
 
 ### 📁 Peta Folder Builders (`lib/Builders/`)
@@ -1074,6 +1086,12 @@ panggilan.react('👍')
 panggilan.setHandRaised(true)
 const stopRekam = panggilan.recordToFile('./panggilan.wav') // peer lawan → .wav
 await voip.previewCallLink('token-call-link')
+
+// 🔀 ganti audio yang diputar TANPA menutup panggilan (alur gaya IVR)
+panggilan.setAudioSource('./menu.mp3')                  // file/URL
+panggilan.setAudioSource({ data: buffer, ext: 'mp3' })  // audio in-memory
+panggilan.setAudioSource('lavfi:sine=frequency=440')    // nada hasil generate
+panggilan.setAudioSource('silence')                     // berhenti memutar, tetap di panggilan
 ```
 
 **Reconnect & pemulihan** — watchdog memantau transport relay selama panggilan

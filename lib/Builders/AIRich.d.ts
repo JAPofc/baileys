@@ -98,6 +98,19 @@ export class AIRich extends BaseBuilder {
     send(jid: string, options?: AIRichSendOptions): Promise<any>;
     buildEdit(targetJid: string, targetId: string, options?: AIRichEditOptions): Promise<any>;
     sendEdit(jid: string, id: string, options?: AIRichEditOptions): Promise<any>;
+    /**
+     * Progressive text reveal ("AI typing" effect): sends once, then patches the
+     * same bubble via EDIT protocolMessages until the full text is out. Accepts a
+     * plain string (split at word boundaries every ~chunkSize chars) or a
+     * pre-split array of chunks. `intervalMs` (min 300) paces the edits; `cursor`
+     * is shown after partial text while streaming ('' disables).
+     */
+    streamText(jid: string, text: string | string[], options?: {
+        chunkSize?: number;
+        intervalMs?: number;
+        cursor?: string;
+        [key: string]: any;
+    }): Promise<{ key: any; text: string; edits: number }>;
     static tokenizer(code: string, lang?: string): Record<string, any>;
     static toTableMetadata(arr: string[][], options?: AddTextOptions): Record<string, any>;
     static newLayout(name: string, data: Record<string, any> | Record<string, any>[], extra?: Record<string, any>): Record<string, any>;

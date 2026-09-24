@@ -14,5 +14,7 @@ export declare class AudioFeeder {
         ext?: string;
     });
     start: () => void;
+    /** Swap the decode source mid-stream; returns true when the running pipeline was restarted with the new source. */
+    swapSource: (source: string | { data: Buffer; ext?: string }) => boolean;
     stop: () => void;
 }

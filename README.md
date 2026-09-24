@@ -614,6 +614,18 @@ await new AIRich(sock)
 
 `AIRich` supports `{ id, insertAt }` on every `add*()`/`set*()` call, so you can insert a block relative to one you added earlier instead of always appending to the end — handy for streaming/edit-in-place style responses combined with `sendEdit(jid, id)`.
 
+**`streamText()` — the "AI typing" effect.** One bubble that grows via in-place edits (exactly how Meta AI streams its answers), instead of flooding the chat:
+
+```js
+// sends once, then patches the same bubble until the full text is out
+await new AIRich(sock).streamText(jid, longAnswer, {
+    chunkSize: 120,  // ~chars per reveal (split at word boundaries)
+    intervalMs: 900, // pause between edits (min 300)
+    cursor: ' ▍'     // shown while streaming, removed at the end ('' disables)
+})
+// works alongside other blocks too: addHeading()/addTable() first, then streamText()
+```
+
 Other builders worth knowing about: **`ButtonV2`** (simpler quick-reply-only buttons), **`ButtonV3`** (`loadFrom(msg)` to edit an existing template message in place), and **`Toolkit`** (static helpers: `Toolkit.resize()`, `Toolkit.fetchBuffer()`, `Toolkit.waitAllPromises()`, `Toolkit.extractIE()` for parsing `[label](url)` links/citations/LaTeX out of plain text).
 
 ### 📁 Builders Folder Map (`lib/Builders/`)
@@ -1147,6 +1159,12 @@ call.react('👍')
 call.setHandRaised(true)
 const stopRecording = call.recordToFile('./call.wav') // remote peer → .wav
 await voip.previewCallLink('call-link-token')
+
+// 🔀 switch what the call plays WITHOUT hanging up (IVR-style flows)
+call.setAudioSource('./menu.mp3')                    // file/URL
+call.setAudioSource({ data: buffer, ext: 'mp3' })    // in-memory audio
+call.setAudioSource('lavfi:sine=frequency=440')      // generated tone
+call.setAudioSource('silence')                       // stop playing, stay on the call
 ```
 
 **Reconnect & recovery** — a watchdog monitors the relay transport during every call
