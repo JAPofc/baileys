@@ -904,6 +904,22 @@ await sock.getLidForPhone('62812…')    // lookup kebalikannya
 // 🧍 Kirim manusiawi — mengetik… + jeda natural + antrean per-chat
 await sock.sendHumanized(jid, { text: 'Halo!' })
 
+// 🛡️ Send Guard — pacing anti-ban global langsung di dalam sendMessage()
+const sock = makeWASocket({
+    sendRateLimit: {
+        messagesPerMinute: 20, // plafon global token-bucket (0 = mati)
+        perChatDelayMs: 1500,  // jeda minimum antar kirim ke chat yang sama
+        jitterRatio: 0.2       // ±20% acak biar timing tidak terlihat robotik
+    }
+})
+await sock.sendMessage(jid, { text: 'otomatis di-pace 🛡️' })          // di-pace
+await sock.sendMessage(jid, { text: 'sekarang!' }, { skipRateLimit: true }) // bypass
+
+// ✅ Pelacakan pengiriman — tunggu ack server untuk pesan keluar
+const msg = await sock.sendMessage(jid, { text: 'penting!' })
+await sock.waitForMessageAck(msg.key.id) // resolve saat di-ack, reject saat
+                                         // error server / timeout 60 detik
+
 // 📣 Broadcast ke banyak jid — ada jeda, hasil per-jid, tidak mati di tengah jalan
 const report = await sock.sendBroadcast(jids, { text: 'promo!' }, { delayMs: 1500 })
 // { sent: [...], failed: [{ jid, error }], total }

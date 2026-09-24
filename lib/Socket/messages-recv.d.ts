@@ -5,6 +5,16 @@ export function makeMessagesRecvSocket(config: any): {
     fetchMessageHistory: (count: any, oldestMsgKey: any, oldestMsgTimestamp: any) => Promise<any>;
     requestPlaceholderResend: (messageKey: any, msgData: any) => Promise<any>;
     messageRetryManager: import("../index.js").MessageRetryManager | null;
+    /**
+     * Resolves when the server acks the given outgoing message id; rejects when
+     * the ack carries an error code, on timeout (default 60s), or when the
+     * connection closes first.
+     */
+    waitForMessageAck: (messageId: string, timeoutMs?: number) => Promise<{
+        messageId: string;
+        from?: string;
+        timestamp?: number;
+    }>;
     userDevicesCache: any;
     devicesMutex: {
         mutex(code: any): any;

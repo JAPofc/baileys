@@ -977,6 +977,22 @@ await sock.getLidForPhone('62812…')    // reverse lookup
 // 🧍 Humanized send — typing… + natural delay + per-chat queue
 await sock.sendHumanized(jid, { text: 'Hello!' })
 
+// 🛡️ Send Guard — global anti-ban pacing baked into sendMessage()
+const sock = makeWASocket({
+    sendRateLimit: {
+        messagesPerMinute: 20, // global token-bucket ceiling (0 = off)
+        perChatDelayMs: 1500,  // minimum gap between sends to the same chat
+        jitterRatio: 0.2       // ±20% randomness so timing never looks robotic
+    }
+})
+await sock.sendMessage(jid, { text: 'auto-paced 🛡️' })            // paced
+await sock.sendMessage(jid, { text: 'now!' }, { skipRateLimit: true }) // bypass
+
+// ✅ Delivery tracking — await the server ack of an outgoing message
+const msg = await sock.sendMessage(jid, { text: 'important!' })
+await sock.waitForMessageAck(msg.key.id) // resolves on ack, rejects on
+                                         // server error / 60s timeout
+
 // 📣 Broadcast to many jids — paced, per-jid outcomes, never dies mid-run
 const report = await sock.sendBroadcast(jids, { text: 'promo!' }, { delayMs: 1500 })
 // { sent: [...], failed: [{ jid, error }], total }

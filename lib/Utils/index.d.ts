@@ -64,3 +64,4 @@ export * from "./doctor.js";
 export { printBanner } from "./banner.js";
 
 export * from "./MessageBuilder.js";
+export * from "./send-guard.js";

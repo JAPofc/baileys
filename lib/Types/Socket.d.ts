@@ -75,6 +75,13 @@ export type SocketConfig = {
      * fallback). Manual `usernameQueryIds` overrides always win. Default: false.
      */
     autoRotateQueryIds?: boolean;
+    /**
+     * Anti-ban outgoing pacing, applied transparently inside sendMessage():
+     * a global messages/minute token bucket plus a minimum per-chat gap with
+     * jitter. Off by default. Individual calls can bypass with
+     * `options.skipRateLimit`. See createSendGuard().
+     */
+    sendRateLimit?: import('../Utils/send-guard.js').SendGuardOptions;
     /** should events be emitted for actions done by this socket connection */
     emitOwnEvents: boolean;
     /** custom upload hosts to upload media to */
