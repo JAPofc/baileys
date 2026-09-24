@@ -1,7 +1,7 @@
 {
   "name": "@japofc/baileys",
-  "version": "2.4.1",
-  "description": "Feature-rich WhatsApp Multi-Device library for Node.js \u2014 interactive messages, native flows, polls, newsletters, VoIP, mini-apps and everyday bot utilities.",
+  "version": "2.4.2",
+  "description": "Feature-rich WhatsApp Multi-Device library for Node.js — interactive messages, native flows, polls, newsletters, VoIP, mini-apps and everyday bot utilities.",
   "type": "module",
   "main": "./lib/index.js",
   "module": "./lib/index.js",
