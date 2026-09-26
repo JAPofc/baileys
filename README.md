@@ -646,6 +646,23 @@ await new AIRich(sock).streamText(jid, longAnswer, {
 // works alongside other blocks too: addHeading()/addTable() first, then streamText()
 ```
 
+**`readRichMessage()` — the reader half.** Parse a received rich card (from any AI/assistant-style bot) back into structured blocks instead of staring at opaque proto:
+
+```js
+import { readRichMessage } from '@japofc/baileys'
+
+sock.ev.on('messages.upsert', ({ messages }) => {
+    const rich = readRichMessage(messages[0])
+    if (!rich.found) return
+    rich.blocks      // [{ type: 'heading', text }, { type: 'code', language, code },
+                     //  { type: 'table', rows, headerRows }, { type: 'text', text, entities }, …]
+    rich.suggestions // every suggestion-pill text
+    rich.text        // flat text rendering of the whole card
+})
+```
+
+Handles both wire forms (unified-response payload + proto submessages fallback), resolves inline link entities back to `[label](url)`, re-joins syntax-highlighted code spans, never throws — non-rich input returns `{ found: false }`. Round-trip tested against the AIRich builder itself.
+
 Other builders worth knowing about: **`ButtonV2`** (simpler quick-reply-only buttons), **`ButtonV3`** (`loadFrom(msg)` to edit an existing template message in place), and **`Toolkit`** (static helpers: `Toolkit.resize()`, `Toolkit.fetchBuffer()`, `Toolkit.waitAllPromises()`, `Toolkit.extractIE()` for parsing `[label](url)` links/citations/LaTeX out of plain text).
 
 ### 📁 Builders Folder Map (`lib/Builders/`)

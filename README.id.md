@@ -572,6 +572,23 @@ await new AIRich(sock).streamText(jid, jawabanPanjang, {
 // bisa digabung blok lain: addHeading()/addTable() dulu, baru streamText()
 ```
 
+**`readRichMessage()` — separuh pembacanya.** Parse kartu rich yang DITERIMA (dari bot AI/asisten mana pun) balik jadi blok terstruktur, bukan menatap proto mentah:
+
+```js
+import { readRichMessage } from '@japofc/baileys'
+
+sock.ev.on('messages.upsert', ({ messages }) => {
+    const rich = readRichMessage(messages[0])
+    if (!rich.found) return
+    rich.blocks      // [{ type: 'heading', text }, { type: 'code', language, code },
+                     //  { type: 'table', rows, headerRows }, { type: 'text', text, entities }, …]
+    rich.suggestions // teks semua pill saran
+    rich.text        // render teks datar seluruh kartu
+})
+```
+
+Mendukung dua bentuk wire (payload unified-response + fallback submessages proto), entity link inline dikembalikan jadi `[label](url)`, span kode ber-highlight digabung ulang, tidak pernah throw — input non-rich mengembalikan `{ found: false }`. Teruji roundtrip terhadap builder AIRich sendiri.
+
 Builder lain yang layak diketahui: **`ButtonV2`** (tombol quick-reply sederhana), **`ButtonV3`** (`loadFrom(msg)` untuk mengedit pesan template yang sudah ada), dan **`Toolkit`** (helper statis: `Toolkit.resize()`, `Toolkit.fetchBuffer()`, `Toolkit.waitAllPromises()`, `Toolkit.extractIE()` untuk mem-parse link/sitasi/LaTeX `[label](url)` dari teks biasa).
 
 ### 📁 Peta Folder Builders (`lib/Builders/`)
