@@ -1346,6 +1346,7 @@ A sample of the utilities exported from `lib/Utils` beyond the message builders 
 |---|---|
 | `anti-delete` | Detect and recover messages the sender deleted for everyone |
 | `anti-edit` | Capture what a message said BEFORE it was edited — before/after text, full revision history, chained edits |
+| `trackers` | Reaction / receipt / presence trackers — who reacted what, who read your group message, who's online/typing |
 | `auto-reply` | Simple keyword/pattern-based auto-responder engine |
 | `message-search` | Search cached/stored messages, peeling off ephemeral/view-once wrappers first |
 | `message-retry-manager` | Handles WhatsApp's retry-receipt protocol for undecryptable messages |
@@ -1368,6 +1369,28 @@ sock.ev.on('messages.upsert', createAntiEditUpsertHandler(store, (info) => {
     console.log(`edit #${info.editCount}: "${info.beforeText}" -> "${info.afterText}"`)
     info.history // every previous revision, oldest first
 }))
+```
+
+```js
+// event trackers — reaction / read-receipt / presence
+import { createReactionTracker, createReceiptTracker, createPresenceTracker } from '@japofc/baileys'
+
+const reactions = createReactionTracker()
+reactions.bind(sock)                       // messages.reaction
+reactions.getSummary(msg.key)              // { '👍': ['628…@s.whatsapp.net'], … }
+reactions.onReaction(({ user, emoji, removed }) => { /* live updates */ })
+
+const receipts = createReceiptTracker()
+receipts.bind(sock)                        // message-receipt.update + messages.update
+receipts.getReceipts(msg.key)              // { delivered: [...], read: [...], played: [...] }
+receipts.isReadBy(msg.key, jid)            // has THIS user read it?
+receipts.onRead(({ key, user }) => { /* fires once per reader */ })
+
+const presence = createPresenceTracker()
+presence.bind(sock)                        // presence.update
+await sock.presenceSubscribe(jid)          // WA only streams presence for subscribed jids
+presence.isOnline(jid); presence.isTyping(jid); presence.get(jid)?.lastSeen
+presence.onChange(({ user, presence }) => { /* online/offline/typing transitions */ })
 ```
 | `stickerpack` | Build and send sticker packs (including animated/Lottie) |
 | `templates` | Legacy WhatsApp Business template message helpers |

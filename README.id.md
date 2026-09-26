@@ -1273,6 +1273,7 @@ Sampel utilitas yang diekspor dari `lib/Utils` di luar builder pesan di atas:
 |---|---|
 | `anti-delete` | Deteksi dan pulihkan pesan yang dihapus pengirim untuk semua orang |
 | `anti-edit` | Tangkap isi pesan SEBELUM di-edit — teks before/after, riwayat revisi lengkap, edit berantai |
+| `trackers` | Tracker reaksi / tanda terima / presence — siapa react apa, siapa sudah baca pesan grup, siapa online/ngetik |
 | `auto-reply` | Engine auto-responder sederhana berbasis kata kunci/pola |
 | `message-search` | Cari pesan di cache/store, membuka wrapper ephemeral/view-once dulu |
 | `message-retry-manager` | Menangani protokol retry-receipt WhatsApp untuk pesan yang gagal didekripsi |
@@ -1295,6 +1296,28 @@ sock.ev.on('messages.upsert', createAntiEditUpsertHandler(store, (info) => {
     console.log(`edit #${info.editCount}: "${info.beforeText}" -> "${info.afterText}"`)
     info.history // semua revisi sebelumnya, dari yang paling lama
 }))
+```
+
+```js
+// tracker event — reaksi / tanda-baca / presence
+import { createReactionTracker, createReceiptTracker, createPresenceTracker } from '@japofc/baileys'
+
+const reaksi = createReactionTracker()
+reaksi.bind(sock)                          // messages.reaction
+reaksi.getSummary(msg.key)                 // { '👍': ['628…@s.whatsapp.net'], … }
+reaksi.onReaction(({ user, emoji, removed }) => { /* update live */ })
+
+const tandaTerima = createReceiptTracker()
+tandaTerima.bind(sock)                     // message-receipt.update + messages.update
+tandaTerima.getReceipts(msg.key)           // { delivered: [...], read: [...], played: [...] }
+tandaTerima.isReadBy(msg.key, jid)         // user INI sudah baca?
+tandaTerima.onRead(({ key, user }) => { /* sekali per pembaca */ })
+
+const presence = createPresenceTracker()
+presence.bind(sock)                        // presence.update
+await sock.presenceSubscribe(jid)          // WA hanya kirim presence untuk jid yang di-subscribe
+presence.isOnline(jid); presence.isTyping(jid); presence.get(jid)?.lastSeen
+presence.onChange(({ user, presence }) => { /* transisi online/offline/ngetik */ })
 ```
 | `stickerpack` | Bangun dan kirim paket stiker (termasuk animasi/Lottie) |
 | `templates` | Helper pesan template WhatsApp Business lama |
