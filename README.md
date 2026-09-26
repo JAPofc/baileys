@@ -1347,6 +1347,11 @@ A sample of the utilities exported from `lib/Utils` beyond the message builders 
 | `anti-delete` | Detect and recover messages the sender deleted for everyone |
 | `anti-edit` | Capture what a message said BEFORE it was edited — before/after text, full revision history, chained edits |
 | `trackers` | Reaction / receipt / presence trackers — who reacted what, who read your group message, who's online/typing |
+| `serialize` | `serializeMessage` — flat bot-friendly message object with `.reply()`, `.react()`, `.download()`, quoted unwrap |
+| `call-guard` | Track incoming calls, auto-reject with an optional text, per-caller counters, allowlist |
+| `group-events` | Welcome/goodbye/promote/demote callbacks + per-group event log from group updates |
+| `view-once` | Detect, unwrap and capture view-once messages before they disappear |
+| `anti-link` | Detect (and auto-delete) group-invite/any links in groups — allowlists for chats & domains |
 | `auto-reply` | Simple keyword/pattern-based auto-responder engine |
 | `message-search` | Search cached/stored messages, peeling off ephemeral/view-once wrappers first |
 | `message-retry-manager` | Handles WhatsApp's retry-receipt protocol for undecryptable messages |
@@ -1391,6 +1396,42 @@ presence.bind(sock)                        // presence.update
 await sock.presenceSubscribe(jid)          // WA only streams presence for subscribed jids
 presence.isOnline(jid); presence.isTyping(jid); presence.get(jid)?.lastSeen
 presence.onChange(({ user, presence }) => { /* online/offline/typing transitions */ })
+```
+
+```js
+// bot toolkit — serializer, call guard, group events, view-once, anti-link
+import {
+    serializeMessage, createCallGuard, createGroupEventsTracker,
+    createViewOnceCapture, createAntiLinkGuard
+} from '@japofc/baileys'
+
+sock.ev.on('messages.upsert', async ({ messages }) => {
+    const m = serializeMessage(sock, messages[0])
+    if (!m || m.fromMe) return
+    if (m.body === 'ping') await m.reply('pong')      // quotes the original
+    if (m.isMedia) { const buf = await m.download() } // media as Buffer
+    if (m.quoted) console.log('replying to:', m.quoted.body)
+})
+
+const calls = createCallGuard({ autoReject: true, rejectMessage: 'Bots cannot pick up calls.' })
+calls.bind(sock)                                      // 'call' event
+calls.onRejected(call => console.log('rejected', call.from, call.isVideo ? '(video)' : ''))
+
+const groups = createGroupEventsTracker()
+groups.bind(sock)                                     // group-participants.update + groups.update
+groups.onJoin(({ id, participants }) =>
+    sock.sendMessage(id, { text: `Welcome ${participants.join(', ')}! 👋` }))
+groups.onLeave(({ participants }) => console.log('left:', participants))
+
+const vault = createViewOnceCapture()
+vault.bind(sock)                                      // messages.upsert
+vault.onViewOnce(({ msg, unwrapped }) =>
+    console.log('view-once', unwrapped.mediaType, 'from', msg.key.remoteJid))
+
+const antilink = createAntiLinkGuard({ autoDelete: true }) // invite links in groups
+antilink.bind(sock)
+antilink.onDetected(({ chat, sender }) =>
+    sock.sendMessage(chat, { text: `@${sender.split('@')[0]} no group links here!`, mentions: [sender] }))
 ```
 | `stickerpack` | Build and send sticker packs (including animated/Lottie) |
 | `templates` | Legacy WhatsApp Business template message helpers |

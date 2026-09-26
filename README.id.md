@@ -1274,6 +1274,11 @@ Sampel utilitas yang diekspor dari `lib/Utils` di luar builder pesan di atas:
 | `anti-delete` | Deteksi dan pulihkan pesan yang dihapus pengirim untuk semua orang |
 | `anti-edit` | Tangkap isi pesan SEBELUM di-edit — teks before/after, riwayat revisi lengkap, edit berantai |
 | `trackers` | Tracker reaksi / tanda terima / presence — siapa react apa, siapa sudah baca pesan grup, siapa online/ngetik |
+| `serialize` | `serializeMessage` — objek pesan siap-bot dengan `.reply()`, `.react()`, `.download()`, quoted ke-unwrap |
+| `call-guard` | Lacak panggilan masuk, auto-reject + pesan teks opsional, hitungan per penelepon, allowlist |
+| `group-events` | Callback welcome/goodbye/promote/demote + log event per grup dari update grup |
+| `view-once` | Deteksi, buka, dan tangkap pesan view-once sebelum hilang |
+| `anti-link` | Deteksi (dan auto-hapus) link undangan grup/link apa pun di grup — allowlist chat & domain |
 | `auto-reply` | Engine auto-responder sederhana berbasis kata kunci/pola |
 | `message-search` | Cari pesan di cache/store, membuka wrapper ephemeral/view-once dulu |
 | `message-retry-manager` | Menangani protokol retry-receipt WhatsApp untuk pesan yang gagal didekripsi |
@@ -1318,6 +1323,42 @@ presence.bind(sock)                        // presence.update
 await sock.presenceSubscribe(jid)          // WA hanya kirim presence untuk jid yang di-subscribe
 presence.isOnline(jid); presence.isTyping(jid); presence.get(jid)?.lastSeen
 presence.onChange(({ user, presence }) => { /* transisi online/offline/ngetik */ })
+```
+
+```js
+// toolkit bot — serializer, call guard, event grup, view-once, anti-link
+import {
+    serializeMessage, createCallGuard, createGroupEventsTracker,
+    createViewOnceCapture, createAntiLinkGuard
+} from '@japofc/baileys'
+
+sock.ev.on('messages.upsert', async ({ messages }) => {
+    const m = serializeMessage(sock, messages[0])
+    if (!m || m.fromMe) return
+    if (m.body === 'ping') await m.reply('pong')      // otomatis quote pesan asli
+    if (m.isMedia) { const buf = await m.download() } // media jadi Buffer
+    if (m.quoted) console.log('membalas:', m.quoted.body)
+})
+
+const panggilan = createCallGuard({ autoReject: true, rejectMessage: 'Bot tidak bisa angkat telepon.' })
+panggilan.bind(sock)                                  // event 'call'
+panggilan.onRejected(call => console.log('ditolak', call.from, call.isVideo ? '(video)' : ''))
+
+const grup = createGroupEventsTracker()
+grup.bind(sock)                                       // group-participants.update + groups.update
+grup.onJoin(({ id, participants }) =>
+    sock.sendMessage(id, { text: `Selamat datang ${participants.join(', ')}! 👋` }))
+grup.onLeave(({ participants }) => console.log('keluar:', participants))
+
+const brankas = createViewOnceCapture()
+brankas.bind(sock)                                    // messages.upsert
+brankas.onViewOnce(({ msg, unwrapped }) =>
+    console.log('view-once', unwrapped.mediaType, 'dari', msg.key.remoteJid))
+
+const antilink = createAntiLinkGuard({ autoDelete: true }) // link undangan di grup
+antilink.bind(sock)
+antilink.onDetected(({ chat, sender }) =>
+    sock.sendMessage(chat, { text: `@${sender.split('@')[0]} dilarang share link grup!`, mentions: [sender] }))
 ```
 | `stickerpack` | Bangun dan kirim paket stiker (termasuk animasi/Lottie) |
 | `templates` | Helper pesan template WhatsApp Business lama |
