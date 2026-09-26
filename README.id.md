@@ -1279,6 +1279,8 @@ Sampel utilitas yang diekspor dari `lib/Utils` di luar builder pesan di atas:
 | `group-events` | Callback welcome/goodbye/promote/demote + log event per grup dari update grup |
 | `view-once` | Deteksi, buka, dan tangkap pesan view-once sebelum hilang |
 | `anti-link` | Deteksi (dan auto-hapus) link undangan grup/link apa pun di grup — allowlist chat & domain |
+| `auto-read` | Auto centang-biru pesan masuk — filter grup/DM/status, allow/deny list, pause/resume |
+| `afk` | Manajer AFK — tandai user pergi, tangkap @mention & reply selama pergi, auto welcome-back |
 | `auto-reply` | Engine auto-responder sederhana berbasis kata kunci/pola |
 | `message-search` | Cari pesan di cache/store, membuka wrapper ephemeral/view-once dulu |
 | `message-retry-manager` | Menangani protokol retry-receipt WhatsApp untuk pesan yang gagal didekripsi |
@@ -1359,6 +1361,27 @@ const antilink = createAntiLinkGuard({ autoDelete: true }) // link undangan di g
 antilink.bind(sock)
 antilink.onDetected(({ chat, sender }) =>
     sock.sendMessage(chat, { text: `@${sender.split('@')[0]} dilarang share link grup!`, mentions: [sender] }))
+```
+
+```js
+// auto-read, AFK & tag-all
+import { createAutoRead, createAfkManager, sendMentionAll, sendHideTag } from '@japofc/baileys'
+
+const reader = createAutoRead({ denylist: ['bos@s.whatsapp.net'] })
+reader.bind(sock)                       // sisanya auto centang biru begitu masuk
+reader.pause(); reader.resume()
+
+const afk = createAfkManager()
+afk.bind(sock)
+afk.setAfk(sender, 'istirahat makan 🍜') // mis. dari command !afk
+afk.onAfkMention(({ chat, afkUser, reason, msg }) =>
+    sock.sendMessage(chat, { text: `@${afkUser.split('@')[0]} lagi AFK: ${reason}`, mentions: [afkUser] }, { quoted: msg }))
+afk.onReturn(({ user, missed }) => console.log(user, 'sudah balik,', missed.length, 'ping selama pergi'))
+
+await sendMentionAll(sock, groupJid, 'Rapat 5 menit lagi!')  // @everyone kelihatan
+await sendHideTag(sock, groupJid, 'Pengumuman diam-diam')    // semua ke-ping, teks bersih
+
+// upgrade serializeMessage: m.isViewOnce, m.viewOnce, m.expiration, m.forward(jid), m.delete()
 ```
 | `stickerpack` | Bangun dan kirim paket stiker (termasuk animasi/Lottie) |
 | `templates` | Helper pesan template WhatsApp Business lama |

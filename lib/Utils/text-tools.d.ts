@@ -40,3 +40,26 @@ export declare const sendBroadcast: (
     content: any,
     options?: BroadcastOptions
 ) => Promise<BroadcastReport>;
+
+/** Build a tag-all content ({ text, mentions }) from a participant list. */
+export declare const buildMentionAll: (
+    participants: Array<string | { id?: string }>,
+    text?: string,
+    options?: { separator?: string; listMentions?: boolean }
+) => { text: string; mentions: string[] };
+
+/** Tag every group member visibly (classic "tagall"). */
+export declare const sendMentionAll: (
+    sock: any,
+    groupJid: string,
+    text?: string,
+    options?: { participants?: Array<string | { id?: string }> } & Record<string, unknown>
+) => Promise<unknown>;
+
+/** Ping every member without printing the @list ("hidetag"). */
+export declare const sendHideTag: (
+    sock: any,
+    groupJid: string,
+    content: string | Record<string, unknown>,
+    options?: { participants?: Array<string | { id?: string }> } & Record<string, unknown>
+) => Promise<unknown>;

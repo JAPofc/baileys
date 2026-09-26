@@ -29,11 +29,18 @@ export interface SerializedMessage {
 	message?: Record<string, unknown>;
 	mentions: string[];
 	isMedia: boolean;
+	isViewOnce: boolean;
+	/** Unwrapped view-once info or null. */
+	viewOnce: { message: Record<string, unknown>; type: string; mediaType?: string; media: Record<string, unknown> } | null;
+	/** Disappearing-message timer (seconds), if any. */
+	expiration?: number;
 	quoted: SerializedQuoted | null;
 	reply(content: string | Record<string, unknown>, options?: Record<string, unknown>): Promise<unknown>;
 	send(content: string | Record<string, unknown>, options?: Record<string, unknown>): Promise<unknown>;
 	react(emoji: string): Promise<unknown>;
 	download(downloadType?: 'buffer' | 'stream', options?: Record<string, unknown>): Promise<unknown>;
+	forward(jid: string, options?: Record<string, unknown>): Promise<unknown>;
+	delete(): Promise<unknown>;
 }
 
 /**

@@ -1352,6 +1352,8 @@ A sample of the utilities exported from `lib/Utils` beyond the message builders 
 | `group-events` | Welcome/goodbye/promote/demote callbacks + per-group event log from group updates |
 | `view-once` | Detect, unwrap and capture view-once messages before they disappear |
 | `anti-link` | Detect (and auto-delete) group-invite/any links in groups — allowlists for chats & domains |
+| `auto-read` | Auto blue-tick incoming messages — group/DM/status filters, allow/deny lists, pause/resume |
+| `afk` | AFK manager — mark users away, catch @mentions & replies while away, auto welcome-back |
 | `auto-reply` | Simple keyword/pattern-based auto-responder engine |
 | `message-search` | Search cached/stored messages, peeling off ephemeral/view-once wrappers first |
 | `message-retry-manager` | Handles WhatsApp's retry-receipt protocol for undecryptable messages |
@@ -1432,6 +1434,27 @@ const antilink = createAntiLinkGuard({ autoDelete: true }) // invite links in gr
 antilink.bind(sock)
 antilink.onDetected(({ chat, sender }) =>
     sock.sendMessage(chat, { text: `@${sender.split('@')[0]} no group links here!`, mentions: [sender] }))
+```
+
+```js
+// auto-read, AFK & tag-all
+import { createAutoRead, createAfkManager, sendMentionAll, sendHideTag } from '@japofc/baileys'
+
+const reader = createAutoRead({ denylist: ['boss@s.whatsapp.net'] })
+reader.bind(sock)                       // blue-ticks everything else as it arrives
+reader.pause(); reader.resume()
+
+const afk = createAfkManager()
+afk.bind(sock)
+afk.setAfk(sender, 'lunch break 🍜')    // e.g. from an !afk command
+afk.onAfkMention(({ chat, afkUser, reason, msg }) =>
+    sock.sendMessage(chat, { text: `@${afkUser.split('@')[0]} is AFK: ${reason}`, mentions: [afkUser] }, { quoted: msg }))
+afk.onReturn(({ user, missed }) => console.log(user, 'is back,', missed.length, 'pings while away'))
+
+await sendMentionAll(sock, groupJid, 'Meeting in 5 minutes!') // visible @everyone
+await sendHideTag(sock, groupJid, 'Silent announcement')      // pings all, clean text
+
+// serializeMessage upgrades: m.isViewOnce, m.viewOnce, m.expiration, m.forward(jid), m.delete()
 ```
 | `stickerpack` | Build and send sticker packs (including animated/Lottie) |
 | `templates` | Legacy WhatsApp Business template message helpers |
