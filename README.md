@@ -228,7 +228,7 @@ How `@japofc/baileys` stacks up against other Baileys libraries:
 <td valign="top">
 
 - Full TypeScript definitions (`.d.ts`)
-- Anti-delete detection
+- Anti-delete & anti-edit detection (recover deleted messages, capture pre-edit content)
 - Message search helpers
 - Auto-reply engine
 - Scheduling helpers
@@ -1345,6 +1345,7 @@ A sample of the utilities exported from `lib/Utils` beyond the message builders 
 | Module | What it does |
 |---|---|
 | `anti-delete` | Detect and recover messages the sender deleted for everyone |
+| `anti-edit` | Capture what a message said BEFORE it was edited — before/after text, full revision history, chained edits |
 | `auto-reply` | Simple keyword/pattern-based auto-responder engine |
 | `message-search` | Search cached/stored messages, peeling off ephemeral/view-once wrappers first |
 | `message-retry-manager` | Handles WhatsApp's retry-receipt protocol for undecryptable messages |
@@ -1353,6 +1354,21 @@ A sample of the utilities exported from `lib/Utils` beyond the message builders 
 | `chat-control` | Pin, mute, archive, and mark-read/unread helpers |
 | `chat-history-helpers` | Work with synced chat history payloads |
 | `link-preview` | Generate link preview metadata for outgoing messages |
+
+```js
+// anti-delete + anti-edit share one MessageStore
+import { MessageStore, createMessageStoreHandler, createAntiDeleteUpsertHandler, createAntiEditUpsertHandler } from '@japofc/baileys'
+
+const store = new MessageStore()
+sock.ev.on('messages.upsert', createMessageStoreHandler(store))     // register FIRST
+sock.ev.on('messages.upsert', createAntiDeleteUpsertHandler(store, (info) => {
+    console.log('deleted:', info.originalMessage)                   // recovered content
+}))
+sock.ev.on('messages.upsert', createAntiEditUpsertHandler(store, (info) => {
+    console.log(`edit #${info.editCount}: "${info.beforeText}" -> "${info.afterText}"`)
+    info.history // every previous revision, oldest first
+}))
+```
 | `stickerpack` | Build and send sticker packs (including animated/Lottie) |
 | `templates` | Legacy WhatsApp Business template message helpers |
 | `vcard` | Build vCard (contact card) payloads |

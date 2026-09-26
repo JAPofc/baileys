@@ -36,6 +36,8 @@ export declare const createTextStatus: (options: TextStatusOptions) => AnyMessag
 export declare const createImageStatus: (media: Buffer | string, options?: MediaStatusOptions) => AnyMessageContent;
 export declare const createVideoStatus: (media: Buffer | string, options?: MediaStatusOptions) => AnyMessageContent;
 export declare const createAudioStatus: (media: Buffer | string, options?: MediaStatusOptions) => AnyMessageContent;
+/** Sticker status: a stickerMessage posted to status@broadcast (same delivery path as image/video statuses). */
+export declare const createStickerStatus: (media: Buffer | string, options?: { isAnimated?: boolean }) => AnyMessageContent;
 export declare const getStatusJid: () => string;
 /** Music metadata for a status music attribution (official Dec-2025 surface). */
 export type StatusMusicAttribution = {
@@ -61,6 +63,7 @@ export declare const StatusHelper: {
     videoUrl: (url: string, caption?: string) => AnyMessageContent;
     gif: (buffer: Buffer, caption?: string) => AnyMessageContent;
     voiceNote: (buffer: Buffer) => AnyMessageContent;
+    sticker: (media: Buffer | string, isAnimated?: boolean) => AnyMessageContent;
     send: (sock: WASocket, content: AnyMessageContent, jidList?: string[]) => Promise<any>;
 };
 export {};

@@ -158,7 +158,7 @@ Posisi `@japofc/baileys` dibanding library Baileys lain:
 <td valign="top">
 
 - Definisi TypeScript lengkap (`.d.ts`)
-- Deteksi anti-delete
+- Deteksi anti-delete & anti-edit (pulihkan pesan terhapus, tangkap isi sebelum edit)
 - Helper pencarian pesan
 - Engine auto-reply
 - Helper penjadwalan
@@ -1272,6 +1272,7 @@ Sampel utilitas yang diekspor dari `lib/Utils` di luar builder pesan di atas:
 | Modul | Fungsinya |
 |---|---|
 | `anti-delete` | Deteksi dan pulihkan pesan yang dihapus pengirim untuk semua orang |
+| `anti-edit` | Tangkap isi pesan SEBELUM di-edit — teks before/after, riwayat revisi lengkap, edit berantai |
 | `auto-reply` | Engine auto-responder sederhana berbasis kata kunci/pola |
 | `message-search` | Cari pesan di cache/store, membuka wrapper ephemeral/view-once dulu |
 | `message-retry-manager` | Menangani protokol retry-receipt WhatsApp untuk pesan yang gagal didekripsi |
@@ -1280,6 +1281,21 @@ Sampel utilitas yang diekspor dari `lib/Utils` di luar builder pesan di atas:
 | `chat-control` | Helper pin, mute, arsip, dan tandai dibaca/belum |
 | `chat-history-helpers` | Bekerja dengan payload riwayat chat tersinkron |
 | `link-preview` | Membuat metadata preview link untuk pesan keluar |
+
+```js
+// anti-delete + anti-edit berbagi satu MessageStore
+import { MessageStore, createMessageStoreHandler, createAntiDeleteUpsertHandler, createAntiEditUpsertHandler } from '@japofc/baileys'
+
+const store = new MessageStore()
+sock.ev.on('messages.upsert', createMessageStoreHandler(store))     // daftarkan DULUAN
+sock.ev.on('messages.upsert', createAntiDeleteUpsertHandler(store, (info) => {
+    console.log('terhapus:', info.originalMessage)                  // konten terpulihkan
+}))
+sock.ev.on('messages.upsert', createAntiEditUpsertHandler(store, (info) => {
+    console.log(`edit #${info.editCount}: "${info.beforeText}" -> "${info.afterText}"`)
+    info.history // semua revisi sebelumnya, dari yang paling lama
+}))
+```
 | `stickerpack` | Bangun dan kirim paket stiker (termasuk animasi/Lottie) |
 | `templates` | Helper pesan template WhatsApp Business lama |
 | `vcard` | Bangun payload vCard (kartu kontak) |

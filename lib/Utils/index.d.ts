@@ -66,3 +66,4 @@ export { printBanner } from "./banner.js";
 export * from "./MessageBuilder.js";
 export * from "./send-guard.js";
 export * from './rich-reader.js';
+export * from './anti-edit.js';
