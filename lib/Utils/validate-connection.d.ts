@@ -1,3 +1,10 @@
+/**
+ * Normalize + validate a phone number for requestPairingCode(): returns the
+ * clean digits-only E.164 number, strips a leading "00" international call
+ * prefix, and throws a descriptive TypeError for junk input, local-format
+ * numbers (leading 0) and numbers over the 15-digit E.164 maximum.
+ */
+export function normalizePairingPhone(phoneNumber: string | number): string;
 export function generateLoginNode(userJid: any, config: any): any;
 export function generateRegistrationNode({ registrationId, signedPreKey, signedIdentityKey }: {
     registrationId: any;

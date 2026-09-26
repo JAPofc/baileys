@@ -15,6 +15,23 @@ export function makeMessagesRecvSocket(config: any): {
         from?: string;
         timestamp?: number;
     }>;
+    /**
+     * Send a message AND wait for the server ack in one race-free call: the
+     * message id is minted up front and the ack waiter registered before the
+     * send goes out. Rejects on error ack, ack timeout (options.ackTimeoutMs,
+     * default 60s), or send failure (pending waiter is cancelled).
+     */
+    sendMessageAcked: (jid: string, content: any, options?: {
+        ackTimeoutMs?: number;
+        [key: string]: any;
+    }) => Promise<{
+        message: any;
+        ack: {
+            messageId: string;
+            from?: string;
+            timestamp?: number;
+        };
+    }>;
     userDevicesCache: any;
     devicesMutex: {
         mutex(code: any): any;

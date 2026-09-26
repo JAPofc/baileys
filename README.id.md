@@ -374,6 +374,26 @@ await manager.start()
 
 Versi lengkap yang bisa langsung dijalankan: [`examples/auto-reconnect-bot.js`](./examples/auto-reconnect-bot.js).
 
+### Login pakai pairing code (tanpa QR)
+
+```js
+import { makeWASocket, useMultiFileAuthState, formatPairingCode } from '@japofc/baileys'
+
+const { state, saveCreds } = await useMultiFileAuthState('auth_info')
+const sock = makeWASocket({ auth: state, printQRInTerminal: false })
+sock.ev.on('creds.update', saveCreds)
+
+if (!state.creds.registered) {
+    const code = await sock.requestPairingCode('628123456789') // nomor internasional lengkap
+    console.log('Pairing code:', formatPairingCode(code))      // "ABCD-EFGH"
+}
+
+// kode custom 8 karakter (Crockford base32: 1-9, A-Z tanpa I/O/U)
+await sock.requestPairingCode('628123456789', 'JAPJAP12')
+```
+
+Input divalidasi di awal dengan error yang jelas, bukan gagal diam-diam di sisi server: karakter format (`+`, spasi, strip) dibersihkan, prefix telepon internasional `00` di depan dihapus otomatis, dan dua penyebab klasik langsung dilempar error — **nomor format lokal** (`08123...` padahal harusnya `628123...`, penyebab #1 "pairing code gak pernah dateng") dan nomor lebih dari 15 digit (batas maksimum E.164). Pengecekan yang sama tersedia mandiri sebagai `normalizePairingPhone(nomor)`. Untuk bot publik, batasi percobaan pairing dengan `withPairingGuard`.
+
 **Observability** — pasang `createDebugMonitor()` untuk snapshot terstruktur yang aman
 (status koneksi, alasan disconnect, uptime, persentil latensi pesan, hitungan retry kirim,
 hitungan error Signal, status VoIP/WASM, memori). Snapshot ini **tidak pernah** berisi
@@ -931,6 +951,10 @@ await sock.sendMessage(jid, { text: 'sekarang!' }, { skipRateLimit: true }) // b
 const msg = await sock.sendMessage(jid, { text: 'penting!' })
 await sock.waitForMessageAck(msg.key.id) // resolve saat di-ack, reject saat
                                          // error server / timeout 60 detik
+
+// ✅ Varian satu panggilan — kirim + tunggu ack, bebas race (waiter didaftarkan
+// SEBELUM pesan keluar, jadi ack yang datang cepat tidak mungkin lolos)
+const { message, ack } = await sock.sendMessageAcked(jid, { text: 'penting banget!' }, { ackTimeoutMs: 30_000 })
 
 // 📣 Broadcast ke banyak jid — ada jeda, hasil per-jid, tidak mati di tengah jalan
 const report = await sock.sendBroadcast(jids, { text: 'promo!' }, { delayMs: 1500 })

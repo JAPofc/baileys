@@ -492,6 +492,26 @@ const sock = makeWASocket({ auth: state })
 sock.ev.on('creds.update', saveCreds)
 ```
 
+### Pairing code login (no QR)
+
+```js
+import { makeWASocket, useMultiFileAuthState, formatPairingCode } from '@japofc/baileys'
+
+const { state, saveCreds } = await useMultiFileAuthState('auth_info')
+const sock = makeWASocket({ auth: state, printQRInTerminal: false })
+sock.ev.on('creds.update', saveCreds)
+
+if (!state.creds.registered) {
+    const code = await sock.requestPairingCode('628123456789') // full international number
+    console.log('Pairing code:', formatPairingCode(code))      // "ABCD-EFGH"
+}
+
+// custom 8-char code (Crockford base32: 1-9, A-Z minus I/O/U)
+await sock.requestPairingCode('628123456789', 'JAPJAP12')
+```
+
+Input is validated up front with clear errors instead of the classic silent server-side failures: formatting noise (`+`, spaces, dashes) is stripped, a leading `00` international call prefix is removed automatically, and the two big footguns throw immediately — **local-format numbers** (`08123...` instead of `628123...`, the #1 cause of "the pairing code never arrives") and numbers over the 15-digit E.164 maximum. The same check is exported standalone as `normalizePairingPhone(phone)`. For public-facing bots, rate-limit pairing attempts with [`withPairingGuard`](#-security-pack).
+
 ```js
 // SQLite variant
 import { makeWASocket, useSqliteAuthState } from '@japofc/baileys'
@@ -1004,6 +1024,10 @@ await sock.sendMessage(jid, { text: 'now!' }, { skipRateLimit: true }) // bypass
 const msg = await sock.sendMessage(jid, { text: 'important!' })
 await sock.waitForMessageAck(msg.key.id) // resolves on ack, rejects on
                                          // server error / 60s timeout
+
+// ✅ One-call variant — send + await the ack, race-free (waiter registered
+// BEFORE the send goes out, so a fast ack can never slip through)
+const { message, ack } = await sock.sendMessageAcked(jid, { text: 'critical!' }, { ackTimeoutMs: 30_000 })
 
 // 📣 Broadcast to many jids — paced, per-jid outcomes, never dies mid-run
 const report = await sock.sendBroadcast(jids, { text: 'promo!' }, { delayMs: 1500 })
