@@ -342,7 +342,6 @@ Everything below is **optional** — the socket works without any of them. Insta
 | `audio-decode` | `^2.2.3` | Audio waveform/duration extraction (voice notes, VoIP capture) |
 | `link-preview-js` | `^3.x` | Rich link previews for URLs in outgoing text messages |
 | `better-sqlite3` | `^11.x` (Node 20 ABI) | SQLite auth state, SQLite store adapter, **and** the [Bot Framework](#-bot-framework)'s `SQLiteStore`/`StatsManager` |
-| `node-webpmux` | `^3.2.x` | Packname/author EXIF metadata on stickers made via `MediaManager.convertToSticker()` — not needed for plain sticker conversion |
 | `mongodb` | `^6.10+` | MongoDB store adapter |
 | `mysql2` | `^3.11+` | MySQL store adapter |
 | `pg` | `^8.13+` | PostgreSQL store adapter |
@@ -1360,6 +1359,10 @@ A sample of the utilities exported from `lib/Utils` beyond the message builders 
 | `warn-manager` | Strike system — warns per user per chat, thresholds, pardon, persistence |
 | `gatekeeper` | Ban users/chats from the bot; wrap any handler so banned traffic never reaches it |
 | `level-system` | XP & levels per user, level-up events, global + per-chat leaderboards, persistence |
+| `sticker-exif` | Read/write sticker pack-name/author EXIF on WebP in pure JS — no native deps, Termux-friendly |
+| `economy` | Balances, transfers with fees, daily rewards with streak bonuses, leaderboard, persistence |
+| `group-scheduler` | Open/close groups on a daily schedule ("night mode"), weekday filters |
+| `verifier` | Captcha-gate new group members — auto challenge on join, timeout/attempt kick hooks |
 | `auto-reply` | Simple keyword/pattern-based auto-responder engine |
 | `message-search` | Search cached/stored messages, peeling off ephemeral/view-once wrappers first |
 | `message-retry-manager` | Handles WhatsApp's retry-receipt protocol for undecryptable messages |
@@ -1508,6 +1511,39 @@ levels.bind(sock)
 levels.onLevelUp(({ user, chat, level }) =>
     sock.sendMessage(chat, { text: `🎉 @${user.split('@')[0]} reached level ${level}!`, mentions: [user] }))
 levels.getLeaderboard(10, chat) // top 10 in this group
+```
+
+```js
+// sticker branding, economy, night mode & join captcha
+import {
+    setStickerExif, readStickerExif, createEconomy,
+    createGroupScheduler, createVerifier
+} from '@japofc/baileys'
+
+// pure JS — no node-webpmux, works on static AND animated webp
+const branded = setStickerExif(webpBuffer, { packName: 'My Pack', author: 'me', emojis: ['🔥'] })
+await sock.sendMessage(jid, { sticker: branded })
+readStickerExif(branded) // { 'sticker-pack-name': 'My Pack', … }
+
+const eco = createEconomy({ dailyAmount: [100, 200], streakBonus: 25, transferFee: 0.05 })
+eco.claimDaily(user)          // { claimed, amount, streak } or { remainingMs }
+eco.transfer(userA, userB, 100)
+
+const nightMode = createGroupScheduler()
+nightMode.add({ group, action: 'close', at: '22:00' })          // announcement-only
+nightMode.add({ group, action: 'open',  at: '06:00' })          // everyone can chat
+nightMode.start(sock)
+
+const verifier = createVerifier({ timeoutMs: 120_000 })
+verifier.bind(sock) // auto math-captcha for every new member
+verifier.onChallenge(({ chat, user, question }) =>
+    sock.sendMessage(chat, { text: `👋 @${user.split('@')[0]} verify: ${question}`, mentions: [user] }))
+verifier.onFailed(({ chat, user }) => sock.groupParticipantsUpdate(chat, [user], 'remove'))
+
+// router upgrade — guards & categorized menu:
+router.command('kick', handler, { adminOnly: true, category: 'Admin' })
+router.command('shutdown', handler, { ownerOnly: true })         // owners: [...] in createRouter
+router.command('daily', handler, { cooldownMs: 60_000, category: 'Economy' })
 ```
 | `stickerpack` | Build and send sticker packs (including animated/Lottie) |
 | `templates` | Legacy WhatsApp Business template message helpers |
@@ -1673,7 +1709,7 @@ Use responsibly and follow WhatsApp Terms of Service.
 - Added [Username Management](#-username-management): `checkUsername`, `checkUsernameMulti`, `setUsername`, `deleteUsername`, `getMyUsername`, `setUsernamePin`, `findUserByUsername`, `fetchContactUsernames`, `getUsernameRecommendations`, layered onto the existing `USyncUsernameProtocol` support.
 - Added the [Bot Framework](#-bot-framework) (`Bot`, `Context`, `SessionManager`, `StatsManager`, `MediaManager`, `SQLiteStore`). Adapted on the way in:
   - `SQLiteStore`/`StatsManager` construction moved behind an async `.create()` factory so `better-sqlite3` stays a lazily-loaded optional peer dep instead of a hard top-level import that would crash the Framework module for anyone without it installed.
-  - `MediaManager`'s sticker/voice-note conversion now reuses this fork's existing lazy `fluent-ffmpeg` loader (see `Utils/MessageBuilder.js`) instead of adding `ffmpeg-static` + a second ffmpeg dependency; `node-webpmux` (sticker EXIF metadata) is lazy-loaded the same way and only when packname/author is actually requested.
+  - `MediaManager`'s sticker/voice-note conversion now reuses this fork's existing lazy `fluent-ffmpeg` loader (see `Utils/MessageBuilder.js`) instead of adding `ffmpeg-static` + a second ffmpeg dependency; sticker EXIF metadata is written by the built-in pure-JS muxer (`sticker-exif`) — no extra package needed.
   - `Bot`'s default logger now falls back to this fork's own pino instance instead of a silent no-op stub.
 - No `.d.ts` files were written for the new Framework module yet — see the note in that section.
 - Bumped to `1.0.1`.

@@ -8,6 +8,7 @@ export interface RouterContext {
     key: any;
     jid: string;
     sender: string;
+    isGroup: boolean;
     pushName: string;
     text: string;
     raw: string;
@@ -16,22 +17,48 @@ export interface RouterContext {
     reply: (content: any, opts?: any) => Promise<any>;
     react: (emoji: string) => Promise<any>;
 }
+export interface RouterDenial {
+    reason: 'groupOnly' | 'dmOnly' | 'ownerOnly' | 'adminOnly' | 'cooldown';
+    remainingMs?: number;
+}
+export interface RouterCommandOptions {
+    desc?: string;
+    category?: string;
+    /** Per-user cooldown for this command in ms. */
+    cooldownMs?: number;
+    /** Only group admins may run it (group metadata is cached). */
+    adminOnly?: boolean;
+    /** Only jids from RouterOptions.owners may run it. */
+    ownerOnly?: boolean;
+    groupOnly?: boolean;
+    dmOnly?: boolean;
+}
 export interface RouterOptions {
     prefix?: string | string[];
     ignoreMe?: boolean;
     help?: boolean;
     onError?: (err: any, ctx: RouterContext) => void;
+    /** Owner jids for ownerOnly commands (device suffixes tolerated). */
+    owners?: string | string[];
+    /** Called when a guard blocks a command. */
+    onDenied?: (ctx: RouterContext, denial: RouterDenial) => void;
+    /** Group-admin cache TTL in ms. Default 60000. */
+    adminCacheTtlMs?: number;
 }
 export interface Router {
-    command(names: string | string[], handler: (ctx: RouterContext) => any, opts?: {
-        desc?: string;
-    }): Router;
+    command(names: string | string[], handler: (ctx: RouterContext) => any, opts?: RouterCommandOptions): Router;
     use(mw: (ctx: RouterContext, next: () => Promise<void>) => any): Router;
     handle(sock: any, webMessage: any): Promise<boolean>;
     attach(sock: any): () => void;
-    list(): {
+    list(): Array<{
         names: string[];
         desc: string;
-    }[];
+        category: string;
+        cooldownMs: number;
+        adminOnly: boolean;
+        ownerOnly: boolean;
+        groupOnly: boolean;
+        dmOnly: boolean;
+    }>;
 }
 export declare const createRouter: (opts?: RouterOptions) => Router;

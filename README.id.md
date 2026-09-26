@@ -272,7 +272,6 @@ Semua di bawah ini **opsional** — socket tetap jalan tanpa satu pun. Install h
 | `audio-decode` | Ekstraksi waveform/durasi audio (voice note, capture VoIP) |
 | `link-preview-js` | Preview link kaya untuk URL di pesan teks keluar |
 | `better-sqlite3` | Auth state SQLite, adapter store SQLite, **dan** `SQLiteStore`/`StatsManager` milik [Bot Framework](#-bot-framework) |
-| `node-webpmux` | Metadata EXIF packname/author pada stiker via `MediaManager.convertToSticker()` — tidak dibutuhkan untuk konversi stiker biasa |
 | `mongodb` | Adapter store MongoDB |
 | `mysql2` | Adapter store MySQL |
 | `pg` | Adapter store PostgreSQL |
@@ -1287,6 +1286,10 @@ Sampel utilitas yang diekspor dari `lib/Utils` di luar builder pesan di atas:
 | `warn-manager` | Sistem strike — warn per user per chat, threshold, pardon, persistensi |
 | `gatekeeper` | Ban user/chat dari bot; bungkus handler apa pun agar trafik banned tak pernah masuk |
 | `level-system` | XP & level per user, event level-up, leaderboard global + per chat, persistensi |
+| `sticker-exif` | Baca/tulis EXIF packname/author stiker di WebP murni JS — tanpa dependensi native, aman di Termux |
+| `economy` | Saldo, transfer dengan fee, hadiah harian dengan bonus streak, leaderboard, persistensi |
+| `group-scheduler` | Buka/tutup grup terjadwal harian ("mode malam"), filter hari |
+| `verifier` | Captcha member baru grup — tantangan otomatis saat join, hook kick timeout/salah jawab |
 | `auto-reply` | Engine auto-responder sederhana berbasis kata kunci/pola |
 | `message-search` | Cari pesan di cache/store, membuka wrapper ephemeral/view-once dulu |
 | `message-retry-manager` | Menangani protokol retry-receipt WhatsApp untuk pesan yang gagal didekripsi |
@@ -1435,6 +1438,39 @@ levels.bind(sock)
 levels.onLevelUp(({ user, chat, level }) =>
     sock.sendMessage(chat, { text: `🎉 @${user.split('@')[0]} naik ke level ${level}!`, mentions: [user] }))
 levels.getLeaderboard(10, chat) // top 10 di grup ini
+```
+
+```js
+// branding stiker, economy, mode malam & captcha join
+import {
+    setStickerExif, readStickerExif, createEconomy,
+    createGroupScheduler, createVerifier
+} from '@japofc/baileys'
+
+// murni JS — tanpa node-webpmux, jalan di webp statis DAN animasi
+const stiker = setStickerExif(webpBuffer, { packName: 'Pack Gue', author: 'gue', emojis: ['🔥'] })
+await sock.sendMessage(jid, { sticker })
+readStickerExif(stiker) // { 'sticker-pack-name': 'Pack Gue', … }
+
+const eco = createEconomy({ dailyAmount: [100, 200], streakBonus: 25, transferFee: 0.05 })
+eco.claimDaily(user)          // { claimed, amount, streak } atau { remainingMs }
+eco.transfer(userA, userB, 100)
+
+const modeMalam = createGroupScheduler()
+modeMalam.add({ group, action: 'close', at: '22:00' })  // hanya admin
+modeMalam.add({ group, action: 'open',  at: '06:00' })  // semua bisa chat
+modeMalam.start(sock)
+
+const verifier = createVerifier({ timeoutMs: 120_000 })
+verifier.bind(sock) // captcha matematika otomatis untuk member baru
+verifier.onChallenge(({ chat, user, question }) =>
+    sock.sendMessage(chat, { text: `👋 @${user.split('@')[0]} verifikasi: ${question}`, mentions: [user] }))
+verifier.onFailed(({ chat, user }) => sock.groupParticipantsUpdate(chat, [user], 'remove'))
+
+// upgrade router — guard & menu berkategori:
+router.command('kick', handler, { adminOnly: true, category: 'Admin' })
+router.command('shutdown', handler, { ownerOnly: true })         // owners: [...] di createRouter
+router.command('daily', handler, { cooldownMs: 60_000, category: 'Economy' })
 ```
 | `stickerpack` | Bangun dan kirim paket stiker (termasuk animasi/Lottie) |
 | `templates` | Helper pesan template WhatsApp Business lama |
