@@ -1354,6 +1354,12 @@ A sample of the utilities exported from `lib/Utils` beyond the message builders 
 | `anti-link` | Detect (and auto-delete) group-invite/any links in groups — allowlists for chats & domains |
 | `auto-read` | Auto blue-tick incoming messages — group/DM/status filters, allow/deny lists, pause/resume |
 | `afk` | AFK manager — mark users away, catch @mentions & replies while away, auto welcome-back |
+| `pairing-tools` | Pairing code lifecycle — validate/normalize custom codes, expiry countdown, `pairWithCode` one-call flow |
+| `flood-guard` | Per-user burst detection — N messages in a window fires one alert per burst |
+| `word-filter` | Keyword/regex moderation over full extracted text (captions too), auto-delete, runtime word list |
+| `warn-manager` | Strike system — warns per user per chat, thresholds, pardon, persistence |
+| `gatekeeper` | Ban users/chats from the bot; wrap any handler so banned traffic never reaches it |
+| `level-system` | XP & levels per user, level-up events, global + per-chat leaderboards, persistence |
 | `auto-reply` | Simple keyword/pattern-based auto-responder engine |
 | `message-search` | Search cached/stored messages, peeling off ephemeral/view-once wrappers first |
 | `message-retry-manager` | Handles WhatsApp's retry-receipt protocol for undecryptable messages |
@@ -1455,6 +1461,53 @@ await sendMentionAll(sock, groupJid, 'Meeting in 5 minutes!') // visible @everyo
 await sendHideTag(sock, groupJid, 'Silent announcement')      // pings all, clean text
 
 // serializeMessage upgrades: m.isViewOnce, m.viewOnce, m.expiration, m.forward(jid), m.delete()
+```
+
+```js
+// pairing, but comfortable — one call from socket to paired
+import { pairWithCode, getPairingCodeInfo } from '@japofc/baileys'
+
+const result = await pairWithCode(sock, '628123456789', {
+    customCode: 'abcd-efgh', // optional — any format, normalized for you
+    onCode: (code, formatted) => console.log('Enter on your phone:', formatted)
+})
+if (result.restartRequired) { /* recreate the socket — standard after pairing */ }
+
+const info = getPairingCodeInfo(state.creds)
+console.log(info.formatted, '— expires in', Math.round(info.remainingMs / 1000), 's')
+// requestPairingCode itself now also accepts "abcd-efgh" / "ABCD EFGH" custom codes
+```
+
+```js
+// community & moderation pack
+import {
+    createFloodGuard, createWordFilter, createWarnManager,
+    createGatekeeper, createLevelSystem
+} from '@japofc/baileys'
+
+const flood = createFloodGuard({ maxMessages: 8, windowMs: 10_000 })
+flood.bind(sock)
+flood.onFlood(({ chat, user }) => warns.warn(user, { chat, reason: 'flooding' }))
+
+const filter = createWordFilter({ words: ['judol'], patterns: [/j\s*u\s*d\s*o\s*l/i], autoDelete: true })
+filter.bind(sock)
+filter.onMatch(({ chat, sender }) => warns.warn(sender, { chat, reason: 'banned word' }))
+
+const warns = createWarnManager({ threshold: 3 })
+warns.onThreshold(async ({ user, chat }) => {
+    await sock.groupParticipantsUpdate(chat, [user], 'remove') // three strikes, out
+    warns.reset(user, chat)
+})
+
+const gate = createGatekeeper()
+gate.banUser('pest@s.whatsapp.net', 'spam')
+sock.ev.on('messages.upsert', gate.filter(async ({ messages }) => { /* clean traffic only */ }))
+
+const levels = createLevelSystem()
+levels.bind(sock)
+levels.onLevelUp(({ user, chat, level }) =>
+    sock.sendMessage(chat, { text: `🎉 @${user.split('@')[0]} reached level ${level}!`, mentions: [user] }))
+levels.getLeaderboard(10, chat) // top 10 in this group
 ```
 | `stickerpack` | Build and send sticker packs (including animated/Lottie) |
 | `templates` | Legacy WhatsApp Business template message helpers |

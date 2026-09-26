@@ -61,6 +61,8 @@ export type AuthenticationCreds = SignalCreds & {
     accountSettings: AccountSettings;
     registered: boolean;
     pairingCode: string | undefined;
+    /** epoch ms when the current pairing code was requested */
+    pairingCodeRequestedAt?: number;
     lastPropHash: string | undefined;
     routingInfo: Buffer | undefined;
     additionalData?: any | undefined;

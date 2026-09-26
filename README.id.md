@@ -1281,6 +1281,12 @@ Sampel utilitas yang diekspor dari `lib/Utils` di luar builder pesan di atas:
 | `anti-link` | Deteksi (dan auto-hapus) link undangan grup/link apa pun di grup — allowlist chat & domain |
 | `auto-read` | Auto centang-biru pesan masuk — filter grup/DM/status, allow/deny list, pause/resume |
 | `afk` | Manajer AFK — tandai user pergi, tangkap @mention & reply selama pergi, auto welcome-back |
+| `pairing-tools` | Siklus kode pairing — validasi/normalisasi kode custom, hitung mundur kedaluwarsa, alur sekali panggil `pairWithCode` |
+| `flood-guard` | Deteksi spam per user — N pesan dalam satu jendela memicu satu alert per burst |
+| `word-filter` | Moderasi kata/regex atas seluruh teks terekstrak (caption juga), auto-hapus, daftar kata runtime |
+| `warn-manager` | Sistem strike — warn per user per chat, threshold, pardon, persistensi |
+| `gatekeeper` | Ban user/chat dari bot; bungkus handler apa pun agar trafik banned tak pernah masuk |
+| `level-system` | XP & level per user, event level-up, leaderboard global + per chat, persistensi |
 | `auto-reply` | Engine auto-responder sederhana berbasis kata kunci/pola |
 | `message-search` | Cari pesan di cache/store, membuka wrapper ephemeral/view-once dulu |
 | `message-retry-manager` | Menangani protokol retry-receipt WhatsApp untuk pesan yang gagal didekripsi |
@@ -1382,6 +1388,53 @@ await sendMentionAll(sock, groupJid, 'Rapat 5 menit lagi!')  // @everyone keliha
 await sendHideTag(sock, groupJid, 'Pengumuman diam-diam')    // semua ke-ping, teks bersih
 
 // upgrade serializeMessage: m.isViewOnce, m.viewOnce, m.expiration, m.forward(jid), m.delete()
+```
+
+```js
+// pairing jadi nyaman — sekali panggil dari socket sampai terpasang
+import { pairWithCode, getPairingCodeInfo } from '@japofc/baileys'
+
+const hasil = await pairWithCode(sock, '628123456789', {
+    customCode: 'abcd-efgh', // opsional — format bebas, dinormalisasi otomatis
+    onCode: (code, formatted) => console.log('Masukkan di HP:', formatted)
+})
+if (hasil.restartRequired) { /* buat ulang socket — standar setelah pairing */ }
+
+const info = getPairingCodeInfo(state.creds)
+console.log(info.formatted, '— kedaluwarsa dalam', Math.round(info.remainingMs / 1000), 'detik')
+// requestPairingCode sendiri kini juga menerima kode custom "abcd-efgh" / "ABCD EFGH"
+```
+
+```js
+// paket komunitas & moderasi
+import {
+    createFloodGuard, createWordFilter, createWarnManager,
+    createGatekeeper, createLevelSystem
+} from '@japofc/baileys'
+
+const flood = createFloodGuard({ maxMessages: 8, windowMs: 10_000 })
+flood.bind(sock)
+flood.onFlood(({ chat, user }) => warns.warn(user, { chat, reason: 'spam beruntun' }))
+
+const filter = createWordFilter({ words: ['judol'], patterns: [/j\s*u\s*d\s*o\s*l/i], autoDelete: true })
+filter.bind(sock)
+filter.onMatch(({ chat, sender }) => warns.warn(sender, { chat, reason: 'kata terlarang' }))
+
+const warns = createWarnManager({ threshold: 3 })
+warns.onThreshold(async ({ user, chat }) => {
+    await sock.groupParticipantsUpdate(chat, [user], 'remove') // tiga strike, keluar
+    warns.reset(user, chat)
+})
+
+const gate = createGatekeeper()
+gate.banUser('pengganggu@s.whatsapp.net', 'spam')
+sock.ev.on('messages.upsert', gate.filter(async ({ messages }) => { /* hanya trafik bersih */ }))
+
+const levels = createLevelSystem()
+levels.bind(sock)
+levels.onLevelUp(({ user, chat, level }) =>
+    sock.sendMessage(chat, { text: `🎉 @${user.split('@')[0]} naik ke level ${level}!`, mentions: [user] }))
+levels.getLeaderboard(10, chat) // top 10 di grup ini
 ```
 | `stickerpack` | Bangun dan kirim paket stiker (termasuk animasi/Lottie) |
 | `templates` | Helper pesan template WhatsApp Business lama |
