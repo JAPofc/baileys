@@ -1417,6 +1417,7 @@ A sample of the utilities exported from `lib/Utils` beyond the message builders 
 | `command-lock` | Disable commands per chat/globally + maintenance mode with owner bypass |
 | `status-tools` | Status auto-styling — random font/colors for text statuses, media/audio normalization (wired into status sends) |
 | `newsletter-tools` | Paced batch channel ops — follow/unfollow/mute many with per-jid verdicts |
+| `ai-groups` | ⚠️ EXPERIMENTAL: add/remove Meta AI in groups, createAiGroup — server-gated by Meta's per-account rollout (no flag = server rejects; nothing to verify manually) |
 | `auto-reply` | Simple keyword/pattern-based auto-responder engine |
 | `message-search` | Search cached/stored messages, peeling off ephemeral/view-once wrappers first |
 | `message-retry-manager` | Handles WhatsApp's retry-receipt protocol for undecryptable messages |
