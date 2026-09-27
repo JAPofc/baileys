@@ -10,6 +10,9 @@ export interface FlowStep {
 	parse?: (text: string) => unknown;
 	/** Fixed options: rendered numbered, answered by text or number. */
 	choices?: string[];
+	/** Step can be skipped with 'skip'/'lewati' (stores `default` ?? null). */
+	optional?: boolean;
+	default?: unknown;
 }
 
 export interface ConversationFlowOptions {
@@ -19,6 +22,8 @@ export interface ConversationFlowOptions {
 	cancelWords?: string[];
 	/** Words that go back one step. Default ['back', 'kembali']. */
 	backWords?: string[];
+	/** Words that skip an optional step. Default ['skip', 'lewati']. */
+	skipWords?: string[];
 	/** Clock override (testing). */
 	now?: () => number;
 }

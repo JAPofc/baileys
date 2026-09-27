@@ -35,6 +35,10 @@ export interface WordFilter {
 	getCensored(text: string, options?: { char?: string }): string;
 	/** Check a text directly; returns the matched fragment or null. */
 	test(text: string): string | null;
+	/** Chat-specific banned words (on top of the global list). */
+	addChatWords(chat: string, ...words: Array<string | string[]>): void;
+	removeChatWords(chat: string, ...words: Array<string | string[]>): void;
+	getChatWords(chat: string): string[];
 	addWords(...words: Array<string | string[]>): void;
 	removeWords(...words: Array<string | string[]>): void;
 	addPatterns(...patterns: Array<RegExp | RegExp[]>): void;

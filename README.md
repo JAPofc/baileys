@@ -1434,6 +1434,10 @@ A sample of the utilities exported from `lib/Utils` beyond the message builders 
 | `timing-tools` | debounce, throttle, lap stopwatch, measureTime |
 | `task-queue` | Bounded-concurrency async jobs with retries — mass DM safe |
 | `mask-tools` | maskPhone/maskEmail, boundary-aware censorText |
+| `math-eval` | SAFE !calc parser (no eval) + terbilang (Indonesian spelling) + Roman numerals |
+| `chat-settings` | Per-chat feature toggles with defaults — the !settings backbone, ✅/❌ cards |
+| `voucher` | Generate & redeem codes (JAP-X7K2-9QMD) — max uses, expiry, once-per-user |
+| `quiz` | Multi-question quiz sessions — running scores, skips, rankings |
 | `ai-groups` | ⚠️ EXPERIMENTAL: add/remove Meta AI in groups, createAiGroup — server-gated by Meta's per-account rollout (no flag = server rejects; nothing to verify manually) |
 | `auto-reply` | Simple keyword/pattern-based auto-responder engine |
 | `message-search` | Search cached/stored messages, peeling off ephemeral/view-once wrappers first |

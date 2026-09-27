@@ -26,4 +26,11 @@ export interface KVStore extends KVNamespace {
 }
 
 /** Pass a file path for persistence, or nothing for in-memory. */
+/** One-line persistence for any module with toJSON()/load(). Returns a stop() that flushes. */
+export declare const autoPersist: (
+	kv: KVNamespace,
+	module: { toJSON(): unknown; load(snapshot: any): void },
+	options?: { key?: string; intervalMs?: number; loadNow?: boolean }
+) => () => void;
+
 export declare const createKVStore: (file?: string, options?: { debounceMs?: number }) => Promise<KVStore>;
