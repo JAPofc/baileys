@@ -1412,6 +1412,9 @@ A sample of the utilities exported from `lib/Utils` beyond the message builders 
 | `tictactoe` | XO duels — challenge/accept, emoji boards, win/draw/forfeit |
 | `rps` | Rock-paper-scissors ("suit") — hidden picks, batu/gunting/kertas aliases, bets |
 | `word-games` | scrambleWord, math-problem generator, "sambung kata" word-chain engine |
+| `rental` | Per-chat bot rentals ("sewa") — trials, expiry warnings, unrented-group filter |
+| `message-counter` | Daily per-user activity — top chatters, 🥇 digests, day history |
+| `command-lock` | Disable commands per chat/globally + maintenance mode with owner bypass |
 | `auto-reply` | Simple keyword/pattern-based auto-responder engine |
 | `message-search` | Search cached/stored messages, peeling off ephemeral/view-once wrappers first |
 | `message-retry-manager` | Handles WhatsApp's retry-receipt protocol for undecryptable messages |
@@ -1875,6 +1878,29 @@ chain.start(chat, { firstWord: 'makan' })
 await chain.play(chat, user, 'nasi')         // ✅ n… — scores by word length
 
 eco.rob(thief, victim)  // upgrade: wallet heists — bank money stays safe
+
+// bot-business ops — rentals, activity, locks
+import { createRentalManager, createMessageCounter, createCommandLock } from '@japofc/baileys'
+
+const rental = createRentalManager()
+rental.add(groupJid, { days: 30 }); rental.startTrial(newGroup, { days: 3 })
+sock.ev.on('messages.upsert', rental.filter(handler)) // unrented groups ignored
+rental.onExpiring(({ chat }) => remind(chat))          // renewal reminder (24h before)
+rental.onExpire(({ chat }) => sock.groupLeave(chat))
+rental.startSweeper()
+
+const counter = createMessageCounter()
+counter.bind(sock)
+counter.renderDigest(chat)   // 🥇 @user — 42 pesan (daily top chatters)
+
+const locks = createCommandLock({ owners: [ownerJid] })
+locks.lock(chat, 'slot'); locks.lockGlobal('rob')
+router.use(locks.middleware())                         // blocked before handlers run
+locks.setMaintenance(true, { message: '🛠️ maintenance' }) // owners still pass
+
+// conversation-flow upgrade: choice steps
+flows.define('order', [{ id: 'size', prompt: 'Size:', choices: ['S', 'M', 'L'] }])
+// renders numbered options; answers accepted by text OR number
 // CLI: npx @japofc/baileys wa → package + baked WA Web version
 
 // +18 upgrades: titleCase/slugify/generateId, shop.updateItem, notes.exportText,

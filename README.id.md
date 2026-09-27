@@ -1339,6 +1339,9 @@ Sampel utilitas yang diekspor dari `lib/Utils` di luar builder pesan di atas:
 | `tictactoe` | Duel XO — tantang/terima, papan emoji, menang/seri/menyerah |
 | `rps` | Suit batu-gunting-kertas — pilihan tersembunyi, alias Indonesia, taruhan |
 | `word-games` | scrambleWord, generator soal matematika, engine "sambung kata" |
+| `rental` | Sewa bot per chat — trial, peringatan kedaluwarsa, filter grup belum sewa |
+| `message-counter` | Aktivitas harian per user — top chatter, rekap 🥇, riwayat harian |
+| `command-lock` | Matikan command per chat/global + mode maintenance dengan bypass owner |
 | `auto-reply` | Engine auto-responder sederhana berbasis kata kunci/pola |
 | `message-search` | Cari pesan di cache/store, membuka wrapper ephemeral/view-once dulu |
 | `message-retry-manager` | Menangani protokol retry-receipt WhatsApp untuk pesan yang gagal didekripsi |
@@ -1802,6 +1805,29 @@ sambung.start(chat, { firstWord: 'makan' })
 await sambung.play(chat, user, 'nasi')       // ✅ n… — skor = panjang kata
 
 eco.rob(maling, korban)  // upgrade: rampok dompet — uang bank tetap aman
+
+// operasional bisnis bot — sewa, aktivitas, kunci
+import { createRentalManager, createMessageCounter, createCommandLock } from '@japofc/baileys'
+
+const sewa = createRentalManager()
+sewa.add(groupJid, { days: 30 }); sewa.startTrial(grupBaru, { days: 3 })
+sock.ev.on('messages.upsert', sewa.filter(handler))   // grup belum sewa diabaikan
+sewa.onExpiring(({ chat }) => ingatkan(chat))          // pengingat perpanjang (24 jam)
+sewa.onExpire(({ chat }) => sock.groupLeave(chat))
+sewa.startSweeper()
+
+const counter = createMessageCounter()
+counter.bind(sock)
+counter.renderDigest(chat)   // 🥇 @user — 42 pesan (top chatter harian)
+
+const locks = createCommandLock({ owners: [ownerJid] })
+locks.lock(chat, 'slot'); locks.lockGlobal('rob')
+router.use(locks.middleware())                         // diblokir sebelum handler jalan
+locks.setMaintenance(true, { message: '🛠️ maintenance' }) // owner tetap lolos
+
+// upgrade conversation-flow: langkah pilihan
+flows.define('order', [{ id: 'size', prompt: 'Ukuran:', choices: ['S', 'M', 'L'] }])
+// dirender bernomor; jawaban diterima via teks ATAU angka
 // CLI: npx @japofc/baileys wa → versi paket + versi WA Web bawaan
 
 // +18 upgrade: titleCase/slugify/generateId, shop.updateItem, notes.exportText,

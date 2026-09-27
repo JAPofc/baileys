@@ -8,6 +8,8 @@ export interface FlowStep {
 	validate?: (text: string, answers: Record<string, unknown>) => boolean | string | Promise<boolean | string>;
 	/** Transform the accepted text before storing. */
 	parse?: (text: string) => unknown;
+	/** Fixed options: rendered numbered, answered by text or number. */
+	choices?: string[];
 }
 
 export interface ConversationFlowOptions {

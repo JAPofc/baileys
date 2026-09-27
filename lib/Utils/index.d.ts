@@ -134,3 +134,6 @@ export * from './text-poll';
 export * from './tictactoe';
 export * from './rps';
 export * from './word-games';
+export * from './rental';
+export * from './message-counter';
+export * from './command-lock';
