@@ -1323,6 +1323,12 @@ Sampel utilitas yang diekspor dari `lib/Utils` di luar builder pesan di atas:
 | `always-online` | Titik hijau tetap nyala — penyegar presence dengan ganti mode live & counter gagal |
 | `status-watcher` | Story sisi penerima — filter kontak, tipe media, hook download |
 | `button-extras` | quickButtons, sendConfirm (ya/tidak), sendMenuButtons sekali panggil |
+| `random-tools` | Notasi dadu, koin, pilihan berbobot, meter rate/"jodoh" deterministik |
+| `jid-extras` | Konversi nomor↔jid, banding tanpa peduli device, cetak nomor cantik |
+| `time-tools` | Waktu relatif ('5m ago'), jam, kejadian berikutnya, jendela lewat tengah malam, salam |
+| `group-tools` | Helper groupMetadata murni — admin, owner, statistik, diff member, kartu info |
+| `msg-tools` | messageTypeOf, info quoted, timestamp, preview pesan satu baris |
+| `kv-store` | Database key-value JSON mini — namespace, counter, simpan atomik debounce |
 | `auto-reply` | Engine auto-responder sederhana berbasis kata kunci/pola |
 | `message-search` | Cari pesan di cache/store, membuka wrapper ephemeral/view-once dulu |
 | `message-retry-manager` | Menangani protokol retry-receipt WhatsApp untuk pesan yang gagal didekripsi |
@@ -1704,6 +1710,26 @@ statuses.onStatus(({ download }) => download())
 
 await sendConfirm(sock, jid, 'Hapus semua data?')           // confirm_yes/confirm_no
 await sendButtons(sock, jid, { text: 'Pilih', buttons: quickButtons(['A', 'B']) })
+
+// ronde 50+ — perkakas harian:
+import { rollDice, matchScore, phoneToJid, prettyPhone, formatRelative,
+         getGroupAdmins, diffParticipants, summarizeMessage, createKVStore } from '@japofc/baileys'
+
+rollDice('2d6+3')                       // { rolls: [4, 2], total: 9 }
+matchScore('budi', 'ani')               // 0-100, "jodoh meter" deterministik
+phoneToJid('+62 812-3456-7890')         // 6281234567890@s.whatsapp.net
+prettyPhone('6281234567890')            // +62 812-3456-7890
+formatRelative(msg.timestamp)           // '5m ago'
+getGroupAdmins(await sock.groupMetadata(jid))
+summarizeMessage(msg)                   // '📷 image: caption…' buat log
+
+const db = await createKVStore('./botdata.json')   // DB persisten mini
+db.namespace('settings').set(jid, { welcome: true })
+
+// +18 upgrade: titleCase/slugify/generateId, shop.updateItem, notes.exportText,
+// warns.getTop, stats.getTopChats, i18n.formatNumber/formatDate, levels.getRankPosition,
+// quota.getAllUsage, tiers.renderStatus, birthday.renderUpcoming, guess.startNumberGame,
+// flood.getTopFlooders, gate.listBans, health.setThreshold, watchdog.getReport
 
 // 10 upgrade lain: ban sementara gate.banUser(jid, r, { expiresInMs }),
 // flood autoMuteMs + isMuted, eco.applyInterest(0.01) bunga bank,

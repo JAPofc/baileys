@@ -35,6 +35,8 @@ export interface ConnectionWatchdog {
 	readonly silentMs: number;
 	readonly isStale: boolean;
 	readonly stats: { staleCount: number };
+	/** One-line status for dashboards/owner DMs. */
+	getReport(): string;
 }
 
 export declare const createConnectionWatchdog: (options?: ConnectionWatchdogOptions) => ConnectionWatchdog;

@@ -1396,6 +1396,12 @@ A sample of the utilities exported from `lib/Utils` beyond the message builders 
 | `always-online` | Keep the green dot lit — presence refresher with live switching and failure counters |
 | `status-watcher` | Receive-side stories — per-contact filters, media type, download hook |
 | `button-extras` | quickButtons, sendConfirm (yes/no), sendMenuButtons one-liners |
+| `random-tools` | Dice notation, coins, weighted picks, deterministic rate/"jodoh" meters |
+| `jid-extras` | phone↔jid conversions, device-insensitive compare, pretty phone printing |
+| `time-tools` | Relative times ('5m ago'), clocks, next-occurrence, overnight windows, greetings |
+| `group-tools` | Pure groupMetadata helpers — admins, owner, stats, participant diffs, info card |
+| `msg-tools` | messageTypeOf, quoted info, timestamps, one-line message previews |
+| `kv-store` | Tiny JSON key-value DB — namespaces, counters, debounced atomic saves |
 | `auto-reply` | Simple keyword/pattern-based auto-responder engine |
 | `message-search` | Search cached/stored messages, peeling off ephemeral/view-once wrappers first |
 | `message-retry-manager` | Handles WhatsApp's retry-receipt protocol for undecryptable messages |
@@ -1777,6 +1783,26 @@ statuses.onStatus(({ download }) => download())
 
 await sendConfirm(sock, jid, 'Delete all data?')            // confirm_yes/confirm_no
 await sendButtons(sock, jid, { text: 'Pick', buttons: quickButtons(['A', 'B']) })
+
+// the 50+ round — grab-bag of daily drivers:
+import { rollDice, matchScore, phoneToJid, prettyPhone, formatRelative,
+         getGroupAdmins, diffParticipants, summarizeMessage, createKVStore } from '@japofc/baileys'
+
+rollDice('2d6+3')                       // { rolls: [4, 2], total: 9 }
+matchScore('budi', 'ani')               // 0-100, deterministic "jodoh meter"
+phoneToJid('+62 812-3456-7890')         // 6281234567890@s.whatsapp.net
+prettyPhone('6281234567890')            // +62 812-3456-7890
+formatRelative(msg.timestamp)           // '5m ago'
+getGroupAdmins(await sock.groupMetadata(jid))
+summarizeMessage(msg)                   // '📷 image: caption…' for logs
+
+const db = await createKVStore('./botdata.json')   // tiny persistent DB
+db.namespace('settings').set(jid, { welcome: true })
+
+// +18 upgrades: titleCase/slugify/generateId, shop.updateItem, notes.exportText,
+// warns.getTop, stats.getTopChats, i18n.formatNumber/formatDate, levels.getRankPosition,
+// quota.getAllUsage, tiers.renderStatus, birthday.renderUpcoming, guess.startNumberGame,
+// flood.getTopFlooders, gate.listBans, health.setThreshold, watchdog.getReport
 
 // 10 more upgrades: temp bans gate.banUser(jid, r, { expiresInMs }),
 // flood autoMuteMs + isMuted, eco.applyInterest(0.01) bank interest,

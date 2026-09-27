@@ -32,6 +32,8 @@ export interface QuotaManager {
 	grantBonus(user: string, amount: number): void;
 	/** Reset one user, or everyone when omitted. */
 	reset(user?: string): void;
+	/** Today's usage for every tracked user. */
+	getAllUsage(): Array<{ user: string; used: number }>;
 	onExhausted(cb: (info: { user: string; tier?: string; used: number; limit: number; resetAt: number }) => void): () => void;
 	toJSON(): Record<string, unknown>;
 	load(snapshot: Record<string, unknown>): void;

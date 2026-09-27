@@ -26,3 +26,10 @@ export declare const stripMarkdown: (text: string) => string;
 export declare const levenshtein: (a: string, b: string) => number;
 /** 0..1 similarity from edit distance (1 = identical). */
 export declare const similarity: (a: string, b: string) => number;
+
+/** Title Case Every Word. */
+export declare const titleCase: (text: string) => string;
+/** URL/file-safe slug. */
+export declare const slugify: (text: string, options?: { separator?: string }) => string;
+/** Short unique id with optional prefix ('ord_lx2c…'). */
+export declare const generateId: (prefix?: string) => string;

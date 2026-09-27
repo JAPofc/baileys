@@ -35,6 +35,8 @@ export interface BirthdayManager {
 	getToday(): Array<{ user: string; chat?: string; age?: number; zodiac?: string | null }>;
 	getUpcoming(days?: number): Array<{ user: string; chat?: string; day: number; month: number; inDays: number }>;
 	/** Run one check; fires onBirthday max once per user per year. */
+	/** Ready-to-send upcoming-birthdays list. */
+	renderUpcoming(days?: number, options?: { title?: string }): string;
 	checkNow(): BirthdayEvent[];
 	start(): () => void;
 	stop(): void;

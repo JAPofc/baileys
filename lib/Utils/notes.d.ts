@@ -23,6 +23,8 @@ export interface Notes {
 	rename(chat: string, from: string, to: string): boolean;
 	list(chat: string): Note[];
 	search(chat: string, query: string): Note[];
+	/** Ready-to-send list of a chat's notes. */
+	exportText(chat: string, options?: { title?: string }): string;
 	countIn(chat: string): number;
 	readonly size: number;
 	toJSON(): Record<string, unknown>;

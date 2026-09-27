@@ -22,6 +22,10 @@ export interface I18n {
 	setChatLang(chat: string, lang: string): void;
 	getChatLang(chat: string): string;
 	resetChatLang(chat: string): boolean;
+	/** Locale-aware number formatting (pass a chat jid or a lang code). */
+	formatNumber(value: number, chatOrLang?: string, options?: Intl.NumberFormatOptions): string;
+	/** Locale-aware date formatting (pass a chat jid or a lang code). */
+	formatDate(value: number | Date, chatOrLang?: string, options?: Intl.DateTimeFormatOptions): string;
 	/** Keys the default language has that `lang` is missing. */
 	getMissingKeys(lang: string): string[];
 	toJSON(): Record<string, unknown>;

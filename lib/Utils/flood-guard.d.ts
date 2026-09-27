@@ -35,6 +35,8 @@ export interface FloodGuard {
 	isMuted(chat: string, user: string): boolean;
 	muteFor(chat: string, user: string, ms: number): void;
 	unmute(chat: string, user: string): void;
+	/** Users with the most in-window messages right now. */
+	getTopFlooders(limit?: number): Array<{ chat: string; user: string; count: number }>;
 	clear(): void;
 }
 

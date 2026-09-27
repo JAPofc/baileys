@@ -29,6 +29,8 @@ export interface ShopPurchase {
 
 export interface Shop {
 	addItem(item: { id: string; name: string; price: number; description?: string; stock?: number; consumable?: boolean; maxPerUser?: number; [meta: string]: unknown }): ShopItem;
+	/** Patch an item live (price/stock/…). */
+	updateItem(id: string, patch: Partial<Pick<ShopItem, 'name' | 'price' | 'description' | 'stock' | 'consumable' | 'maxPerUser'>>): ShopItem;
 	removeItem(id: string): boolean;
 	getItem(id: string): ShopItem | null;
 	getCatalog(): ShopItem[];

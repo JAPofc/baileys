@@ -35,6 +35,9 @@ export interface HealthMonitor {
 	snapshot(): Promise<HealthSnapshot>;
 	/** Register a custom metric. Returns a remover. */
 	addProbe(name: string, fn: () => unknown | Promise<unknown>): () => void;
+	/** Add/change a threshold live (null removes it). */
+	setThreshold(metric: string, value: number | null): void;
+	getThresholds(): Record<string, number>;
 	start(): () => void;
 	stop(): void;
 	readonly isRunning: boolean;

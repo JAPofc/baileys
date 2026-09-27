@@ -29,6 +29,8 @@ export interface Gatekeeper {
 	isBannedUser(jid: string): boolean;
 	isBannedChat(jid: string): boolean;
 	getBanInfo(jid: string): { reason: string; at: number; expiresAt?: number } | null;
+	/** Detailed ban list with reasons and remaining time. */
+	listBans(): Array<{ jid: string; type: 'user' | 'chat'; reason: string; at: number; expiresAt: number | null; remainingMs: number | null }>;
 	getBannedUsers(): string[];
 	getBannedChats(): string[];
 	onBlocked(cb: (event: GatekeeperBlockEvent) => void): () => void;

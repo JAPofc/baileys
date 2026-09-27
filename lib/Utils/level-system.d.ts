@@ -51,6 +51,8 @@ export interface LevelSystem {
 	onLevelUp(cb: (event: LevelUpEvent) => void): () => void;
 	getUser(user: string): LevelUserStats | null;
 	getLeaderboard(limit?: number, chat?: string): LeaderboardRow[];
+	/** 1-based leaderboard position (global or per chat), or null. */
+	getRankPosition(user: string, chat?: string): number | null;
 	levelOf(xp: number): number;
 	xpForLevel(level: number): number;
 	rankOf(level: number): string;
