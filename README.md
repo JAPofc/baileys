@@ -1368,6 +1368,12 @@ A sample of the utilities exported from `lib/Utils` beyond the message builders 
 | `shop` | Shop & inventory on top of the economy — stock, consumables, sell-back, gifting |
 | `group-backup` | Snapshot group settings + members to JSON, diff against live, restore settings |
 | `menfess` | Anonymous two-way DM relay sessions ("menfess" bot) — aliases, stop words, TTL |
+| `notes` | Named snippets per chat (`#save` / `#get`) — search, rename, limits, persistence |
+| `birthday` | Birthday book — today/upcoming lists, auto-congratulate once per year |
+| `guess-game` | "Tebak-tebakan" engine — one round per chat, first correct wins, rewards, timeout reveal |
+| `i18n` | Tiny translation layer — dictionaries, per-chat language, `{var}` interpolation |
+| `fancy-text` | Unicode restyling for menus — 𝗯𝗼𝗹𝗱, 𝚖𝚘𝚗𝚘, ⓒⓘⓡⓒⓛⓔⓓ, ｆｕｌｌｗｉｄｔｈ, ꜱᴍᴀʟʟᴄᴀᴘꜱ (12 styles) |
+| `join-requests` | Auto approve/reject group join requests — allow/deny lists, manual routing, pending sweep |
 | `auto-reply` | Simple keyword/pattern-based auto-responder engine |
 | `message-search` | Search cached/stored messages, peeling off ephemeral/view-once wrappers first |
 | `message-retry-manager` | Handles WhatsApp's retry-receipt protocol for undecryptable messages |
@@ -1581,6 +1587,43 @@ await menfess.start(sock, sender, targetJid, 'first anonymous message')
 // both sides now chat through the bot as Anon-1 / Anon-2 until "stop"
 
 // more upgrades: verifier { challenge: 'emoji' }, level ranks (Newbie→Legend)
+```
+
+```js
+// notes, birthdays, games, i18n, fancy menus & join requests
+import {
+    createNotes, createBirthdayManager, createGuessGame,
+    createI18n, styleText, createJoinRequestManager
+} from '@japofc/baileys'
+
+const notes = createNotes()
+notes.set(chat, 'rules', 'No spam. Be kind.')     // !save rules …
+notes.get(chat, 'rules')?.content                 // !get rules
+
+const bdays = createBirthdayManager()
+bdays.set(user, { day: 17, month: 8, year: 2000, chat })
+bdays.onBirthday(({ user, age, chat }) =>
+    sock.sendMessage(chat, { text: `🎂 HBD @${user.split('@')[0]} (${age})!`, mentions: [user] }))
+bdays.start()
+
+const game = createGuessGame({ timeoutMs: 60_000 })
+game.bind(sock)
+game.start(chat, { answer: 'Jakarta', hint: 'capital city', reward: 500 })
+game.onCorrect(({ user, reward }) => eco.add(user, reward, 'quiz win'))
+
+const i18n = createI18n({ defaultLang: 'en' })
+i18n.addLanguage('id', { greet: 'Halo {name}!' })
+i18n.setChatLang(chat, 'id')                      // !lang id
+i18n.tFor(chat, 'greet', { name: 'Budi' })        // 'Halo Budi!'
+
+styleText('Bot Menu', 'bold')                     // 𝗕𝗼𝘁 𝗠𝗲𝗻𝘂
+
+const joins = createJoinRequestManager({ denylist: [spammer] })
+joins.bind(sock)                                  // live join-request events
+joins.onRequest(({ user, approve, reject }) => approve())
+await joins.sweep(sock, groupJid)                 // process the pending list
+
+// CLI upgrade: npx @japofc/baileys sticker in.webp out.webp --pack "My Pack" --author me
 ```
 | `stickerpack` | Build and send sticker packs (including animated/Lottie) |
 | `templates` | Legacy WhatsApp Business template message helpers |

@@ -1295,6 +1295,12 @@ Sampel utilitas yang diekspor dari `lib/Utils` di luar builder pesan di atas:
 | `shop` | Toko & inventory di atas economy — stok, consumable, jual balik, kirim item |
 | `group-backup` | Snapshot setting + member grup ke JSON, diff dengan kondisi live, restore setting |
 | `menfess` | Sesi relay DM anonim dua arah (bot "menfess") — alias, kata stop, TTL |
+| `notes` | Catatan bernama per chat (`#save` / `#get`) — cari, rename, limit, persistensi |
+| `birthday` | Buku ulang tahun — daftar hari ini/mendatang, ucapan otomatis sekali per tahun |
+| `guess-game` | Engine tebak-tebakan — satu ronde per chat, tercepat menang, hadiah, jawaban dibuka saat timeout |
+| `i18n` | Lapisan terjemahan mini — kamus, bahasa per chat, interpolasi `{var}` |
+| `fancy-text` | Gaya teks Unicode untuk menu — 𝗯𝗼𝗹𝗱, 𝚖𝚘𝚗𝚘, ⓒⓘⓡⓒⓛⓔⓓ, ｆｕｌｌｗｉｄｔｈ, ꜱᴍᴀʟʟᴄᴀᴘꜱ (12 gaya) |
+| `join-requests` | Auto setujui/tolak permintaan join grup — allowlist/denylist, routing manual, sweep pending |
 | `auto-reply` | Engine auto-responder sederhana berbasis kata kunci/pola |
 | `message-search` | Cari pesan di cache/store, membuka wrapper ephemeral/view-once dulu |
 | `message-retry-manager` | Menangani protokol retry-receipt WhatsApp untuk pesan yang gagal didekripsi |
@@ -1508,6 +1514,43 @@ await menfess.start(sock, sender, targetJid, 'pesan anonim pertama')
 // kedua pihak chat lewat bot sebagai Anon-1 / Anon-2 sampai kirim "stop"
 
 // upgrade lain: verifier { challenge: 'emoji' }, rank level (Newbie→Legend)
+```
+
+```js
+// catatan, ulang tahun, game, i18n, menu keren & permintaan join
+import {
+    createNotes, createBirthdayManager, createGuessGame,
+    createI18n, styleText, createJoinRequestManager
+} from '@japofc/baileys'
+
+const notes = createNotes()
+notes.set(chat, 'rules', 'Dilarang spam. Santun.')  // !save rules …
+notes.get(chat, 'rules')?.content                   // !get rules
+
+const ultah = createBirthdayManager()
+ultah.set(user, { day: 17, month: 8, year: 2000, chat })
+ultah.onBirthday(({ user, age, chat }) =>
+    sock.sendMessage(chat, { text: `🎂 HBD @${user.split('@')[0]} (${age})!`, mentions: [user] }))
+ultah.start()
+
+const game = createGuessGame({ timeoutMs: 60_000 })
+game.bind(sock)
+game.start(chat, { answer: 'Jakarta', hint: 'ibukota', reward: 500 })
+game.onCorrect(({ user, reward }) => eco.add(user, reward, 'menang kuis'))
+
+const i18n = createI18n({ defaultLang: 'id' })
+i18n.addLanguage('en', { greet: 'Hello {name}!' })
+i18n.setChatLang(chat, 'en')                        // !lang en
+i18n.tFor(chat, 'greet', { name: 'Budi' })
+
+styleText('Menu Bot', 'bold')                       // 𝗠𝗲𝗻𝘂 𝗕𝗼𝘁
+
+const joins = createJoinRequestManager({ denylist: [spammer] })
+joins.bind(sock)                                    // event join-request live
+joins.onRequest(({ user, approve, reject }) => approve())
+await joins.sweep(sock, groupJid)                   // proses daftar pending
+
+// upgrade CLI: npx @japofc/baileys sticker in.webp out.webp --pack "Pack Gue" --author gue
 ```
 | `stickerpack` | Bangun dan kirim paket stiker (termasuk animasi/Lottie) |
 | `templates` | Helper pesan template WhatsApp Business lama |
