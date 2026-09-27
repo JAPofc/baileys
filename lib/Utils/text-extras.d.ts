@@ -27,6 +27,9 @@ export declare const levenshtein: (a: string, b: string) => number;
 /** 0..1 similarity from edit distance (1 = identical). */
 export declare const similarity: (a: string, b: string) => number;
 
+/** Text sparkline: sparkline([1,5,3,8]) → '▁▅▃█'. */
+export declare const sparkline: (values: number[], options?: { chars?: string }) => string;
+
 /** Title Case Every Word. */
 export declare const titleCase: (text: string) => string;
 /** URL/file-safe slug. */

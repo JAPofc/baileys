@@ -48,6 +48,9 @@ export interface HealthMonitor {
 	isAlerting(metric: string): boolean;
 }
 
+/** Heap/lag trend text (sparklines) from getHistory(). */
+export declare const renderHealthHistory: (history: HealthSnapshot[]) => string;
+
 /** Pretty owner-DM text for a snapshot(). */
 export declare const formatHealthSnapshot: (snapshot: HealthSnapshot) => string;
 

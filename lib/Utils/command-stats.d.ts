@@ -11,6 +11,8 @@ export interface CommandStats {
 	middleware(): (ctx: { command: string; sender: string; jid: string }, next: () => Promise<void>) => Promise<void>;
 	getTopCommands(limit?: number): Array<{ command: string; count: number }>;
 	getTopUsers(limit?: number): Array<{ user: string; count: number }>;
+	/** Ready-to-send usage leaderboard. */
+	renderTop(options?: { title?: string; limit?: number }): string;
 	/** Busiest chats across all commands. */
 	getTopChats(limit?: number): Array<{ chat: string; count: number }>;
 	/** 24 numbers — command volume per local hour-of-day. */

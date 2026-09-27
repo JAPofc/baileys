@@ -20,6 +20,8 @@ export interface AccountWarmup {
 	getStatus(): WarmupStatus;
 	/** Next local midnight (counter reset). */
 	nextResetAt(): number;
+	/** Aged account? Mark it graduated — caps lift instantly. */
+	skipWarmup(): void;
 	/** Fires once per day when the cap is reached. */
 	onLimit(cb: (info: { day: number; cap: number; sentToday: number }) => void): () => void;
 	toJSON(): Record<string, unknown>;

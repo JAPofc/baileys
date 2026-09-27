@@ -19,6 +19,8 @@ export interface Gatekeeper {
 	/** Wrap a messages.upsert handler — banned messages never reach it. */
 	filter<T extends (upsert: { messages: unknown[] }, ...rest: unknown[]) => unknown>(handler: T): T;
 	banUser(jid: string, reason?: string, options?: { expiresInMs?: number }): void;
+	/** Bulk ban (raid cleanup). Returns how many were newly added. */
+	banMany(jids: string[], reason?: string, options?: { expiresInMs?: number }): number;
 	unbanUser(jid: string): boolean;
 	banChat(jid: string, reason?: string, options?: { expiresInMs?: number }): void;
 	unbanChat(jid: string): boolean;

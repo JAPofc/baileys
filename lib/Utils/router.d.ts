@@ -9,6 +9,8 @@ export interface RouterContext {
     jid: string;
     sender: string;
     isGroup: boolean;
+    /** Text of the replied-to message, or ''. */
+    readonly quotedText: string;
     pushName: string;
     text: string;
     raw: string;
@@ -32,6 +34,8 @@ export interface RouterCommandOptions {
     ownerOnly?: boolean;
     groupOnly?: boolean;
     dmOnly?: boolean;
+    /** Excluded from the help menu. */
+    hidden?: boolean;
 }
 export interface RouterOptions {
     prefix?: string | string[];
@@ -63,6 +67,7 @@ export interface Router {
         ownerOnly: boolean;
         groupOnly: boolean;
         dmOnly: boolean;
+        hidden: boolean;
     }>;
 }
 export declare const createRouter: (opts?: RouterOptions) => Router;

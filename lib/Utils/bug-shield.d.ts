@@ -61,6 +61,8 @@ export interface BugShield {
 	addExempt(jid: string): void;
 	removeExempt(jid: string): boolean;
 	readonly stats: { scanned: number; blocked: number };
+	/** Detection counts per reason. */
+	getReasonStats(): Record<string, number>;
 }
 
 export declare const createBugShield: (options?: BugShieldOptions) => BugShield;

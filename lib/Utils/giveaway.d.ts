@@ -25,7 +25,9 @@ export interface Giveaway {
 	unbind(): void;
 	onJoin(cb: (info: { chat: string; user: string; entries: number; msg?: unknown }) => void): () => void;
 	onEnd(cb: (result: GiveawayEndResult) => void): () => void;
+	/** Fires when canJoin rejects an entry. */
+	onDenied(cb: (info: { chat: string; user: string; reason: string; msg?: unknown }) => void): () => void;
 	readonly size: number;
 }
 
-export declare const createGiveaway: (options?: { keyword?: string; random?: () => number; now?: () => number }) => Giveaway;
+export declare const createGiveaway: (options?: { keyword?: string; random?: () => number; now?: () => number; canJoin?: (user: string, chat: string) => true | string }) => Giveaway;

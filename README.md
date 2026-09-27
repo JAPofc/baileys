@@ -1898,6 +1898,20 @@ locks.lock(chat, 'slot'); locks.lockGlobal('rob')
 router.use(locks.middleware())                         // blocked before handlers run
 locks.setMaintenance(true, { message: '🛠️ maintenance' }) // owners still pass
 
+// MEGA UPGRADE SWEEP (36 upgrades across the whole toolkit):
+// kv TTL + getOrSet · notes pinning 📌 · todo priorities 🔴🟡 · recurring
+// reminders · warns.renderList · eco.getEconomyStats + eco.work() jobs ·
+// shop.renderCatalog · tiers.extendAll (downtime compensation) ·
+// quota.renderStatus · level PRESTIGE ⭐ · guess.revealHint('j_k__t_') ·
+// ttt win/loss records + leaderboard · RPS best-of-3 series · giveaway
+// canJoin requirements · attendance streaks · auction buy-now price ·
+// poll renderLive bars · menfess.listActiveSessions · afk.renderAfkList ·
+// shield.getReasonStats · gate.banMany (raid cleanup) · warmup.skip ·
+// opGuard.waitAndAssert · watchdog autoRestart · health sparklines ▁▅▃█ ·
+// router hidden commands + ctx.quotedText · i18n.addLanguages ·
+// stats.renderTop · m.timestampMs · tag-all chunking for huge groups ·
+// isForwarded/getForwardInfo · rental.renderList
+
 // conversation-flow upgrade: choice steps
 flows.define('order', [{ id: 'size', prompt: 'Size:', choices: ['S', 'M', 'L'] }])
 // renders numbered options; answers accepted by text OR number

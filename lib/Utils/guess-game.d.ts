@@ -34,6 +34,8 @@ export interface GuessCorrectEvent {
 
 export interface GuessGame {
 	start(chat: string, round: { answer: string | number; hint?: string; reward?: number; timeoutMs?: number; startedBy?: string }): { chat: string; hint: string; reward: number; deadline: number };
+	/** Progressive hint mask ('j_k__t_'), more letters each call. */
+	revealHint(chat: string, options?: { fraction?: number }): string | null;
 	/** Number-guessing round with an auto-generated answer + hint. */
 	startNumberGame(chat: string, options?: { min?: number; max?: number; reward?: number; timeoutMs?: number; random?: () => number; startedBy?: string }): { chat: string; hint: string; reward: number; deadline: number };
 	guess(chat: string, user: string, text: string, msg?: unknown): 'correct' | 'wrong' | null;

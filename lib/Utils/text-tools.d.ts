@@ -53,7 +53,7 @@ export declare const sendMentionAll: (
     sock: any,
     groupJid: string,
     text?: string,
-    options?: { participants?: Array<string | { id?: string }> } & Record<string, unknown>
+    options?: { participants?: Array<string | { id?: string }>; maxMentionsPerMessage?: number } & Record<string, unknown>
 ) => Promise<unknown>;
 
 /** Ping every member without printing the @list ("hidetag"). */

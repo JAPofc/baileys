@@ -20,6 +20,9 @@ export interface TicTacToe {
 	isActive(chat: string): boolean;
 	getGame(chat: string): { x: string; o: string; board: Array<'x' | 'o' | null>; turn: 'x' | 'o'; pendingAccept: boolean } | null;
 	onEnd(cb: (result: Record<string, unknown>) => void): () => void;
+	/** Lifetime record for a player, or null. */
+	getStats(user: string): { user: string; wins: number; losses: number; draws: number } | null;
+	getLeaderboard(limit?: number): Array<{ user: string; wins: number; losses: number; draws: number }>;
 	readonly size: number;
 }
 

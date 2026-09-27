@@ -17,6 +17,8 @@ export interface GroupOpCheck {
 export interface GroupOpGuard {
 	check(op: string, count?: number): GroupOpCheck;
 	record(op: string, count?: number): void;
+	/** Wait until allowed, then record (throws past maxWaitMs). */
+	waitAndAssert(op: string, count?: number, options?: { maxWaitMs?: number }): Promise<GroupOpCheck>;
 	/** check + record; throws GroupOpLimitError on breach. */
 	assert(op: string, count?: number): GroupOpCheck;
 	/** Proxy a socket so groupParticipantsUpdate/groupCreate are guarded. */

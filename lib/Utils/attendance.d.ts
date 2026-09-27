@@ -22,7 +22,9 @@ export interface Attendance {
 	getMentions(chat: string): string[];
 	bind(sock: unknown): () => void;
 	unbind(): void;
-	onCheckIn(cb: (info: { chat: string; user: string; position: number; at: number }) => void): () => void;
+	onCheckIn(cb: (info: { chat: string; user: string; position: number; at: number; streak: number }) => void): () => void;
+	/** Consecutive-day attendance streak for a user. */
+	getStreak(chat: string, user: string): number;
 	readonly size: number;
 }
 

@@ -44,6 +44,8 @@ export interface AfkManager {
 	isAfk(jid: string): boolean;
 	getAfk(jid: string): AfkEntry | null;
 	getAfkUsers(): string[];
+	/** Ready-to-send list of who's AFK and for how long. */
+	renderAfkList(options?: { title?: string }): string;
 	onAfkMention(cb: (event: AfkMentionEvent) => void): () => void;
 	onReturn(cb: (summary: AfkReturnSummary) => void): () => void;
 	readonly size: number;

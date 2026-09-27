@@ -10,6 +10,8 @@ export interface I18nOptions {
 export interface I18n {
 	/** Register/merge a dictionary (nested objects become dot-paths). */
 	addLanguage(lang: string, dict: Record<string, unknown>): I18n;
+	/** Register many dictionaries at once. */
+	addLanguages(dicts: Record<string, Record<string, unknown>>): I18n;
 	removeLanguage(lang: string): boolean;
 	hasLanguage(lang: string): boolean;
 	getLanguages(): string[];

@@ -29,6 +29,8 @@ export interface SerializedMessage {
 	message?: Record<string, unknown>;
 	mentions: string[];
 	isMedia: boolean;
+	/** Epoch-ms timestamp (Long + second units handled), or null. */
+	timestampMs: number | null;
 	isViewOnce: boolean;
 	/** Unwrapped view-once info or null. */
 	viewOnce: { message: Record<string, unknown>; type: string; mediaType?: string; media: Record<string, unknown> } | null;

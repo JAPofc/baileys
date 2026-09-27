@@ -1825,6 +1825,20 @@ locks.lock(chat, 'slot'); locks.lockGlobal('rob')
 router.use(locks.middleware())                         // diblokir sebelum handler jalan
 locks.setMaintenance(true, { message: '🛠️ maintenance' }) // owner tetap lolos
 
+// SAPUAN UPGRADE BESAR (36 upgrade di seluruh toolkit):
+// kv TTL + getOrSet · pin catatan 📌 · prioritas todo 🔴🟡 · pengingat
+// berulang · warns.renderList · eco.getEconomyStats + eco.work() kerja ·
+// shop.renderCatalog · tiers.extendAll (kompensasi downtime) ·
+// quota.renderStatus · PRESTIGE level ⭐ · guess.revealHint('j_k__t_') ·
+// rekor menang/kalah ttt + leaderboard · suit best-of-3 · syarat ikut
+// giveaway (canJoin) · streak absen · harga beli-langsung lelang ·
+// poll renderLive bar · menfess.listActiveSessions · afk.renderAfkList ·
+// shield.getReasonStats · gate.banMany (bersih-bersih raid) · warmup.skip ·
+// opGuard.waitAndAssert · watchdog autoRestart · sparkline kesehatan ▁▅▃█ ·
+// command tersembunyi router + ctx.quotedText · i18n.addLanguages ·
+// stats.renderTop · m.timestampMs · tag-all dipecah utk grup raksasa ·
+// isForwarded/getForwardInfo · rental.renderList
+
 // upgrade conversation-flow: langkah pilihan
 flows.define('order', [{ id: 'size', prompt: 'Ukuran:', choices: ['S', 'M', 'L'] }])
 // dirender bernomor; jawaban diterima via teks ATAU angka

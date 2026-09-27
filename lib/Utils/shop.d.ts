@@ -34,6 +34,8 @@ export interface Shop {
 	removeItem(id: string): boolean;
 	getItem(id: string): ShopItem | null;
 	getCatalog(): ShopItem[];
+	/** Ready-to-send store listing. */
+	renderCatalog(options?: { title?: string }): string;
 	buy(user: string, itemId: string, qty?: number): ShopPurchase;
 	sellBack(user: string, itemId: string, qty?: number): { refund: number; balance: number };
 	useItem(user: string, itemId: string): number;

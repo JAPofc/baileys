@@ -34,6 +34,8 @@ export interface WarnManager {
 	getCount(user: string, chat?: string): number;
 	getWarns(user: string, chat?: string): WarnRecord[];
 	list(chat?: string): Array<{ user: string; chat?: string; count: number }>;
+	/** Ready-to-send warn list for a chat. */
+	renderList(chat: string, options?: { title?: string }): string;
 	/** Most-warned users leaderboard. */
 	getTop(limit?: number, chat?: string): Array<{ user: string; chat?: string; count: number }>;
 	onWarn(cb: (result: WarnResult) => void): () => void;

@@ -2,7 +2,9 @@
 
 export interface KVNamespace {
 	get<T = unknown>(key: string, fallback?: T): T;
-	set<T>(key: string, value: T): T;
+	set<T>(key: string, value: T, options?: { ttlMs?: number }): T;
+	/** Return the cached value or create-and-store it. */
+	getOrSet<T>(key: string, factory: T | (() => T), options?: { ttlMs?: number }): T;
 	has(key: string): boolean;
 	delete(key: string): boolean;
 	/** All entries of this namespace. */

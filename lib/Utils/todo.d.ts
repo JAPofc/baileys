@@ -6,6 +6,7 @@ export interface TodoTask {
 	text: string;
 	by?: string;
 	assignee?: string;
+	priority?: 'high' | 'medium' | 'low' | null;
 	done: boolean;
 	createdAt: number;
 	doneAt: number | null;
@@ -20,7 +21,7 @@ export interface TodoListOptions {
 }
 
 export interface TodoList {
-	add(chat: string, text: string, meta?: { by?: string; assignee?: string }): { id: number; position: number };
+	add(chat: string, text: string, meta?: { by?: string; assignee?: string; priority?: 'high' | 'medium' | 'low' }): { id: number; position: number };
 	/** Check off by 1-based position or id. */
 	done(chat: string, ref: number): boolean;
 	undone(chat: string, ref: number): boolean;
@@ -28,6 +29,7 @@ export interface TodoList {
 	assign(chat: string, ref: number, assignee: string): boolean;
 	/** Set (or clear with null) a task deadline. */
 	setDue(chat: string, ref: number, dueAt: number | null): boolean;
+	setPriority(chat: string, ref: number, priority: 'high' | 'medium' | 'low' | null): boolean;
 	/** Open tasks past their deadline. */
 	getOverdue(chat: string): TodoTask[];
 	list(chat: string, options?: { openOnly?: boolean }): TodoTask[];

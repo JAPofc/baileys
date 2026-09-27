@@ -7,6 +7,8 @@ export interface ConnectionWatchdogOptions {
 	checkIntervalMs?: number;
 	/** Events that count as activity. Default: messages/receipts/presence/… */
 	events?: string[];
+	/** End the bound socket automatically on stale. Default false. */
+	autoRestart?: boolean;
 	/** Clock override (testing). */
 	now?: () => number;
 }

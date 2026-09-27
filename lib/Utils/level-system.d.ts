@@ -18,6 +18,7 @@ export interface LevelUserStats {
 	xp: number;
 	level: number;
 	rank: string;
+	prestige: number;
 	messages: number;
 	nextLevelXp: number;
 	/** 0..1 progress toward the next level. */
@@ -60,6 +61,8 @@ export interface LevelSystem {
 	setMultiplier(multiplier: number, chat?: string): void;
 	getMultiplier(chat?: string): number;
 	clearMultiplier(chat?: string): boolean;
+	/** Reset XP for a permanent ⭐ (requires minLevel, default 10). */
+	prestige(user: string, options?: { minLevel?: number }): LevelUserStats | null;
 	/** Ready-to-send text rank card with a progress bar, or null. */
 	renderRankCard(user: string, options?: { barSize?: number }): string | null;
 	toJSON(): Record<string, unknown>;

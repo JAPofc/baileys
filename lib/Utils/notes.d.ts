@@ -4,6 +4,7 @@ export interface Note {
 	name: string;
 	content: unknown;
 	author?: string;
+	pinned?: boolean;
 	createdAt: number;
 	updatedAt: number;
 }
@@ -20,6 +21,8 @@ export interface Notes {
 	get(chat: string, name: string): Note | null;
 	has(chat: string, name: string): boolean;
 	remove(chat: string, name: string): boolean;
+	/** Pinned notes sort first and get 📌 in exportText. */
+	pin(chat: string, name: string, pinned?: boolean): boolean;
 	rename(chat: string, from: string, to: string): boolean;
 	list(chat: string): Note[];
 	search(chat: string, query: string): Note[];

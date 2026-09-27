@@ -12,6 +12,10 @@ export interface Reminder {
 	createdAt: number;
 	/** Set when restored past its due time. */
 	late?: boolean;
+	/** Interval for recurring reminders. */
+	repeatMs?: number;
+	/** Set on recurring firings. */
+	recurring?: boolean;
 }
 
 export interface ReminderManagerOptions {
@@ -23,7 +27,7 @@ export interface ReminderManagerOptions {
 
 export interface ReminderManager {
 	/** Schedule with `inMs` (relative) or `atMs` (absolute). Returns the id. */
-	add(reminder: { chat: string; user: string; text?: string; inMs?: number; atMs?: number }): number;
+	add(reminder: { chat: string; user: string; text?: string; inMs?: number; atMs?: number; repeatMs?: number }): number;
 	cancel(id: number): boolean;
 	/** Push a pending reminder back by extraMs. Returns the new dueAt or null. */
 	snooze(id: number, extraMs: number): number | null;

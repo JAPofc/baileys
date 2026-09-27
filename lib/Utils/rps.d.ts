@@ -12,18 +12,21 @@ export interface RpsResult {
 	loser: string | null;
 	picks: Record<string, { choice: RpsChoice; emoji: string }>;
 	bet: number;
+	/** Present in best-of-N duels. */
+	series?: { round: number; of: number; score: Record<string, number>; over: boolean };
+	lastRound?: { draw: boolean; winner: string | null; loser: string | null };
 }
 
 export interface RPS {
 	normalizeChoice: typeof normalizeRpsChoice;
-	challenge(chat: string, challenger: string, opponent: string, options?: { bet?: number }): { chat: string; challenger: string; opponent: string; bet: number };
+	challenge(chat: string, challenger: string, opponent: string, options?: { bet?: number; rounds?: number }): { chat: string; challenger: string; opponent: string; bet: number };
 	accept(chat: string, user: string): boolean;
 	cancel(chat: string): boolean;
 	/** 'waiting' | RpsResult | 'no-duel' | 'not-accepted' | 'not-a-player' | 'bad-choice' | 'already-picked' */
 	pick(chat: string, user: string, choice: string): 'waiting' | RpsResult | string;
 	isActive(chat: string): boolean;
 	/** Reveals WHO picked, never WHAT. */
-	getDuel(chat: string): { a: string; b: string; bet: number; pendingAccept: boolean; picked: string[] } | null;
+	getDuel(chat: string): { a: string; b: string; bet: number; rounds: number; round: number; score: Record<string, number>; pendingAccept: boolean; picked: string[] } | null;
 	onResult(cb: (result: RpsResult) => void): () => void;
 	readonly size: number;
 }

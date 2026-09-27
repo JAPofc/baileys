@@ -42,6 +42,8 @@ export interface MenfessRelay {
 	onRelayed(cb: (event: MenfessRelayEvent) => void): () => void;
 	onEnded(cb: (info: { session: MenfessSession; reason: string; error?: unknown }) => void): () => void;
 	getSession(userJid: string): MenfessSession | null;
+	/** Owner overview of live sessions (jids included). */
+	listActiveSessions(): Array<{ id: number; a: string; b: string; aliasA: string; aliasB: string; ageMs: number; idleMs: number }>;
 	isInSession(userJid: string): boolean;
 	end(sessionId: number, reason?: string): boolean;
 	readonly size: number;

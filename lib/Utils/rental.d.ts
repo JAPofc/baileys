@@ -26,6 +26,8 @@ export interface RentalManager {
 	renderStatus(chat: string): string;
 	getExpiring(withinMs: number): Array<{ chat: string; expiresAt: number; remainingMs: number }>;
 	list(): Array<{ chat: string; expiresAt: number; trial: boolean }>;
+	/** Owner overview of every active rental. */
+	renderList(options?: { title?: string }): string;
 	/** Fire expiries + renewal warnings now. Returns expired chats. */
 	sweep(): string[];
 	startSweeper(): () => void;

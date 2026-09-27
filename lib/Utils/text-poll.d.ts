@@ -25,6 +25,8 @@ export interface TextPoll {
 	end(chat: string): TextPollEnd | null;
 	isActive(chat: string): boolean;
 	getResults(chat: string): { question: string; results: TextPollResult[]; totalVotes: number } | null;
+	/** Live results card with bars while voting is open. */
+	renderLive(chat: string): string | null;
 	/** Ready-to-send ballot card. */
 	render(chat: string): string | null;
 	/** Results with text bar charts. */

@@ -20,11 +20,11 @@ export interface AuctionEndResult {
 }
 
 export type BidResult =
-	| { accepted: true; amount: number; leader: string; extended: boolean }
+	| { accepted: true; amount: number; leader: string; extended: boolean; buyNow?: boolean; result?: AuctionEndResult }
 	| { accepted: false; reason: 'no-auction' | 'too-low' | 'already-leading'; minNext?: number };
 
 export interface Auction {
-	start(chat: string, options?: { item?: string; startBid?: number; minIncrement?: number; durationMs?: number; antiSnipeMs?: number; startedBy?: string }): { chat: string; item: string; startBid: number; minIncrement: number; endsAt: number };
+	start(chat: string, options?: { item?: string; startBid?: number; minIncrement?: number; buyNow?: number; durationMs?: number; antiSnipeMs?: number; startedBy?: string }): { chat: string; item: string; startBid: number; minIncrement: number; endsAt: number };
 	/** Never throws on a bad bid — returns a refusal instead. */
 	bid(chat: string, user: string, amount: number): BidResult;
 	end(chat: string): AuctionEndResult | null;

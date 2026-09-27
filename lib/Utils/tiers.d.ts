@@ -34,6 +34,8 @@ export interface TierManager {
 	setTier(user: string, name: string, duration?: TierDuration): { user: string; name: string; since: number; expiresAt: number };
 	/** Stack time onto an existing membership. */
 	extend(user: string, duration: TierDuration): { user: string; name: string; expiresAt: number };
+	/** Extend every active member of a tier. Returns how many. */
+	extendAll(name: string, duration: TierDuration): number;
 	revoke(user: string): boolean;
 	isActive(user: string, name?: string): boolean;
 	getTier(user: string): TierInfo | null;
