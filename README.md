@@ -1415,6 +1415,8 @@ A sample of the utilities exported from `lib/Utils` beyond the message builders 
 | `rental` | Per-chat bot rentals ("sewa") — trials, expiry warnings, unrented-group filter |
 | `message-counter` | Daily per-user activity — top chatters, 🥇 digests, day history |
 | `command-lock` | Disable commands per chat/globally + maintenance mode with owner bypass |
+| `status-tools` | Status auto-styling — random font/colors for text statuses, media/audio normalization (wired into status sends) |
+| `newsletter-tools` | Paced batch channel ops — follow/unfollow/mute many with per-jid verdicts |
 | `auto-reply` | Simple keyword/pattern-based auto-responder engine |
 | `message-search` | Search cached/stored messages, peeling off ephemeral/view-once wrappers first |
 | `message-retry-manager` | Handles WhatsApp's retry-receipt protocol for undecryptable messages |

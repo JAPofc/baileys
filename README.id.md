@@ -1342,6 +1342,8 @@ Sampel utilitas yang diekspor dari `lib/Utils` di luar builder pesan di atas:
 | `rental` | Sewa bot per chat — trial, peringatan kedaluwarsa, filter grup belum sewa |
 | `message-counter` | Aktivitas harian per user — top chatter, rekap 🥇, riwayat harian |
 | `command-lock` | Matikan command per chat/global + mode maintenance dengan bypass owner |
+| `status-tools` | Auto-style status — font/warna acak untuk status teks, normalisasi media/audio (terpasang di jalur kirim status) |
+| `newsletter-tools` | Operasi channel massal ber-jeda — follow/unfollow/mute banyak dengan hasil per-jid |
 | `auto-reply` | Engine auto-responder sederhana berbasis kata kunci/pola |
 | `message-search` | Cari pesan di cache/store, membuka wrapper ephemeral/view-once dulu |
 | `message-retry-manager` | Menangani protokol retry-receipt WhatsApp untuk pesan yang gagal didekripsi |
