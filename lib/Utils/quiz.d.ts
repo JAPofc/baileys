@@ -9,7 +9,7 @@ export interface QuizQuestion {
 export interface QuizSession {
 	handler(upsert: { messages: unknown[] }): void;
 	answer(chat: string, user: string, text: string): 'correct' | 'wrong' | null;
-	start(chat: string, questions: QuizQuestion[]): { chat: string; total: number };
+	start(chat: string, questions: QuizQuestion[], options?: { shuffle?: boolean; random?: () => number }): { chat: string; total: number };
 	/** Skip the current question (reveals the answer via onTimeout). */
 	skip(chat: string): boolean;
 	/** End early. Returns the final ranking. */

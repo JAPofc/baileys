@@ -13,6 +13,8 @@ export interface EconomyOptions {
 	streakGraceMs?: number;
 	/** Transfer fee fraction (0.05 = 5%), charged to the sender. Default 0. */
 	transferFee?: number;
+	/** Currency symbol for format(). Default 💰. */
+	currency?: string;
 	/** Max money the bank can hold per user. Default Infinity. */
 	bankCapacity?: number;
 	allowNegative?: boolean;
@@ -48,6 +50,8 @@ export interface Economy {
 	bet(user: string, amount: number, options?: { winChance?: number; multiplier?: number }): { won: boolean; payout: number; balance: number };
 	getStreak(user: string): number;
 	getBankBalance(user: string): number;
+	/** '1.234.567 💰' locale formatting. */
+	format(amount: number): string;
 	deposit(user: string, amount: number): { balance: number; bank: number };
 	withdraw(user: string, amount: number): { balance: number; bank: number };
 	/** Whole-economy overview for dashboards. */

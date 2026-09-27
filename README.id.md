@@ -1366,6 +1366,10 @@ Sampel utilitas yang diekspor dari `lib/Utils` di luar builder pesan di atas:
 | `quiz` | Sesi kuis multi-soal — skor berjalan, skip, peringkat |
 | `socket-preflight` | validateSocketConfig — tangkap config rusak sebelum jadi 405 misterius (otomatis di makeWASocket) |
 | `group-cache` | createGroupMetadataCache — TTL-LRU untuk `cachedGroupMetadata` dengan invalidasi via event |
+| `reputation` | +rep/-rep dengan cooldown per pemberi, leaderboard, kartu rep |
+| `invite-tracker` | Siapa mengundang siapa — hitungan aktif-vs-total (loop join/leave tak dibayar), papan top inviter |
+| `level-rewards` | attachLevelRewards — payout otomatis (saldo/tier/custom) di ambang level, sekali saja |
+| `marriage` | Registri lamar/terima/cerai — monogami ketat, hari jadi, daftar pasangan |
 | `ai-groups` | ⚠️ EKSPERIMENTAL: tambah/hapus Meta AI di grup, createAiGroup — digerbang server per-akun oleh rollout Meta (tanpa flag = server menolak; tidak ada verifikasi manual) |
 | `auto-reply` | Engine auto-responder sederhana berbasis kata kunci/pola |
 | `message-search` | Cari pesan di cache/store, membuka wrapper ephemeral/view-once dulu |

@@ -6,6 +6,8 @@ export type RedeemResult =
 
 export interface VoucherManager {
 	create(options?: { payload?: Record<string, unknown>; maxUses?: number; expiresInMs?: number; note?: string }): { code: string; expiresAt: number };
+	/** Mint N codes with the same payload. */
+	createMany(count: number, options?: { payload?: Record<string, unknown>; maxUses?: number; expiresInMs?: number; note?: string }): string[];
 	/** Never throws on user input. */
 	redeem(user: string, code: string): RedeemResult;
 	/** Public info — never exposes the redeemer list. */
