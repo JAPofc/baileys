@@ -15,6 +15,8 @@ export interface I18n {
 	removeLanguage(lang: string): boolean;
 	hasLanguage(lang: string): boolean;
 	getLanguages(): string[];
+	/** Does a translation exist (no fallback-to-key)? */
+	has(key: string, lang?: string): boolean;
 	t(key: string, vars?: Record<string, unknown>, lang?: string): string;
 	/** Translate in a chat's configured language. */
 	tFor(chat: string, key: string, vars?: Record<string, unknown>): string;

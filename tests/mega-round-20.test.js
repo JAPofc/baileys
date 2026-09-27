@@ -300,7 +300,7 @@ test('fancy styles, zodiac, guess-game close hints, health formatting', async ()
 	const bf = [...styleText('Ab', 'boldFraktur')];
 	assert.equal(bf[0].codePointAt(0), 0x1d56c);
 	assert.equal(bf[1].codePointAt(0), 0x1d586 + 1);
-	assert.equal(listTextStyles().length, 14);
+	assert.equal(listTextStyles().length, 15); // upsideDown added
 
 	assert.equal(getZodiac(17, 8), 'Leo');
 	assert.equal(getZodiac(23, 8), 'Virgo');

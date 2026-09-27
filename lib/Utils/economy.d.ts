@@ -60,6 +60,8 @@ export interface Economy {
 	applyInterest(rate: number): { users: number; totalAdded: number };
 	/** Leaderboard position by wallet + bank, or null. */
 	getRank(user: string): number | null;
+	/** Ready-to-send balance card. */
+	getBalanceCard(user: string): string;
 	getLeaderboard(limit?: number): Array<{ rank: number; user: string; balance: number; bank: number; total: number }>;
 	onTransaction(cb: (tx: EconomyTransaction) => void): () => void;
 	toJSON(): Record<string, unknown>;

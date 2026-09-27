@@ -23,6 +23,8 @@ export interface UrlChangeEvent {
 export interface UrlWatcher {
 	/** Poll once (also primes the baseline). */
 	check(): Promise<{ changed?: boolean; notModified?: boolean; hash?: string; body?: string; error?: unknown }>;
+	/** Switch targets at runtime (baseline + ETag reset). */
+	setUrl(url: string): void;
 	start(): () => void;
 	stop(): void;
 	readonly isRunning: boolean;

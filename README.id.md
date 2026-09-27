@@ -1354,6 +1354,12 @@ Sampel utilitas yang diekspor dari `lib/Utils` di luar builder pesan di atas:
 | `command-lock` | Matikan command per chat/global + mode maintenance dengan bypass owner |
 | `status-tools` | Auto-style status — font/warna acak untuk status teks, normalisasi media/audio (terpasang di jalur kirim status) |
 | `newsletter-tools` | Operasi channel massal ber-jeda — follow/unfollow/mute banyak dengan hasil per-jid |
+| `emoji-tools` | Deteksi/hitung/ekstrak/buang emoji, randomEmoji bertema |
+| `array-tools` | chunk, unique-by, groupBy, sortBy, sample unik, range |
+| `validate-tools` | isUrl/isEmail, parseBool id/en, clamp, ensureArray, pickFields |
+| `timing-tools` | debounce, throttle, stopwatch lap, measureTime |
+| `task-queue` | Job async konkuren terbatas + retry — aman untuk DM massal |
+| `mask-tools` | maskPhone/maskEmail, censorText sadar batas kata |
 | `ai-groups` | ⚠️ EKSPERIMENTAL: tambah/hapus Meta AI di grup, createAiGroup — digerbang server per-akun oleh rollout Meta (tanpa flag = server menolak; tidak ada verifikasi manual) |
 | `auto-reply` | Engine auto-responder sederhana berbasis kata kunci/pola |
 | `message-search` | Cari pesan di cache/store, membuka wrapper ephemeral/view-once dulu |

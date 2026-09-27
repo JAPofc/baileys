@@ -14,7 +14,8 @@ export type TextStyle =
 	| 'negativeSquared'
 	| 'boldFraktur'
 	| 'fullwidth'
-	| 'smallcaps';
+	| 'smallcaps'
+	| 'upsideDown';
 
 /** Wrap text in a box (double/single/round borders). */
 export declare const boxText: (text: string, options?: { style?: 'double' | 'single' | 'round' }) => string;

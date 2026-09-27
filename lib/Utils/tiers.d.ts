@@ -44,6 +44,8 @@ export interface TierManager {
 	renderStatus(user: string): string;
 	/** Active memberships expiring within `withinMs`, soonest first. */
 	getExpiring(withinMs: number): Array<{ user: string; name: string; expiresAt: number; remainingMs: number }>;
+	/** Owner overview of active members. */
+	renderList(name?: string, options?: { title?: string }): string;
 	/** Fire expiries now. Returns the expired entries. */
 	sweep(): TierExpireEvent[];
 	startSweeper(): () => void;

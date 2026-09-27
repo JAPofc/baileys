@@ -10,5 +10,8 @@ export declare const parseClockTime: (value: string) => { hour: number; minute: 
 export declare const nextOccurrence: (at: string, options?: { now?: number }) => number;
 /** Inside a window? Overnight ranges handled; probe = 'HH:MM' or epoch ms. */
 export declare const isWithinHours: (probe: string | number, from: string, to: string) => boolean;
+/** Locale-pretty date: humanDate(ts, 'id') → '28 September 2026'. */
+export declare const humanDate: (timestamp?: number, lang?: string, options?: Intl.DateTimeFormatOptions) => string;
+
 /** Time-of-day greeting ('en' | 'id'). */
 export declare const getGreeting: (hour?: number, lang?: string) => string;

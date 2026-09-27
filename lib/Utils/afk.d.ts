@@ -45,6 +45,8 @@ export interface AfkManager {
 	getAfk(jid: string): AfkEntry | null;
 	getAfkUsers(): string[];
 	/** Ready-to-send list of who's AFK and for how long. */
+	/** Cumulative AFK time (ms) across completed sessions. */
+	getTotalAfkMs(jid: string): number;
 	renderAfkList(options?: { title?: string }): string;
 	onAfkMention(cb: (event: AfkMentionEvent) => void): () => void;
 	onReturn(cb: (summary: AfkReturnSummary) => void): () => void;

@@ -47,6 +47,8 @@ export interface MenfessRelay {
 	isInSession(userJid: string): boolean;
 	end(sessionId: number, reason?: string): boolean;
 	readonly size: number;
+	/** Lifetime counters. */
+	readonly stats: { totalStarted: number; totalRelayed: number; active: number };
 	clear(): void;
 }
 

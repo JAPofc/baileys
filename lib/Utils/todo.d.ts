@@ -38,6 +38,8 @@ export interface TodoList {
 	/** Mentions array matching render() output. */
 	mentions(chat: string): string[];
 	/** Remove finished tasks. Returns how many were removed. */
+	/** One-line summary: '3/5 selesai (1 telat ⏰)'. */
+	renderCompact(chat: string): string;
 	clearDone(chat: string): number;
 	countIn(chat: string, options?: { openOnly?: boolean }): number;
 	toJSON(): Record<string, unknown>;

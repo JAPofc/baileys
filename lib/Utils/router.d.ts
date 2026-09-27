@@ -11,6 +11,10 @@ export interface RouterContext {
     isGroup: boolean;
     /** Text of the replied-to message, or ''. */
     readonly quotedText: string;
+    /** Jids mentioned in this message. */
+    readonly mentions: string[];
+    /** Sender is in RouterOptions.owners. */
+    isOwner: boolean;
     pushName: string;
     text: string;
     raw: string;

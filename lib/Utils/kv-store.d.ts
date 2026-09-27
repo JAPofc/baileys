@@ -10,6 +10,8 @@ export interface KVNamespace {
 	/** All entries of this namespace. */
 	all(): Record<string, unknown>;
 	keys(): string[];
+	entries(): Array<[string, unknown]>;
+	readonly size: number;
 	increment(key: string, by?: number): number;
 	clear(): void;
 }

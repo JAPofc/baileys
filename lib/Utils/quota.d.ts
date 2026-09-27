@@ -5,6 +5,8 @@ export interface QuotaManagerOptions {
 	defaultLimit?: number;
 	/** Per-tier daily allowances (Infinity allowed). */
 	limits?: Record<string, number>;
+	/** Local hour when the day rolls (0 = midnight). */
+	resetHour?: number;
 	/** Clock override (testing). */
 	now?: () => number;
 }

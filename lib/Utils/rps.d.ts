@@ -27,6 +27,8 @@ export interface RPS {
 	isActive(chat: string): boolean;
 	/** Reveals WHO picked, never WHAT. */
 	getDuel(chat: string): { a: string; b: string; bet: number; rounds: number; round: number; score: Record<string, number>; pendingAccept: boolean; picked: string[] } | null;
+	/** Lifetime series record, or null. */
+	getStats(user: string): { user: string; wins: number; losses: number } | null;
 	onResult(cb: (result: RpsResult) => void): () => void;
 	readonly size: number;
 }

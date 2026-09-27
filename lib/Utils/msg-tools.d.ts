@@ -11,5 +11,8 @@ export declare const getMessageTimestampMs: (msg: unknown) => number | null;
 export declare const getForwardInfo: (msg: unknown) => { forwarded: boolean; score: number; frequentlyForwarded: boolean };
 export declare const isForwarded: (msg: unknown) => boolean;
 
+/** Caption of a media message (wrappers unwrapped), or ''. */
+export declare const getMediaCaption: (msg: unknown) => string;
+
 /** One-line human preview: '📷 image: caption…'. */
 export declare const summarizeMessage: (msg: unknown, options?: { maxLength?: number }) => string;

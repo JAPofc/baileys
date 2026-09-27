@@ -20,6 +20,8 @@ export interface CrashGuardOptions {
 export interface CrashGuard {
 	readonly stats: { uncaughtException: number; unhandledRejection: number };
 	readonly isInstalled: boolean;
+	/** Most recent caught error, or null. */
+	readonly lastError: { type: string; error: unknown; at: number } | null;
 	uninstall(): boolean;
 }
 

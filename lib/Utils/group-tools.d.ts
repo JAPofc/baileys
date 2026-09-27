@@ -9,6 +9,9 @@ export declare const diffParticipants: (
 	before: Array<{ id: string; admin?: string | null }>,
 	after: Array<{ id: string; admin?: string | null }>
 ) => { added: string[]; removed: string[]; promoted: string[]; demoted: string[] };
+/** Random member jid — tag-roulette games. */
+export declare const pickRandomMember: (metadata: unknown, options?: { excludeAdmins?: boolean; exclude?: string[]; random?: () => number }) => string | null;
+
 /** Pretty one-liner summary of a diffParticipants() result. */
 export declare const formatParticipantChanges: (diff: { added?: string[]; removed?: string[]; promoted?: string[]; demoted?: string[] }) => string;
 

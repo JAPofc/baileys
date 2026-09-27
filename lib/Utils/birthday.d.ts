@@ -37,6 +37,8 @@ export interface BirthdayManager {
 	/** Run one check; fires onBirthday max once per user per year. */
 	/** Ready-to-send upcoming-birthdays list. */
 	renderUpcoming(days?: number, options?: { title?: string }): string;
+	/** Days until a user's next birthday (0 = today), or null. */
+	nextBirthday(user: string): number | null;
 	checkNow(): BirthdayEvent[];
 	start(): () => void;
 	stop(): void;

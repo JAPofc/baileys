@@ -1428,6 +1428,12 @@ A sample of the utilities exported from `lib/Utils` beyond the message builders 
 | `command-lock` | Disable commands per chat/globally + maintenance mode with owner bypass |
 | `status-tools` | Status auto-styling — random font/colors for text statuses, media/audio normalization (wired into status sends) |
 | `newsletter-tools` | Paced batch channel ops — follow/unfollow/mute many with per-jid verdicts |
+| `emoji-tools` | Detect/count/extract/strip emoji, themed randomEmoji |
+| `array-tools` | chunk, unique-by, groupBy, sortBy, distinct sample, range |
+| `validate-tools` | isUrl/isEmail, id/en parseBool, clamp, ensureArray, pickFields |
+| `timing-tools` | debounce, throttle, lap stopwatch, measureTime |
+| `task-queue` | Bounded-concurrency async jobs with retries — mass DM safe |
+| `mask-tools` | maskPhone/maskEmail, boundary-aware censorText |
 | `ai-groups` | ⚠️ EXPERIMENTAL: add/remove Meta AI in groups, createAiGroup — server-gated by Meta's per-account rollout (no flag = server rejects; nothing to verify manually) |
 | `auto-reply` | Simple keyword/pattern-based auto-responder engine |
 | `message-search` | Search cached/stored messages, peeling off ephemeral/view-once wrappers first |

@@ -22,6 +22,8 @@ export interface TicTacToe {
 	onEnd(cb: (result: Record<string, unknown>) => void): () => void;
 	/** Lifetime record for a player, or null. */
 	getStats(user: string): { user: string; wins: number; losses: number; draws: number } | null;
+	/** Pretty W/L/D line for a player. */
+	renderStats(user: string): string;
 	getLeaderboard(limit?: number): Array<{ user: string; wins: number; losses: number; draws: number }>;
 	readonly size: number;
 }

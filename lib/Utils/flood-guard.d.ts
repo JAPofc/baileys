@@ -32,6 +32,8 @@ export interface FloodGuard {
 	onFlood(cb: (event: FloodEvent) => void): () => void;
 	getCount(chat: string, user: string): number;
 	reset(chat: string, user: string): void;
+	/** Per-chat threshold override (null clears). */
+	setChatLimit(chat: string, max: number | null): boolean;
 	isMuted(chat: string, user: string): boolean;
 	muteFor(chat: string, user: string, ms: number): void;
 	unmute(chat: string, user: string): void;

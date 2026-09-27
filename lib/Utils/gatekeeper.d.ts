@@ -39,6 +39,8 @@ export interface Gatekeeper {
 	readonly blockedCount: number;
 	toJSON(): Record<string, unknown>;
 	load(snapshot: Record<string, unknown>): void;
+	/** Amnesty — lift every user ban. Returns how many. */
+	unbanAll(): number;
 	clear(): void;
 }
 

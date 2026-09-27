@@ -64,6 +64,8 @@ export interface LevelSystem {
 	/** Reset XP for a permanent ⭐ (requires minLevel, default 10). */
 	prestige(user: string, options?: { minLevel?: number }): LevelUserStats | null;
 	/** Ready-to-send text rank card with a progress bar, or null. */
+	/** Ready-to-send XP leaderboard with medals. */
+	renderLeaderboard(limit?: number, chat?: string, options?: { title?: string }): string;
 	renderRankCard(user: string, options?: { barSize?: number }): string | null;
 	toJSON(): Record<string, unknown>;
 	load(snapshot: Record<string, unknown>): void;

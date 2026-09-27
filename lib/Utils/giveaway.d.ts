@@ -5,6 +5,8 @@ export interface GiveawayEndResult {
 	prize: string;
 	winners: string[];
 	entries: number;
+	/** Everyone who entered (enables reroll). */
+	pool?: string[];
 	reason: string;
 	startedBy?: string;
 }
@@ -16,6 +18,8 @@ export interface Giveaway {
 	end(chat: string): GiveawayEndResult | null;
 	/** Cancel without drawing (no onEnd). */
 	cancel(chat: string): boolean;
+	/** Redraw the last winner slot from the previous pool. */
+	reroll(chat: string): string | null;
 	/** Manual entry (e.g. reaction-based joining). */
 	enter(chat: string, user: string): boolean;
 	isActive(chat: string): boolean;

@@ -28,6 +28,8 @@ export interface Notes {
 	search(chat: string, query: string): Note[];
 	/** Ready-to-send list of a chat's notes. */
 	exportText(chat: string, options?: { title?: string }): string;
+	/** Random note from a chat (quote-bot style), or null. */
+	random(chat: string, options?: { random?: () => number }): Note | null;
 	countIn(chat: string): number;
 	readonly size: number;
 	toJSON(): Record<string, unknown>;

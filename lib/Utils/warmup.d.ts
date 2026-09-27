@@ -22,6 +22,10 @@ export interface AccountWarmup {
 	nextResetAt(): number;
 	/** Aged account? Mark it graduated — caps lift instantly. */
 	skipWarmup(): void;
+	/** Freeze all sending without losing counts. */
+	pause(): void;
+	resume(): void;
+	readonly isPaused: boolean;
 	/** Fires once per day when the cap is reached. */
 	onLimit(cb: (info: { day: number; cap: number; sentToday: number }) => void): () => void;
 	toJSON(): Record<string, unknown>;

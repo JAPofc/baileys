@@ -17,6 +17,8 @@ export interface GroupOpCheck {
 export interface GroupOpGuard {
 	check(op: string, count?: number): GroupOpCheck;
 	record(op: string, count?: number): void;
+	/** Change an operation's limit at runtime. */
+	configure(op: string, limit: Partial<{ max: number; windowMs: number }>): void;
 	/** Wait until allowed, then record (throws past maxWaitMs). */
 	waitAndAssert(op: string, count?: number, options?: { maxWaitMs?: number }): Promise<GroupOpCheck>;
 	/** check + record; throws GroupOpLimitError on breach. */

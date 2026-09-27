@@ -23,6 +23,8 @@ export interface TextPoll {
 	vote(chat: string, user: string, optionNumber: number): 'ok' | 'invalid' | 'already-voted' | 'unchanged' | null;
 	start(chat: string, options: { question: string; options: string[]; durationMs?: number; startedBy?: string }): { chat: string; question: string; options: string[]; endsAt: number };
 	end(chat: string): TextPollEnd | null;
+	/** Push the deadline out by extraMs. Returns the new endsAt or null. */
+	extendDeadline(chat: string, extraMs: number): number | null;
 	isActive(chat: string): boolean;
 	getResults(chat: string): { question: string; results: TextPollResult[]; totalVotes: number } | null;
 	/** Live results card with bars while voting is open. */

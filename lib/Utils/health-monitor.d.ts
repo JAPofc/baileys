@@ -45,6 +45,8 @@ export interface HealthMonitor {
 	readonly isRunning: boolean;
 	/** Fires once per threshold crossing (re-armed when the metric recovers). */
 	onAlert(cb: (alert: HealthAlert) => void): () => void;
+	/** Fires when a metric drops back under its threshold. */
+	onRecover(cb: (alert: HealthAlert) => void): () => void;
 	onSnapshot(cb: (snapshot: HealthSnapshot) => void): () => void;
 	getHistory(): HealthSnapshot[];
 	isAlerting(metric: string): boolean;

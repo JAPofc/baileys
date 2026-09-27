@@ -32,6 +32,8 @@ export interface Auction {
 	isActive(chat: string): boolean;
 	getStatus(chat: string): AuctionStatus | null;
 	render(chat: string): string | null;
+	/** Last N finished auctions, newest first. */
+	getHistory(limit?: number): AuctionEndResult[];
 	onBid(cb: (info: { chat: string; user: string; amount: number; extended: boolean }) => void): () => void;
 	onOutbid(cb: (info: { chat: string; user: string; by: string; amount: number }) => void): () => void;
 	onEnd(cb: (result: AuctionEndResult) => void): () => void;

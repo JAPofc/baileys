@@ -37,6 +37,8 @@ export interface SerializedMessage {
 	/** Disappearing-message timer (seconds), if any. */
 	expiration?: number;
 	quoted: SerializedQuoted | null;
+	/** Text of the replied-to message, or ''. */
+	quotedText: string;
 	reply(content: string | Record<string, unknown>, options?: Record<string, unknown>): Promise<unknown>;
 	send(content: string | Record<string, unknown>, options?: Record<string, unknown>): Promise<unknown>;
 	react(emoji: string): Promise<unknown>;

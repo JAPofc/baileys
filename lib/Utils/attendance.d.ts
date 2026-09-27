@@ -14,6 +14,8 @@ export interface Attendance {
 	/** Close and return the final list. */
 	close(chat: string): { chat: string; title: string; openedAt: number; closedAt: number; attendees: Attendee[] } | null;
 	isOpen(chat: string): boolean;
+	/** Pretty recap from a close() result. */
+	renderSummary(closed: { title: string; openedAt: number; closedAt: number; attendees: Attendee[] } | null): string | null;
 	getAttendees(chat: string): Attendee[];
 	/** Participants who have NOT checked in. */
 	getMissing(chat: string, participants: Array<string | { id?: string }>): string[];

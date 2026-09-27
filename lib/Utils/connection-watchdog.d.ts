@@ -24,6 +24,8 @@ export interface ConnectionWatchdog {
 	touch(): void;
 	/** Run one staleness check. */
 	check(): { silentMs: number; stale: boolean };
+	/** Adjust the stale threshold at runtime. */
+	setStaleMs(ms: number): void;
 	bind(sock: unknown): () => void;
 	unbind(): void;
 	start(): () => void;

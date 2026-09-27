@@ -31,6 +31,8 @@ export interface WordFilter {
 	unbind(): void;
 	onMatch(cb: (match: WordFilterMatch) => void): () => void;
 	onError(cb: (info: { msg: unknown; error: unknown }) => void): () => void;
+	/** Star out every configured word in a text. */
+	getCensored(text: string, options?: { char?: string }): string;
 	/** Check a text directly; returns the matched fragment or null. */
 	test(text: string): string | null;
 	addWords(...words: Array<string | string[]>): void;

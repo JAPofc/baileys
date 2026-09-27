@@ -9,6 +9,9 @@ export declare const generateMathProblem: (
 	options?: { random?: () => number }
 ) => { question: string; answer: string };
 
+/** Reveal the first n letters: hintFor('bandung', 3) → 'ban____'. */
+export declare const hintFor: (word: string, n?: number, options?: { maskChar?: string }) => string;
+
 export type WordChainPlay =
 	| { ok: true; nextLetter: string; score: number }
 	| { ok: false; reason: 'no-game' | 'not-your-turn' | 'too-short' | 'wrong-letter' | 'already-used' | 'not-a-word'; expected?: string };
