@@ -37,6 +37,8 @@ export interface AIRichEditOptions {
 
 /** AI rich-response builder (Meta AI / GenAI message primitives). */
 export class AIRich extends BaseBuilder {
+    /** `new AIRich(client).addMarkdown(md)` in one call. */
+    static fromMarkdown(md: string, client: any): AIRich;
     constructor(client: any);
     /** Schema-backed primitives — safe to build on. */
     static STABLE_METHODS: Set<string>;
@@ -71,6 +73,14 @@ export class AIRich extends BaseBuilder {
     delete(id: string): this;
     /** FOATextPrimitive — large heading text, distinct from addText()'s paragraph text. */
     addHeading(text: string): this;
+    /** Build a whole card from markdown (headings/code/tables/paragraphs). */
+    addMarkdown(md: string): this;
+    /** Markdown checklist block. */
+    addChecklist(items: Array<string | { text: string; done?: boolean }>): this;
+    /** Two-column key/value table from an object or entries. */
+    addKeyValue(data: Record<string, unknown> | Array<[string, unknown]>, options?: { header?: [string, string] }): this;
+    /** Labelled text progress bar block. */
+    addProgressBar(label: string, value: number, max?: number, options?: { size?: number }): this;
     /** GenAI3PExtWidgetPrimitive — experimental, reverse-engineered; see JSDoc in the .js file for caveats. */
     addWidget(data: Record<string, any> | Record<string, any>[], options?: { layout?: 'Single' | 'HScroll' | 'ActionRow' | string }): this;
     /** GenAIFooterActionPrimitive — footer action link chips (e.g. "Join our Group"). */

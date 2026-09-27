@@ -25,6 +25,12 @@ export interface CallGuardOptions {
 	rejectMessage?: string | ((call: GuardedCall) => unknown);
 	/** JIDs whose calls are never auto-rejected. */
 	allowlist?: string[];
+	/** Always rejected — beats allowlist and schedule. */
+	denylist?: string[];
+	/** Quiet hours — only auto-reject inside this window (overnight ok). */
+	schedule?: { from: string; to: string };
+	/** Clock override (testing). */
+	now?: () => number;
 	/** Max calls kept in the log (LRU). Default 200. */
 	maxCalls?: number;
 }

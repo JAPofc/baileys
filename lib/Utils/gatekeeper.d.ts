@@ -18,9 +18,9 @@ export interface Gatekeeper {
 	allowsJid(user?: string, chat?: string): boolean;
 	/** Wrap a messages.upsert handler — banned messages never reach it. */
 	filter<T extends (upsert: { messages: unknown[] }, ...rest: unknown[]) => unknown>(handler: T): T;
-	banUser(jid: string, reason?: string): void;
+	banUser(jid: string, reason?: string, options?: { expiresInMs?: number }): void;
 	unbanUser(jid: string): boolean;
-	banChat(jid: string, reason?: string): void;
+	banChat(jid: string, reason?: string, options?: { expiresInMs?: number }): void;
 	unbanChat(jid: string): boolean;
 	allowUser(jid: string): void;
 	allowChat(jid: string): void;
@@ -28,7 +28,7 @@ export interface Gatekeeper {
 	disallowChat(jid: string): boolean;
 	isBannedUser(jid: string): boolean;
 	isBannedChat(jid: string): boolean;
-	getBanInfo(jid: string): { reason: string; at: number } | null;
+	getBanInfo(jid: string): { reason: string; at: number; expiresAt?: number } | null;
 	getBannedUsers(): string[];
 	getBannedChats(): string[];
 	onBlocked(cb: (event: GatekeeperBlockEvent) => void): () => void;

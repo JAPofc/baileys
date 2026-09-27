@@ -38,6 +38,8 @@ export interface TierManager {
 	isActive(user: string, name?: string): boolean;
 	getTier(user: string): TierInfo | null;
 	list(name?: string): Array<{ user: string; name: string; expiresAt: number }>;
+	/** Active memberships expiring within `withinMs`, soonest first. */
+	getExpiring(withinMs: number): Array<{ user: string; name: string; expiresAt: number; remainingMs: number }>;
 	/** Fire expiries now. Returns the expired entries. */
 	sweep(): TierExpireEvent[];
 	startSweeper(): () => void;

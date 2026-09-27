@@ -25,6 +25,8 @@ export interface ReminderManager {
 	/** Schedule with `inMs` (relative) or `atMs` (absolute). Returns the id. */
 	add(reminder: { chat: string; user: string; text?: string; inMs?: number; atMs?: number }): number;
 	cancel(id: number): boolean;
+	/** Push a pending reminder back by extraMs. Returns the new dueAt or null. */
+	snooze(id: number, extraMs: number): number | null;
 	list(filter?: { chat?: string; user?: string }): Reminder[];
 	onDue(cb: (reminder: Reminder) => void): () => void;
 	readonly size: number;

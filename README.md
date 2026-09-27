@@ -1392,6 +1392,10 @@ A sample of the utilities exported from `lib/Utils` beyond the message builders 
 | `crash-guard` | Survive uncaught exceptions/rejections — owner alerts, counters, safeStringify |
 | `connection-watchdog` | Catch silent half-open sockets — stale alerts fire once, re-armed by activity |
 | `secure-logger` | Credential-redacting pino logger + redactSensitive() for any object |
+| `call-log` | Call history + per-caller stats from the `call` event — outcomes, durations, persistence |
+| `always-online` | Keep the green dot lit — presence refresher with live switching and failure counters |
+| `status-watcher` | Receive-side stories — per-contact filters, media type, download hook |
+| `button-extras` | quickButtons, sendConfirm (yes/no), sendMenuButtons one-liners |
 | `auto-reply` | Simple keyword/pattern-based auto-responder engine |
 | `message-search` | Search cached/stored messages, peeling off ephemeral/view-once wrappers first |
 | `message-retry-manager` | Handles WhatsApp's retry-receipt protocol for undecryptable messages |
@@ -1745,6 +1749,40 @@ await checkAuthPermissions('./auth')                    // audit for leaks
 autoReconnect(factory, {
     onGiveUp: ({ reason, attempts }) => notifyOwner(reason) // new: give-up hook + getStatus()
 })
+```
+
+```js
+// JAP AI cards from markdown, call tools, presence & button shortcuts
+import { AIRich, createCallLog, createCallGuard, createAlwaysOnline,
+         createStatusWatcher, quickButtons, sendConfirm } from '@japofc/baileys'
+
+// whole AI card from one markdown string (headings/code/tables auto-detected)
+await AIRich.fromMarkdown('# Report\n\n```js\nconst x = 1\n```\n\n| A | B |\n|---|---|\n| 1 | 2 |', sock).send(jid)
+new AIRich(sock).addChecklist([{ text: 'done item', done: true }, 'open item'])
+    .addKeyValue({ Name: 'JAP', Version: '2.4.2' })
+    .addProgressBar('Download', 70, 100)
+
+const callLog = createCallLog()               // who called, outcome, duration
+callLog.bind(sock)
+createCallGuard({                              // quiet hours + hard blocks
+    autoReject: true,
+    schedule: { from: '22:00', to: '06:00' },  // reject only at night
+    denylist: [spammer]                        // …except these: always
+}).bind(sock)
+
+createAlwaysOnline(sock).start()               // green dot stays lit
+const statuses = createStatusWatcher()         // save contacts' stories
+statuses.bind(sock)
+statuses.onStatus(({ download }) => download())
+
+await sendConfirm(sock, jid, 'Delete all data?')            // confirm_yes/confirm_no
+await sendButtons(sock, jid, { text: 'Pick', buttons: quickButtons(['A', 'B']) })
+
+// 10 more upgrades: temp bans gate.banUser(jid, r, { expiresInMs }),
+// flood autoMuteMs + isMuted, eco.applyInterest(0.01) bank interest,
+// shop item maxPerUser, warns.decay(30d), levels.setMultiplier(2) XP events,
+// quota.setLimit live, tiers.getExpiring(3d) renewal crons,
+// reminders.snooze(id, 10m), todos.setDue + getOverdue (⏰ in render)
 ```
 
 ```js

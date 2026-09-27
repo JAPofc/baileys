@@ -1319,6 +1319,10 @@ Sampel utilitas yang diekspor dari `lib/Utils` di luar builder pesan di atas:
 | `crash-guard` | Selamat dari exception/rejection tak tertangkap — alert owner, counter, safeStringify |
 | `connection-watchdog` | Tangkap socket setengah-mati yang diam — alert stale sekali, re-arm saat aktif lagi |
 | `secure-logger` | Logger pino dengan redaksi kredensial + redactSensitive() untuk objek apa pun |
+| `call-log` | Riwayat panggilan + statistik per penelepon dari event `call` — hasil, durasi, persistensi |
+| `always-online` | Titik hijau tetap nyala — penyegar presence dengan ganti mode live & counter gagal |
+| `status-watcher` | Story sisi penerima — filter kontak, tipe media, hook download |
+| `button-extras` | quickButtons, sendConfirm (ya/tidak), sendMenuButtons sekali panggil |
 | `auto-reply` | Engine auto-responder sederhana berbasis kata kunci/pola |
 | `message-search` | Cari pesan di cache/store, membuka wrapper ephemeral/view-once dulu |
 | `message-retry-manager` | Menangani protokol retry-receipt WhatsApp untuk pesan yang gagal didekripsi |
@@ -1672,6 +1676,40 @@ await checkAuthPermissions('./auth')                    // audit kebocoran izin 
 autoReconnect(factory, {
     onGiveUp: ({ reason, attempts }) => kabariOwner(reason) // baru: hook nyerah + getStatus()
 })
+```
+
+```js
+// kartu JAP AI dari markdown, perkakas panggilan, presence & pintasan button
+import { AIRich, createCallLog, createCallGuard, createAlwaysOnline,
+         createStatusWatcher, quickButtons, sendConfirm } from '@japofc/baileys'
+
+// satu kartu AI utuh dari string markdown (heading/kode/tabel otomatis)
+await AIRich.fromMarkdown('# Laporan\n\n```js\nconst x = 1\n```\n\n| A | B |\n|---|---|\n| 1 | 2 |', sock).send(jid)
+new AIRich(sock).addChecklist([{ text: 'sudah', done: true }, 'belum'])
+    .addKeyValue({ Nama: 'JAP', Versi: '2.4.2' })
+    .addProgressBar('Unduhan', 70, 100)
+
+const callLog = createCallLog()                // siapa nelpon, hasil, durasi
+callLog.bind(sock)
+createCallGuard({                              // jam tenang + blokir keras
+    autoReject: true,
+    schedule: { from: '22:00', to: '06:00' },  // tolak hanya malam hari
+    denylist: [pengganggu]                     // …kecuali mereka: selalu
+}).bind(sock)
+
+createAlwaysOnline(sock).start()               // titik hijau nyala terus
+const statuses = createStatusWatcher()         // simpan story kontak
+statuses.bind(sock)
+statuses.onStatus(({ download }) => download())
+
+await sendConfirm(sock, jid, 'Hapus semua data?')           // confirm_yes/confirm_no
+await sendButtons(sock, jid, { text: 'Pilih', buttons: quickButtons(['A', 'B']) })
+
+// 10 upgrade lain: ban sementara gate.banUser(jid, r, { expiresInMs }),
+// flood autoMuteMs + isMuted, eco.applyInterest(0.01) bunga bank,
+// item toko maxPerUser, warns.decay(30 hari), levels.setMultiplier(2) event XP,
+// quota.setLimit live, tiers.getExpiring(3 hari) cron perpanjangan,
+// reminders.snooze(id, 10m), todos.setDue + getOverdue (⏰ di render)
 ```
 
 ```js

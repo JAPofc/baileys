@@ -29,6 +29,8 @@ export interface WarnManager {
 	warn(user: string, info?: { chat?: string; reason?: string; by?: string }): WarnResult;
 	pardon(user: string, chat?: string, amount?: number): number;
 	reset(user: string, chat?: string): void;
+	/** Expire warns older than olderThanMs everywhere. Returns removed count. */
+	decay(olderThanMs: number): number;
 	getCount(user: string, chat?: string): number;
 	getWarns(user: string, chat?: string): WarnRecord[];
 	list(chat?: string): Array<{ user: string; chat?: string; count: number }>;

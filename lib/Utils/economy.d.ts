@@ -23,7 +23,7 @@ export interface EconomyOptions {
 }
 
 export interface EconomyTransaction {
-	type: 'add' | 'deduct' | 'transfer' | 'daily' | 'bet-win' | 'bet-loss' | 'deposit' | 'withdraw';
+	type: 'add' | 'deduct' | 'transfer' | 'daily' | 'bet-win' | 'bet-loss' | 'deposit' | 'withdraw' | 'interest';
 	user: string;
 	to?: string;
 	amount: number;
@@ -50,6 +50,8 @@ export interface Economy {
 	getBankBalance(user: string): number;
 	deposit(user: string, amount: number): { balance: number; bank: number };
 	withdraw(user: string, amount: number): { balance: number; bank: number };
+	/** Pay interest on all bank balances (0.01 = 1%). */
+	applyInterest(rate: number): { users: number; totalAdded: number };
 	/** Leaderboard position by wallet + bank, or null. */
 	getRank(user: string): number | null;
 	getLeaderboard(limit?: number): Array<{ rank: number; user: string; balance: number; bank: number; total: number }>;

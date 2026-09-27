@@ -9,6 +9,7 @@ export interface TodoTask {
 	done: boolean;
 	createdAt: number;
 	doneAt: number | null;
+	dueAt: number | null;
 }
 
 export interface TodoListOptions {
@@ -25,6 +26,10 @@ export interface TodoList {
 	undone(chat: string, ref: number): boolean;
 	remove(chat: string, ref: number): boolean;
 	assign(chat: string, ref: number, assignee: string): boolean;
+	/** Set (or clear with null) a task deadline. */
+	setDue(chat: string, ref: number, dueAt: number | null): boolean;
+	/** Open tasks past their deadline. */
+	getOverdue(chat: string): TodoTask[];
 	list(chat: string, options?: { openOnly?: boolean }): TodoTask[];
 	/** Ready-to-send checklist text (☐/☑, @assignees). */
 	render(chat: string, options?: { title?: string }): string;

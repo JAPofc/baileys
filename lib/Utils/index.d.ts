@@ -114,3 +114,7 @@ export * from './bug-shield';
 export * from './crash-guard';
 export * from './connection-watchdog';
 export * from './secure-logger';
+export * from './call-log';
+export * from './always-online';
+export * from './status-watcher';
+export * from './button-extras';

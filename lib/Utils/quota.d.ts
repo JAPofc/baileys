@@ -24,6 +24,10 @@ export interface QuotaManager {
 	/** Peek without spending. */
 	remaining(user: string, tier?: string): number;
 	getUsed(user: string): number;
+	/** Change a tier's daily limit at runtime. */
+	setLimit(tier: string, limit: number): void;
+	setDefaultLimit(limit: number): void;
+	getLimit(tier?: string): number;
 	/** Extra allowance for today only (rewards/promos). */
 	grantBonus(user: string, amount: number): void;
 	/** Reset one user, or everyone when omitted. */

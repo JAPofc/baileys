@@ -9,6 +9,8 @@ export interface ShopItem {
 	/** Remaining stock; Infinity = unlimited. */
 	stock: number;
 	consumable: boolean;
+	/** Ownership cap per user; Infinity = unlimited. */
+	maxPerUser: number;
 	meta: Record<string, unknown>;
 }
 
@@ -26,7 +28,7 @@ export interface ShopPurchase {
 }
 
 export interface Shop {
-	addItem(item: { id: string; name: string; price: number; description?: string; stock?: number; consumable?: boolean; [meta: string]: unknown }): ShopItem;
+	addItem(item: { id: string; name: string; price: number; description?: string; stock?: number; consumable?: boolean; maxPerUser?: number; [meta: string]: unknown }): ShopItem;
 	removeItem(id: string): boolean;
 	getItem(id: string): ShopItem | null;
 	getCatalog(): ShopItem[];
