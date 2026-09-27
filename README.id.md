@@ -1332,6 +1332,10 @@ Sampel utilitas yang diekspor dari `lib/Utils` di luar builder pesan di atas:
 | `warmup` | Pemanasan akun — naikkan volume kirim harian nomor baru bertahap (20→50→…→bebas) |
 | `disconnect-classifier` | Error close → kategori + aksi yang disarankan (reconnect / pair ulang / stop) |
 | `group-op-guard` | Tetap di bawah batas aksi grup WhatsApp (~3 add & 2 create per 10 menit) |
+| `giveaway` | Undian masuk-via-keyword — undian adil, multi-pemenang, deadline, kartu status |
+| `attendance` | Absen harian — jam check-in, daftar yang belum, render bernomor |
+| `auction` | Lelang berwaktu — kenaikan minimum, perpanjangan anti-snipe, alert tersalip |
+| `text-poll` | Polling balas-angka yang jalan di semua client — tally, bar, penanganan seri |
 | `auto-reply` | Engine auto-responder sederhana berbasis kata kunci/pola |
 | `message-search` | Cari pesan di cache/store, membuka wrapper ephemeral/view-once dulu |
 | `message-retry-manager` | Menangani protokol retry-receipt WhatsApp untuk pesan yang gagal didekripsi |
@@ -1695,7 +1699,7 @@ import { AIRich, createCallLog, createCallGuard, createAlwaysOnline,
 // satu kartu AI utuh dari string markdown (heading/kode/tabel otomatis)
 await AIRich.fromMarkdown('# Laporan\n\n```js\nconst x = 1\n```\n\n| A | B |\n|---|---|\n| 1 | 2 |', sock).send(jid)
 new AIRich(sock).addChecklist([{ text: 'sudah', done: true }, 'belum'])
-    .addKeyValue({ Nama: 'JAP', Versi: '2.4.2' })
+    .addKeyValue({ Nama: 'JAP', Versi: '2.4.3' })
     .addProgressBar('Unduhan', 70, 100)
 
 const callLog = createCallLog()                // siapa nelpon, hasil, durasi
@@ -1750,6 +1754,29 @@ await safe.groupParticipantsUpdate(jid, users, 'add') // throw kalau lewat ~3 ad
 
 await sleep(randomGaussian(2000, 600, { clamp: [500, 5000] })) // jeda ala manusia
 createPresenceCycler(sock, { chats: [ownerJid] }).start()      // aktivitas opt-in
+
+// acara komunitas — giveaway, absen, lelang, polling
+import { createGiveaway, createAttendance, createAuction, createTextPoll } from '@japofc/baileys'
+
+const giveaway = createGiveaway({ keyword: 'ikut' })
+giveaway.bind(sock)
+giveaway.start(chat, { prize: 'Voucher 50k', durationMs: 3600_000, winners: 2 })
+giveaway.onEnd(({ winners }) => umumkan(winners))        // adil, RNG bisa diinjeksi
+
+const absen = createAttendance()
+absen.bind(sock)
+absen.open(chat, { title: 'Absen Pagi 🌞' })             // member ketik "absen"
+await sock.sendMessage(chat, { text: absen.render(chat), mentions: absen.getMentions(chat) })
+
+const lelang = createAuction()
+lelang.start(chat, { item: 'Akun ML', startBid: 50_000, minIncrement: 5_000, antiSnipeMs: 30_000 })
+lelang.bid(chat, user, 60_000)                           // → accepted / too-low / already-leading
+lelang.onEnd(({ winner, amount }) => terjual(winner, amount))
+
+const polls = createTextPoll()
+polls.bind(sock)                                          // vote = balasan angka "1".."9"
+polls.start(chat, { question: 'Mabar jam?', options: ['19:00', '20:00', '21:00'] })
+polls.onEnd(({ results }) => sock.sendMessage(chat, { text: polls.formatResults(results) }))
 
 // +18 upgrade: titleCase/slugify/generateId, shop.updateItem, notes.exportText,
 // warns.getTop, stats.getTopChats, i18n.formatNumber/formatDate, levels.getRankPosition,

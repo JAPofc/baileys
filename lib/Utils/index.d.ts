@@ -127,3 +127,7 @@ export * from './kv-store';
 export * from './warmup';
 export * from './disconnect-classifier';
 export * from './group-op-guard';
+export * from './giveaway';
+export * from './attendance';
+export * from './auction';
+export * from './text-poll';

@@ -1405,6 +1405,10 @@ A sample of the utilities exported from `lib/Utils` beyond the message builders 
 | `warmup` | Account warmup — ramp daily send volume on fresh numbers (20→50→…→unlimited) |
 | `disconnect-classifier` | Close errors → category + recommended action (reconnect / re-pair / stop) |
 | `group-op-guard` | Stay under WhatsApp's group-action ceilings (~3 adds & 2 creates per 10 min) |
+| `giveaway` | Keyword-entry raffles — fair draws, multi-winner, deadlines, status cards |
+| `attendance` | Daily roll-call ("absen") — check-in times, missing list, numbered render |
+| `auction` | Timed bidding ("lelang") — min increments, anti-snipe extensions, outbid alerts |
+| `text-poll` | Vote-by-number polls that work in every client — tallies, bars, tie handling |
 | `auto-reply` | Simple keyword/pattern-based auto-responder engine |
 | `message-search` | Search cached/stored messages, peeling off ephemeral/view-once wrappers first |
 | `message-retry-manager` | Handles WhatsApp's retry-receipt protocol for undecryptable messages |
@@ -1768,7 +1772,7 @@ import { AIRich, createCallLog, createCallGuard, createAlwaysOnline,
 // whole AI card from one markdown string (headings/code/tables auto-detected)
 await AIRich.fromMarkdown('# Report\n\n```js\nconst x = 1\n```\n\n| A | B |\n|---|---|\n| 1 | 2 |', sock).send(jid)
 new AIRich(sock).addChecklist([{ text: 'done item', done: true }, 'open item'])
-    .addKeyValue({ Name: 'JAP', Version: '2.4.2' })
+    .addKeyValue({ Name: 'JAP', Version: '2.4.3' })
     .addProgressBar('Download', 70, 100)
 
 const callLog = createCallLog()               // who called, outcome, duration
@@ -1823,6 +1827,29 @@ await safe.groupParticipantsUpdate(jid, users, 'add') // throws past ~3 adds/10m
 
 await sleep(randomGaussian(2000, 600, { clamp: [500, 5000] })) // human-like pauses
 createPresenceCycler(sock, { chats: [ownerJid] }).start()      // opt-in activity
+
+// community events — giveaways, roll-calls, auctions, polls
+import { createGiveaway, createAttendance, createAuction, createTextPoll } from '@japofc/baileys'
+
+const giveaway = createGiveaway({ keyword: 'join' })
+giveaway.bind(sock)
+giveaway.start(chat, { prize: 'Voucher 50k', durationMs: 3600_000, winners: 2 })
+giveaway.onEnd(({ winners }) => announce(winners))       // fair, injectable RNG
+
+const absen = createAttendance()
+absen.bind(sock)
+absen.open(chat, { title: 'Absen Pagi 🌞' })             // members type "absen"
+await sock.sendMessage(chat, { text: absen.render(chat), mentions: absen.getMentions(chat) })
+
+const auction = createAuction()
+auction.start(chat, { item: 'Akun ML', startBid: 50_000, minIncrement: 5_000, antiSnipeMs: 30_000 })
+auction.bid(chat, user, 60_000)                          // → accepted / too-low / already-leading
+auction.onEnd(({ winner, amount }) => sold(winner, amount))
+
+const polls = createTextPoll()
+polls.bind(sock)                                          // votes = plain "1".."9" replies
+polls.start(chat, { question: 'Mabar jam?', options: ['19:00', '20:00', '21:00'] })
+polls.onEnd(({ results }) => sock.sendMessage(chat, { text: polls.formatResults(results) }))
 
 // +18 upgrades: titleCase/slugify/generateId, shop.updateItem, notes.exportText,
 // warns.getTop, stats.getTopChats, i18n.formatNumber/formatDate, levels.getRankPosition,
