@@ -17,6 +17,8 @@ export interface HealthMonitorOptions {
 	intervalMs?: number;
 	/** metric name (snapshot field or probe name) → alert threshold. */
 	thresholds?: Record<string, number>;
+	/** Per-probe wall-clock cap. Default 5000. */
+	probeTimeoutMs?: number;
 	/** Snapshots kept in history. Default 60. */
 	maxHistory?: number;
 	/** Clock override (testing). */

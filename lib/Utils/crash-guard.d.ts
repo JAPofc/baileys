@@ -10,6 +10,8 @@ export interface CrashGuardOptions {
 	/** Called for every caught error (async errors are swallowed safely). */
 	onError?: (info: { type: 'uncaughtException' | 'unhandledRejection'; error: unknown; stats: Record<string, number> }) => unknown;
 	logger?: unknown;
+	/** Min gap between onError alerts per type (anti alert-storm). Default 0. */
+	minAlertIntervalMs?: number;
 	/** Exit after handling an uncaughtException. Default false (keep running). */
 	exitOnUncaught?: boolean;
 	exitCode?: number;

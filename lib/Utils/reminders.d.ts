@@ -32,6 +32,8 @@ export interface ReminderManager {
 	/** Push a pending reminder back by extraMs. Returns the new dueAt or null. */
 	snooze(id: number, extraMs: number): number | null;
 	list(filter?: { chat?: string; user?: string }): Reminder[];
+	/** Ready-to-send pending-reminders list. */
+	renderList(filter?: { chat?: string; user?: string }, options?: { title?: string }): string;
 	onDue(cb: (reminder: Reminder) => void): () => void;
 	readonly size: number;
 	toJSON(): Record<string, unknown>;

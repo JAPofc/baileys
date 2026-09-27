@@ -9,5 +9,8 @@ export declare const diffParticipants: (
 	before: Array<{ id: string; admin?: string | null }>,
 	after: Array<{ id: string; admin?: string | null }>
 ) => { added: string[]; removed: string[]; promoted: string[]; demoted: string[] };
+/** Pretty one-liner summary of a diffParticipants() result. */
+export declare const formatParticipantChanges: (diff: { added?: string[]; removed?: string[]; promoted?: string[]; demoted?: string[] }) => string;
+
 /** Ready-to-send group info card. */
 export declare const formatGroupInfo: (metadata: unknown) => string;

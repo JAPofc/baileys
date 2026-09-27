@@ -12,6 +12,8 @@ export interface WebhookBridgeOptions {
 	retries?: number;
 	/** Base backoff delay (doubles per attempt). Default 1000. */
 	retryDelayMs?: number;
+	/** Cap the JSON body; oversized payloads get summarized. Default 512 KB. */
+	maxBodyBytes?: number;
 	/** Reshape/filter payloads; return null/undefined to skip the event. */
 	transform?: (event: string, payload: unknown) => unknown;
 	/** fetch override (testing). */

@@ -22,14 +22,14 @@ export interface UrlChangeEvent {
 
 export interface UrlWatcher {
 	/** Poll once (also primes the baseline). */
-	check(): Promise<{ changed?: boolean; hash?: string; body?: string; error?: unknown }>;
+	check(): Promise<{ changed?: boolean; notModified?: boolean; hash?: string; body?: string; error?: unknown }>;
 	start(): () => void;
 	stop(): void;
 	readonly isRunning: boolean;
 	onChange(cb: (event: UrlChangeEvent) => void): () => void;
 	onError(cb: (info: { url: string; error: unknown }) => void): () => void;
 	readonly lastBody: string | null;
-	readonly stats: { checks: number; changes: number };
+	readonly stats: { checks: number; changes: number; notModifiedHits: number };
 }
 
 export declare const createUrlWatcher: (url: string, options?: UrlWatcherOptions) => UrlWatcher;

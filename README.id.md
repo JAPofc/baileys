@@ -1841,6 +1841,13 @@ locks.setMaintenance(true, { message: '🛠️ maintenance' }) // owner tetap lo
 // command tersembunyi router + ctx.quotedText · i18n.addLanguages ·
 // stats.renderTop · m.timestampMs · tag-all dipecah utk grup raksasa ·
 // isForwarded/getForwardInfo · rental.renderList
+//
+// RONDE HUNT/UPDATE (ekosistem fork tuntas disapu — 0 gap tersisa):
+// Versi WA → live 2.3000.1048604174 · backWords flow ('kembali' mundur) ·
+// polling kondisional ETag/304 url-watcher · timeout probe health ·
+// throttle alert crash-guard · batas body webhook · link bisnis
+// wa.me/message/CODE · formatParticipantChanges(➕➖⬆️⬇️) · boxText('MENU') ╔═╗ ·
+// reminders.renderList
 
 // upgrade conversation-flow: langkah pilihan
 flows.define('order', [{ id: 'size', prompt: 'Ukuran:', choices: ['S', 'M', 'L'] }])

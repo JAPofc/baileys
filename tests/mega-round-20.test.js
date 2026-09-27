@@ -223,7 +223,7 @@ test('url watcher: baseline silent, change detected, errors surfaced', async () 
 	const errored = await watcher.check();
 	assert.ok(errored.error);
 	assert.match(errors[0], /HTTP 500/);
-	assert.deepEqual(watcher.stats, { checks: 4, changes: 1 });
+	assert.deepEqual(watcher.stats, { checks: 4, changes: 1, notModifiedHits: 0 }); // stats extended by the ETag upgrade
 	server.close();
 	assert.throws(() => createUrlWatcher(''), /requires a URL/);
 });

@@ -17,6 +17,8 @@ export interface ConversationFlowOptions {
 	timeoutMs?: number;
 	/** Words that abort the flow. Default ['cancel', 'batal']. */
 	cancelWords?: string[];
+	/** Words that go back one step. Default ['back', 'kembali']. */
+	backWords?: string[];
 	/** Clock override (testing). */
 	now?: () => number;
 }
@@ -43,7 +45,7 @@ export interface FlowEndEvent {
 export interface ConversationFlow {
 	define(name: string, steps: FlowStep[]): ConversationFlow;
 	start(sock: unknown, chat: string, user: string, flowName: string, seed?: Record<string, unknown>): Promise<unknown>;
-	answer(chat: string, user: string, text: string, sock?: unknown): Promise<'cancelled' | 'invalid' | 'complete' | 'next' | null>;
+	answer(chat: string, user: string, text: string, sock?: unknown): Promise<'cancelled' | 'back' | 'invalid' | 'complete' | 'next' | null>;
 	handler(upsert: { messages: unknown[] }, sock?: unknown): Promise<void>;
 	bind(sock: unknown): () => void;
 	unbind(): void;

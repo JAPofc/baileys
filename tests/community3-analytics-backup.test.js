@@ -324,7 +324,7 @@ test('menfess: stop words, TTL expiry, group messages ignored', async () => {
 
 test('WA web version bumped to the live revision', () => {
 	const defaults = readFileSync(new URL('../lib/Defaults/index.js', import.meta.url), 'utf8');
-	assert.match(defaults, /\[2, 3000, 1048590665\]/, 'baked version matches live sw.js revision');
+	assert.match(defaults, /\[2, 3000, 1048604174\]/, 'baked version matches live sw.js revision');
 	assert.ok(!defaults.includes('1048570357'), 'old revision gone');
 });
 

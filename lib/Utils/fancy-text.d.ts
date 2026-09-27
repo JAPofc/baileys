@@ -16,6 +16,9 @@ export type TextStyle =
 	| 'fullwidth'
 	| 'smallcaps';
 
+/** Wrap text in a box (double/single/round borders). */
+export declare const boxText: (text: string, options?: { style?: 'double' | 'single' | 'round' }) => string;
+
 /** Names accepted by styleText(). */
 export declare const listTextStyles: () => TextStyle[];
 

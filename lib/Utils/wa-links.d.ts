@@ -11,7 +11,8 @@ export declare const buildChannelUrl: (inviteCode: string) => string;
 export type ParsedWaLink =
 	| { type: 'chat'; phone: string; text?: string }
 	| { type: 'group-invite'; code: string; url: string }
-	| { type: 'channel'; code: string; url: string };
+	| { type: 'channel'; code: string; url: string }
+	| { type: 'business-message'; code: string; url: string };
 
 /** Parse any WhatsApp URL, or null when it isn't one. */
 export declare const parseWaLink: (input: string) => ParsedWaLink | null;
