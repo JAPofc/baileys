@@ -9,12 +9,15 @@ export interface LevelSystemOptions {
 	baseXp?: number;
 	/** Track per-chat XP too (enables per-chat leaderboards). Default true. */
 	groupsChatStats?: boolean;
+	/** Rank titles by minimum level. Default: Newbie → Legend. */
+	ranks?: Array<{ minLevel: number; title: string }>;
 }
 
 export interface LevelUserStats {
 	user: string;
 	xp: number;
 	level: number;
+	rank: string;
 	messages: number;
 	nextLevelXp: number;
 	/** 0..1 progress toward the next level. */
@@ -27,6 +30,9 @@ export interface LevelUpEvent {
 	level: number;
 	previousLevel: number;
 	xp: number;
+	rank: string;
+	/** True when the level-up also crossed into a new rank title. */
+	rankUp: boolean;
 }
 
 export interface LeaderboardRow {
@@ -47,6 +53,7 @@ export interface LevelSystem {
 	getLeaderboard(limit?: number, chat?: string): LeaderboardRow[];
 	levelOf(xp: number): number;
 	xpForLevel(level: number): number;
+	rankOf(level: number): string;
 	toJSON(): Record<string, unknown>;
 	load(snapshot: Record<string, unknown>): void;
 	readonly size: number;

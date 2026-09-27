@@ -16,10 +16,12 @@ export interface EconomyOptions {
 	allowNegative?: boolean;
 	/** Clock override (testing). */
 	now?: () => number;
+	/** RNG override (testing / provably-fair bots). */
+	random?: () => number;
 }
 
 export interface EconomyTransaction {
-	type: 'add' | 'deduct' | 'transfer' | 'daily';
+	type: 'add' | 'deduct' | 'transfer' | 'daily' | 'bet-win' | 'bet-loss';
 	user: string;
 	to?: string;
 	amount: number;
@@ -41,6 +43,7 @@ export interface Economy {
 	deduct(user: string, amount: number, reason?: string): number;
 	transfer(from: string, to: string, amount: number, reason?: string): { sent: number; fee: number };
 	claimDaily(user: string): DailyClaim;
+	bet(user: string, amount: number, options?: { winChance?: number; multiplier?: number }): { won: boolean; payout: number; balance: number };
 	getStreak(user: string): number;
 	getLeaderboard(limit?: number): Array<{ rank: number; user: string; balance: number }>;
 	onTransaction(cb: (tx: EconomyTransaction) => void): () => void;

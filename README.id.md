@@ -1290,6 +1290,11 @@ Sampel utilitas yang diekspor dari `lib/Utils` di luar builder pesan di atas:
 | `economy` | Saldo, transfer dengan fee, hadiah harian dengan bonus streak, leaderboard, persistensi |
 | `group-scheduler` | Buka/tutup grup terjadwal harian ("mode malam"), filter hari |
 | `verifier` | Captcha member baru grup — tantangan otomatis saat join, hook kick timeout/salah jawab |
+| `command-stats` | Analitik command — command/user teratas, histogram per jam, middleware router, persistensi |
+| `anti-tagall` | Tangkap spam mass-mention & hidetag tak terlihat dari member — threshold, pengecualian, auto-hapus |
+| `shop` | Toko & inventory di atas economy — stok, consumable, jual balik, kirim item |
+| `group-backup` | Snapshot setting + member grup ke JSON, diff dengan kondisi live, restore setting |
+| `menfess` | Sesi relay DM anonim dua arah (bot "menfess") — alias, kata stop, TTL |
 | `auto-reply` | Engine auto-responder sederhana berbasis kata kunci/pola |
 | `message-search` | Cari pesan di cache/store, membuka wrapper ephemeral/view-once dulu |
 | `message-retry-manager` | Menangani protokol retry-receipt WhatsApp untuk pesan yang gagal didekripsi |
@@ -1471,6 +1476,38 @@ verifier.onFailed(({ chat, user }) => sock.groupParticipantsUpdate(chat, [user],
 router.command('kick', handler, { adminOnly: true, category: 'Admin' })
 router.command('shutdown', handler, { ownerOnly: true })         // owners: [...] di createRouter
 router.command('daily', handler, { cooldownMs: 60_000, category: 'Economy' })
+```
+
+```js
+// analitik, anti-tagall, toko, backup grup & menfess
+import {
+    createCommandStats, createAntiTagAllGuard, createShop,
+    backupGroup, diffGroupBackup, restoreGroupSettings, createMenfessRelay
+} from '@japofc/baileys'
+
+const stats = createCommandStats()
+router.use(stats.middleware())          // hitung setiap command yang jalan
+stats.getTopCommands(5); stats.getBusiestHours()
+
+const antiTag = createAntiTagAllGuard({ threshold: 5, autoDelete: true })
+antiTag.bind(sock)
+antiTag.onDetected(({ sender, hidden }) => console.log(sender, hidden ? 'hidetag!' : 'tag-all'))
+
+const toko = createShop(eco)            // nyambung ke createEconomy()
+toko.addItem({ id: 'potion', name: 'Potion', price: 250, consumable: true })
+toko.buy(user, 'potion', 2); toko.useItem(user, 'potion')
+eco.bet(user, 100, { winChance: 0.5, multiplier: 2 }) // upgrade economy
+
+const backup = await backupGroup(sock, groupJid)      // setting + member, aman disimpan
+const diff = await diffGroupBackup(sock, backup)      // joined/left/promoted/changed
+await restoreGroupSettings(sock, backup)              // subjek, deskripsi, kunci grup
+
+const menfess = createMenfessRelay()
+menfess.bind(sock)
+await menfess.start(sock, sender, targetJid, 'pesan anonim pertama')
+// kedua pihak chat lewat bot sebagai Anon-1 / Anon-2 sampai kirim "stop"
+
+// upgrade lain: verifier { challenge: 'emoji' }, rank level (Newbie→Legend)
 ```
 | `stickerpack` | Bangun dan kirim paket stiker (termasuk animasi/Lottie) |
 | `templates` | Helper pesan template WhatsApp Business lama |

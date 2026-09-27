@@ -1363,6 +1363,11 @@ A sample of the utilities exported from `lib/Utils` beyond the message builders 
 | `economy` | Balances, transfers with fees, daily rewards with streak bonuses, leaderboard, persistence |
 | `group-scheduler` | Open/close groups on a daily schedule ("night mode"), weekday filters |
 | `verifier` | Captcha-gate new group members — auto challenge on join, timeout/attempt kick hooks |
+| `command-stats` | Command analytics — top commands/users, hourly histogram, router middleware, persistence |
+| `anti-tagall` | Catch mass-mention & invisible hidetag spam from members — threshold, exemptions, auto-delete |
+| `shop` | Shop & inventory on top of the economy — stock, consumables, sell-back, gifting |
+| `group-backup` | Snapshot group settings + members to JSON, diff against live, restore settings |
+| `menfess` | Anonymous two-way DM relay sessions ("menfess" bot) — aliases, stop words, TTL |
 | `auto-reply` | Simple keyword/pattern-based auto-responder engine |
 | `message-search` | Search cached/stored messages, peeling off ephemeral/view-once wrappers first |
 | `message-retry-manager` | Handles WhatsApp's retry-receipt protocol for undecryptable messages |
@@ -1544,6 +1549,38 @@ verifier.onFailed(({ chat, user }) => sock.groupParticipantsUpdate(chat, [user],
 router.command('kick', handler, { adminOnly: true, category: 'Admin' })
 router.command('shutdown', handler, { ownerOnly: true })         // owners: [...] in createRouter
 router.command('daily', handler, { cooldownMs: 60_000, category: 'Economy' })
+```
+
+```js
+// analytics, anti-tagall, shop, group backup & menfess
+import {
+    createCommandStats, createAntiTagAllGuard, createShop,
+    backupGroup, diffGroupBackup, restoreGroupSettings, createMenfessRelay
+} from '@japofc/baileys'
+
+const stats = createCommandStats()
+router.use(stats.middleware())          // counts every executed command
+stats.getTopCommands(5); stats.getBusiestHours()
+
+const antiTag = createAntiTagAllGuard({ threshold: 5, autoDelete: true })
+antiTag.bind(sock)
+antiTag.onDetected(({ sender, hidden }) => console.log(sender, hidden ? 'hidetag!' : 'tag-all'))
+
+const shop = createShop(eco)            // plugs into createEconomy()
+shop.addItem({ id: 'potion', name: 'Potion', price: 250, consumable: true })
+shop.buy(user, 'potion', 2); shop.useItem(user, 'potion')
+eco.bet(user, 100, { winChance: 0.5, multiplier: 2 }) // economy upgrade
+
+const backup = await backupGroup(sock, groupJid)      // settings + members, JSON-safe
+const diff = await diffGroupBackup(sock, backup)      // joined/left/promoted/changed
+await restoreGroupSettings(sock, backup)              // subject, desc, locks
+
+const menfess = createMenfessRelay()
+menfess.bind(sock)
+await menfess.start(sock, sender, targetJid, 'first anonymous message')
+// both sides now chat through the bot as Anon-1 / Anon-2 until "stop"
+
+// more upgrades: verifier { challenge: 'emoji' }, level ranks (Newbie→Legend)
 ```
 | `stickerpack` | Build and send sticker packs (including animated/Lottie) |
 | `templates` | Legacy WhatsApp Business template message helpers |

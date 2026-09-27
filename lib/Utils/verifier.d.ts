@@ -1,6 +1,11 @@
 /** Member verifier — captcha-gate new group members. */
 
+export declare const mathChallenge: () => { question: string; answer: string };
+export declare const emojiChallenge: () => { question: string; answer: string };
+
 export interface VerifierOptions {
+	/** Built-in preset: 'math' (default) or 'emoji'. Ignored when generateChallenge given. */
+	challenge?: 'math' | 'emoji';
 	/** Time to answer before onFailed('timeout'). Default 120000. 0 disables. */
 	timeoutMs?: number;
 	/** Wrong answers before onFailed('attempts'). Default 3. */
