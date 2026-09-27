@@ -19,7 +19,7 @@ const makeEv = () => {
 
 test('WA web version bumped to the current live revision', () => {
 	const defaults = readFileSync(new URL('../lib/Defaults/index.js', import.meta.url), 'utf8');
-	assert.match(defaults, /\[2, 3000, 1048604174\]/);
+	assert.match(defaults, /\[2, 3000, 1048606905\]/);
 	assert.ok(!defaults.includes('1048590665'));
 });
 

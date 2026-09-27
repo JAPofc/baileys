@@ -72,3 +72,8 @@ export function getBizBinaryNode(message: any): {
         };
     })[];
 };
+
+/** Deep search: every node in the tree with this tag. */
+export declare const findAllBinaryNodes: (node: any, tag: string, out?: any[]) => any[];
+/** First node matching a tag path from the root. */
+export declare const getBinaryNodePath: (node: any, tags: string[]) => any;
