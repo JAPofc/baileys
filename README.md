@@ -12,7 +12,7 @@
 <a href="https://github.com/JAPofc/baileys/actions/workflows/ci.yml" target="_blank"><img src="https://img.shields.io/github/actions/workflow/status/JAPofc/baileys/ci.yml?branch=main&style=flat-square&label=CI&color=2ecc71" alt="CI status"/></a>
 <a href="https://japofc.github.io/baileys/" target="_blank"><img src="https://img.shields.io/badge/docs-typedoc-8e44ad?style=flat-square" alt="API docs"/></a>
 <img src="https://img.shields.io/badge/npm-provenance%20attested-2ecc71?style=flat-square&logo=npm&logoColor=white" alt="npm provenance"/>
-<img src="https://img.shields.io/badge/tests-347%20passing-2ecc71?style=flat-square" alt="Tests"/>
+<img src="https://img.shields.io/badge/tests-623%20passing-2ecc71?style=flat-square" alt="Tests"/>
 <a href="https://socket.dev/npm/package/@japofc/baileys" target="_blank"><img src="https://socket.dev/api/badge/npm/package/@japofc/baileys" alt="Socket badge"/></a>
 <img src="https://img.shields.io/badge/tsc%20--strict-clean-3178c6?style=flat-square&logo=typescript&logoColor=white" alt="tsc strict clean"/>
 <img src="https://img.shields.io/github/last-commit/JAPofc/baileys?color=9b59b6&style=flat-square" alt="Last commit"/>
@@ -37,6 +37,10 @@
 <a href="#-contributing">Contributing</a> &#xa0;|&#xa0;
 <a href="#-credits">Credits</a> &#xa0;|&#xa0;
 <a href="#-maintainer">Maintainer</a>
+</p>
+
+<p>
+<b>719+ exports</b> &#xa0;·&#xa0; <b>623 tests</b> &#xa0;·&#xa0; <b>140+ utility modules</b> &#xa0;·&#xa0; <b>10 message builders</b> &#xa0;·&#xa0; WA Web <b>2.3000.x</b> auto-fresh &#xa0;·&#xa0; <b>0</b> vulnerabilities
 </p>
 
 <details>
@@ -94,7 +98,7 @@ Most Baileys forks are the upstream code with a renamed package and a couple of 
 | | |
 |---|---|
 | 🔬 | **Audited core, not just re-exported** — store consistency, reconnect lifecycle, Signal session recovery and retry-receipt parsing all had real reproduced bugs fixed here, each locked in by a regression test |
-| 🧪 | **347 tests + `tsc --strict` in CI** — message shapes round-trip through real protobuf encode→decode; a published-package smoke test runs after every npm release |
+| 🧪 | **623 tests + `tsc --strict` in CI** — message shapes round-trip through real protobuf encode→decode; a published-package smoke test runs after every npm release |
 | 📊 | **Built-in observability** — `createDebugMonitor()` gives connection state, message latency percentiles, Signal error tallies and retry stats, with secrets structurally redacted |
 | 🎯 | Extended native flow support, carousel, AIRich cards, mini-apps |
 | 🗄️ | Multiple auth & store backends out of the box (file, SQLite, MongoDB, MySQL, PostgreSQL, Redis) |
@@ -1135,7 +1139,7 @@ connection lifecycle simulation, read-receipt/presence capture, and
 `reset()` between tests. Honest scope: it does not emulate WhatsApp servers —
 rate limits, sessions, and encryption are out of scope by design.
 
-`npm test` runs the offline suite (`tests/`, 347 tests, no network needed).
+`npm test` runs the offline suite (`tests/`, 623 tests, no network needed).
 
 ---
 
@@ -2057,6 +2061,24 @@ Run `printEnvironmentReport()` (see [doctor](#check-your-environment-doctor)) �
 <br/>
 
 The banner is part of this package's identity and shows once per process. It's designed to stay out of your way: on an interactive terminal you get the full banner; in CI/pm2/piped logs it collapses to a single plain-text line (no ANSI codes, so JSON/structured log pipelines are never corrupted). `NO_COLOR=1` removes the styling but not the banner.
+
+Since v2.4.3 the banner doubles as a startup health card — gradient wordmark plus a framed info panel showing the package version, the baked WA Web client version, node/platform/pid, and a rotating daily tagline:
+
+```text
+       ██╗   █████╗   ██████╗
+       ██║  ██╔══██╗  ██╔══██╗
+       ██║  ███████║  ██████╔╝
+  ██   ██║  ██╔══██║  ██╔═══╝
+  ╚█████╔╝  ██║  ██║  ██║
+   ╚════╝   ╚═╝  ╚═╝  ╚═╝
+
+  ╭────────────────────────────────────────────────────────────────╮
+  │ @japofc/baileys v2.4.3   ● typed · extended · battle-tested    │
+  │ WA Web 2.3000.1048604174   node 20.20.2 · linux/x64 · pid 1472 │
+  │ ⚡ anti-ban toolkit   🛡️ bug-shield   📚 github.com/JAPofc/baileys │
+  ╰────────────────────────────────────────────────────────────────╯
+   "from Termux to production."  — Made with 🍃 by J.AP
+```
 
 </details>
 

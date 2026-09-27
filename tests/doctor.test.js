@@ -68,6 +68,36 @@ describe('banner: printBanner()', () => {
         assert.equal(out.trim().split('\n').length, 1, 'exactly one line');
     });
 
+    it('TTY: framed info card with WA Web version and a daily tagline', () => {
+        const origTTY = process.stdout.isTTY;
+        process.stdout.isTTY = true;
+        try {
+            const out = capture(() => printBanner());
+            assert.match(out, /╭─+╮/, 'framed card top border');
+            assert.match(out, /WA Web.*2\.3000\.\d+/s, 'baked WA version shown');
+            assert.match(out, /node \d+\.\d+/, 'node version shown');
+            assert.match(out, /Made with/, 'signature present');
+            assert.match(out, /"[^"]+\."/, 'a tagline is quoted');
+        } finally {
+            process.stdout.isTTY = origTTY;
+        }
+    });
+
+    it('NO_COLOR TTY: full multi-line banner without any ANSI codes', () => {
+        const origTTY = process.stdout.isTTY;
+        process.stdout.isTTY = true;
+        process.env.NO_COLOR = '1';
+        try {
+            const out = capture(() => printBanner());
+            assert.ok(!out.includes('\x1b['), 'no ANSI under NO_COLOR');
+            assert.ok(out.split('\n').length > 5, 'still the full banner, just unstyled');
+            assert.match(out, /WA Web 2\.3000\.\d+/);
+        } finally {
+            delete process.env.NO_COLOR;
+            process.stdout.isTTY = origTTY;
+        }
+    });
+
     it('cannot be disabled: no opt-out via env or options', () => {
         process.env.JAP_NO_BANNER = '1';
         process.env.NO_COLOR = '1';

@@ -12,7 +12,7 @@
 <a href="https://github.com/JAPofc/baileys/actions/workflows/ci.yml" target="_blank"><img src="https://img.shields.io/github/actions/workflow/status/JAPofc/baileys/ci.yml?branch=main&style=flat-square&label=CI&color=2ecc71" alt="status CI"/></a>
 <a href="https://japofc.github.io/baileys/" target="_blank"><img src="https://img.shields.io/badge/docs-typedoc-8e44ad?style=flat-square" alt="Dokumentasi API"/></a>
 <img src="https://img.shields.io/badge/npm-provenance%20attested-2ecc71?style=flat-square&logo=npm&logoColor=white" alt="npm provenance"/>
-<img src="https://img.shields.io/badge/tests-347%20passing-2ecc71?style=flat-square" alt="Tes"/>
+<img src="https://img.shields.io/badge/tests-623%20passing-2ecc71?style=flat-square" alt="Tes"/>
 <a href="https://socket.dev/npm/package/@japofc/baileys" target="_blank"><img src="https://socket.dev/api/badge/npm/package/@japofc/baileys" alt="Socket badge"/></a>
 <img src="https://img.shields.io/badge/tsc%20--strict-clean-3178c6?style=flat-square&logo=typescript&logoColor=white" alt="tsc strict bersih"/>
 <img src="https://img.shields.io/badge/node-%3E%3D20-brightgreen?style=flat-square" alt="Node >=20"/>
@@ -33,6 +33,10 @@
 <a href="#-maintainer">Maintainer</a>
 </p>
 
+<p>
+<b>719+ ekspor</b> &#xa0;·&#xa0; <b>623 tes</b> &#xa0;·&#xa0; <b>140+ modul utilitas</b> &#xa0;·&#xa0; <b>10 message builder</b> &#xa0;·&#xa0; WA Web <b>2.3000.x</b> selalu segar &#xa0;·&#xa0; <b>0</b> kerentanan
+</p>
+
 </div>
 
 ---
@@ -44,7 +48,7 @@ Kebanyakan fork Baileys cuma kode upstream yang di-rename plus beberapa snippet 
 | | |
 |---|---|
 | 🔬 | **Inti yang diaudit, bukan sekadar re-export** — konsistensi store, lifecycle reconnect, pemulihan sesi Signal, dan parsing retry-receipt semuanya punya bug nyata yang direproduksi lalu diperbaiki di sini, masing-masing dikunci regression test |
-| 🧪 | **347 tes + `tsc --strict` di CI** — bentuk pesan diuji round-trip lewat encode→decode protobuf sungguhan; smoke test paket terpublish jalan otomatis setelah tiap rilis npm |
+| 🧪 | **623 tes + `tsc --strict` di CI** — bentuk pesan diuji round-trip lewat encode→decode protobuf sungguhan; smoke test paket terpublish jalan otomatis setelah tiap rilis npm |
 | 📊 | **Observability bawaan** — `createDebugMonitor()` memberi status koneksi, persentil latensi pesan, hitungan error Signal, dan statistik retry, dengan rahasia (QR/kunci/token) diredaksi secara struktural |
 | 🎯 | Dukungan native flow diperluas, carousel, kartu AIRich, mini-app |
 | 🗄️ | Banyak backend auth & store langsung tersedia (file, SQLite, MongoDB, MySQL, PostgreSQL, Redis) |
@@ -1984,6 +1988,24 @@ Jalankan `printEnvironmentReport()` (lihat [doctor](#cek-lingkunganmu-doctor)) �
 <br/>
 
 Banner adalah bagian dari identitas paket ini dan tampil sekali per proses. Dirancang supaya tidak mengganggu: di terminal interaktif tampil banner penuh; di log CI/pm2/pipe menyusut jadi satu baris teks polos (tanpa kode ANSI, jadi pipeline log JSON/terstruktur tidak pernah rusak). `NO_COLOR=1` menghilangkan pewarnaan, bukan banner-nya.
+
+Sejak v2.4.3 banner sekaligus jadi kartu kesehatan startup — wordmark gradien plus panel info berbingkai: versi paket, versi WA Web bawaan, node/platform/pid, dan tagline harian yang berganti:
+
+```text
+       ██╗   █████╗   ██████╗
+       ██║  ██╔══██╗  ██╔══██╗
+       ██║  ███████║  ██████╔╝
+  ██   ██║  ██╔══██║  ██╔═══╝
+  ╚█████╔╝  ██║  ██║  ██║
+   ╚════╝   ╚═╝  ╚═╝  ╚═╝
+
+  ╭────────────────────────────────────────────────────────────────╮
+  │ @japofc/baileys v2.4.3   ● typed · extended · battle-tested    │
+  │ WA Web 2.3000.1048604174   node 20.20.2 · linux/x64 · pid 1472 │
+  │ ⚡ anti-ban toolkit   🛡️ bug-shield   📚 github.com/JAPofc/baileys │
+  ╰────────────────────────────────────────────────────────────────╯
+   "from Termux to production."  — Made with 🍃 by J.AP
+```
 
 </details>
 
