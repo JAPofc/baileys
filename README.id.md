@@ -1336,6 +1336,9 @@ Sampel utilitas yang diekspor dari `lib/Utils` di luar builder pesan di atas:
 | `attendance` | Absen harian — jam check-in, daftar yang belum, render bernomor |
 | `auction` | Lelang berwaktu — kenaikan minimum, perpanjangan anti-snipe, alert tersalip |
 | `text-poll` | Polling balas-angka yang jalan di semua client — tally, bar, penanganan seri |
+| `tictactoe` | Duel XO — tantang/terima, papan emoji, menang/seri/menyerah |
+| `rps` | Suit batu-gunting-kertas — pilihan tersembunyi, alias Indonesia, taruhan |
+| `word-games` | scrambleWord, generator soal matematika, engine "sambung kata" |
 | `auto-reply` | Engine auto-responder sederhana berbasis kata kunci/pola |
 | `message-search` | Cari pesan di cache/store, membuka wrapper ephemeral/view-once dulu |
 | `message-retry-manager` | Menangani protokol retry-receipt WhatsApp untuk pesan yang gagal didekripsi |
@@ -1777,6 +1780,29 @@ const polls = createTextPoll()
 polls.bind(sock)                                          // vote = balasan angka "1".."9"
 polls.start(chat, { question: 'Mabar jam?', options: ['19:00', '20:00', '21:00'] })
 polls.onEnd(({ results }) => sock.sendMessage(chat, { text: polls.formatResults(results) }))
+
+// paket game — duel & permainan kata
+import { createTicTacToe, createRPS, scrambleWord, generateMathProblem,
+         createWordChain } from '@japofc/baileys'
+
+const ttt = createTicTacToe()
+ttt.challenge(chat, penantang, lawan); ttt.accept(chat, lawan)
+ttt.play(chat, user, 5)                      // kotak 1-9 → next/menang/seri
+await sock.sendMessage(chat, { text: ttt.render(chat) }) // papan emoji ❌⭕3️⃣
+
+const suit = createRPS()
+suit.challenge(chat, a, b, { bet: 5000 }); suit.accept(chat, b)
+suit.pick(chat, a, 'batu')                   // pilihan tetap rahasia
+suit.onResult(({ winner, loser, bet }) => eco.transfer(loser, winner, bet))
+
+game.start(chat, { answer: scrambleWord('bandung') })       // acak kata
+game.start(chat, generateMathProblem('hard'))               // 17 × 8 - 24 = ?
+const sambung = createWordChain()                           // sambung kata
+sambung.start(chat, { firstWord: 'makan' })
+await sambung.play(chat, user, 'nasi')       // ✅ n… — skor = panjang kata
+
+eco.rob(maling, korban)  // upgrade: rampok dompet — uang bank tetap aman
+// CLI: npx @japofc/baileys wa → versi paket + versi WA Web bawaan
 
 // +18 upgrade: titleCase/slugify/generateId, shop.updateItem, notes.exportText,
 // warns.getTop, stats.getTopChats, i18n.formatNumber/formatDate, levels.getRankPosition,

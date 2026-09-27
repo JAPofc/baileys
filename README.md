@@ -1409,6 +1409,9 @@ A sample of the utilities exported from `lib/Utils` beyond the message builders 
 | `attendance` | Daily roll-call ("absen") — check-in times, missing list, numbered render |
 | `auction` | Timed bidding ("lelang") — min increments, anti-snipe extensions, outbid alerts |
 | `text-poll` | Vote-by-number polls that work in every client — tallies, bars, tie handling |
+| `tictactoe` | XO duels — challenge/accept, emoji boards, win/draw/forfeit |
+| `rps` | Rock-paper-scissors ("suit") — hidden picks, batu/gunting/kertas aliases, bets |
+| `word-games` | scrambleWord, math-problem generator, "sambung kata" word-chain engine |
 | `auto-reply` | Simple keyword/pattern-based auto-responder engine |
 | `message-search` | Search cached/stored messages, peeling off ephemeral/view-once wrappers first |
 | `message-retry-manager` | Handles WhatsApp's retry-receipt protocol for undecryptable messages |
@@ -1850,6 +1853,29 @@ const polls = createTextPoll()
 polls.bind(sock)                                          // votes = plain "1".."9" replies
 polls.start(chat, { question: 'Mabar jam?', options: ['19:00', '20:00', '21:00'] })
 polls.onEnd(({ results }) => sock.sendMessage(chat, { text: polls.formatResults(results) }))
+
+// games pack — duels & word games
+import { createTicTacToe, createRPS, scrambleWord, generateMathProblem,
+         createWordChain } from '@japofc/baileys'
+
+const ttt = createTicTacToe()
+ttt.challenge(chat, challenger, opponent); ttt.accept(chat, opponent)
+ttt.play(chat, user, 5)                      // squares 1-9 → next/win/draw
+await sock.sendMessage(chat, { text: ttt.render(chat) }) // ❌⭕3️⃣ emoji board
+
+const suit = createRPS()
+suit.challenge(chat, a, b, { bet: 5000 }); suit.accept(chat, b)
+suit.pick(chat, a, 'batu')                   // picks stay hidden
+suit.onResult(({ winner, loser, bet }) => eco.transfer(loser, winner, bet))
+
+game.start(chat, { answer: scrambleWord('bandung') })       // acak kata
+game.start(chat, generateMathProblem('hard'))               // 17 × 8 - 24 = ?
+const chain = createWordChain()                             // sambung kata
+chain.start(chat, { firstWord: 'makan' })
+await chain.play(chat, user, 'nasi')         // ✅ n… — scores by word length
+
+eco.rob(thief, victim)  // upgrade: wallet heists — bank money stays safe
+// CLI: npx @japofc/baileys wa → package + baked WA Web version
 
 // +18 upgrades: titleCase/slugify/generateId, shop.updateItem, notes.exportText,
 // warns.getTop, stats.getTopChats, i18n.formatNumber/formatDate, levels.getRankPosition,

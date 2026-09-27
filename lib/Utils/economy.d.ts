@@ -23,7 +23,7 @@ export interface EconomyOptions {
 }
 
 export interface EconomyTransaction {
-	type: 'add' | 'deduct' | 'transfer' | 'daily' | 'bet-win' | 'bet-loss' | 'deposit' | 'withdraw' | 'interest';
+	type: 'add' | 'deduct' | 'transfer' | 'daily' | 'bet-win' | 'bet-loss' | 'deposit' | 'withdraw' | 'interest' | 'rob-success' | 'rob-fail';
 	user: string;
 	to?: string;
 	amount: number;
@@ -50,6 +50,8 @@ export interface Economy {
 	getBankBalance(user: string): number;
 	deposit(user: string, amount: number): { balance: number; bank: number };
 	withdraw(user: string, amount: number): { balance: number; bank: number };
+	/** Rob a wallet (bank money is safe). Failure fines the robber. */
+	rob(robber: string, target: string, options?: { successChance?: number; maxStealFraction?: number; finePercent?: number }): { success: boolean; amount: number; robberBalance: number; targetBalance: number };
 	/** Pay interest on all bank balances (0.01 = 1%). */
 	applyInterest(rate: number): { users: number; totalAdded: number };
 	/** Leaderboard position by wallet + bank, or null. */

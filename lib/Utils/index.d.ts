@@ -131,3 +131,6 @@ export * from './giveaway';
 export * from './attendance';
 export * from './auction';
 export * from './text-poll';
+export * from './tictactoe';
+export * from './rps';
+export * from './word-games';
