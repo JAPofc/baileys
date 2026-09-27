@@ -11,6 +11,15 @@ export interface AutoReconnectOptions {
     /** Called when a connection reaches 'open'. */
     onOpen?: (sock: any) => void;
     /** Called once when the session is logged out (no reconnect will follow) — clean up creds here. */
+    onGiveUp?: (info: { reason: 'factory-failed' | 'max-attempts'; attempts: number;
+    /** Current lifecycle status for dashboards/health probes. */
+    getStatus(): {
+        started: boolean;
+        stopped: boolean;
+        attempts: number;
+        reconnectPending: boolean;
+        hasSocket: boolean;
+    }; error?: unknown; statusCode?: number }) => void;
     onLoggedOut?: (error: unknown) => void;
     /** Give up after this many consecutive failed attempts (default Infinity). */
     maxAttempts?: number;

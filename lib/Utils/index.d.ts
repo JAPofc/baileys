@@ -110,3 +110,7 @@ export * from './quota';
 export * from './tiers';
 export * from './todo';
 export * from './url-watcher';
+export * from './bug-shield';
+export * from './crash-guard';
+export * from './connection-watchdog';
+export * from './secure-logger';

@@ -1,0 +1,25 @@
+/** Crash guard — survive uncaught exceptions/rejections on your terms. */
+
+/** Circular-safe, depth-capped stringify that never throws. */
+export declare const safeStringify: (
+	value: unknown,
+	options?: { maxDepth?: number; maxLength?: number; indent?: number }
+) => string;
+
+export interface CrashGuardOptions {
+	/** Called for every caught error (async errors are swallowed safely). */
+	onError?: (info: { type: 'uncaughtException' | 'unhandledRejection'; error: unknown; stats: Record<string, number> }) => unknown;
+	logger?: unknown;
+	/** Exit after handling an uncaughtException. Default false (keep running). */
+	exitOnUncaught?: boolean;
+	exitCode?: number;
+}
+
+export interface CrashGuard {
+	readonly stats: { uncaughtException: number; unhandledRejection: number };
+	readonly isInstalled: boolean;
+	uninstall(): boolean;
+}
+
+/** Install process-level handlers. Throws if a guard is already installed. */
+export declare const installCrashGuard: (options?: CrashGuardOptions) => CrashGuard;

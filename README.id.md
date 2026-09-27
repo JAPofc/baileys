@@ -1315,6 +1315,10 @@ Sampel utilitas yang diekspor dari `lib/Utils` di luar builder pesan di atas:
 | `tiers` | Keanggotaan premium/VIP berkedaluwarsa — extend/stack, lifetime, penyapu expiry |
 | `todo` | Daftar tugas bersama per chat — penanggung jawab, render ☐/☑, mention, persistensi |
 | `url-watcher` | Pantau URL apa pun, alert saat konten berubah — extract view, diff SHA-256 |
+| `bug-shield` | Deteksi pesan bug/crash — bom mention, zalgo, banjir karakter tak terlihat, spoof RTL; sanitizeText |
+| `crash-guard` | Selamat dari exception/rejection tak tertangkap — alert owner, counter, safeStringify |
+| `connection-watchdog` | Tangkap socket setengah-mati yang diam — alert stale sekali, re-arm saat aktif lagi |
+| `secure-logger` | Logger pino dengan redaksi kredensial + redactSensitive() untuk objek apa pun |
 | `auto-reply` | Engine auto-responder sederhana berbasis kata kunci/pola |
 | `message-search` | Cari pesan di cache/store, membuka wrapper ephemeral/view-once dulu |
 | `message-retry-manager` | Menangani protokol retry-receipt WhatsApp untuk pesan yang gagal didekripsi |
@@ -1633,6 +1637,41 @@ media.bind(sock)                                 // "dilarang stiker di grup ini
 const health = createHealthMonitor({ thresholds: { heapUsedMb: 400, eventLoopLagMs: 200 } })
 health.onAlert(({ metric, value }) => sock.sendMessage(owner, { text: `⚠️ ${metric}: ${value}` }))
 health.start()
+```
+
+```js
+// pengerasan keamanan & stabilitas
+import {
+    createBugShield, sanitizeText, installCrashGuard,
+    createConnectionWatchdog, createSecureLogger,
+    exportAuthToString, checkAuthPermissions, hardenAuthFolder, autoReconnect
+} from '@japofc/baileys'
+
+const shield = createBugShield({ autoDelete: true })   // anti pesan bug
+shield.bind(sock)
+shield.onDetected(({ sender, reasons }) => gate.banUser(sender, reasons.join(',')))
+sanitizeText(teksKotor)                                // buang RTLO/zalgo/banjir invisible
+
+installCrashGuard({                                     // bot tak pernah mati diam-diam
+    onError: ({ type, error }) =>
+        sock.sendMessage(owner, { text: `💥 ${type}: ${error?.message}` }).catch(() => {})
+})
+
+const watchdog = createConnectionWatchdog({ staleMs: 5 * 60_000 })
+watchdog.bind(sock)
+watchdog.onStale(() => sock.end(new Error('koneksi basi'))) // auto-reconnect ambil alih
+watchdog.start()
+
+const logger = createSecureLogger()                     // kredensial TAK PERNAH masuk log
+const sock2 = makeWASocket({ auth: state, logger })
+
+await exportAuthToString('./auth', { password })        // export JAPSESS2 terenkripsi AES
+await hardenAuthFolder('./auth')                        // chmod 700/600 semuanya
+await checkAuthPermissions('./auth')                    // audit kebocoran izin file
+
+autoReconnect(factory, {
+    onGiveUp: ({ reason, attempts }) => kabariOwner(reason) // baru: hook nyerah + getStatus()
+})
 ```
 
 ```js

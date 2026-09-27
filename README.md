@@ -1388,6 +1388,10 @@ A sample of the utilities exported from `lib/Utils` beyond the message builders 
 | `tiers` | Premium/VIP memberships with expiry — extend/stack, lifetime, expiry sweeper |
 | `todo` | Shared task lists per chat — assignees, ☐/☑ render, mentions, persistence |
 | `url-watcher` | Poll any URL, alert on content change — extract views, SHA-256 diffing |
+| `bug-shield` | Detect crash/"bug" messages — mention bombs, zalgo, invisible floods, RTL spoofing; sanitizeText |
+| `crash-guard` | Survive uncaught exceptions/rejections — owner alerts, counters, safeStringify |
+| `connection-watchdog` | Catch silent half-open sockets — stale alerts fire once, re-armed by activity |
+| `secure-logger` | Credential-redacting pino logger + redactSensitive() for any object |
 | `auto-reply` | Simple keyword/pattern-based auto-responder engine |
 | `message-search` | Search cached/stored messages, peeling off ephemeral/view-once wrappers first |
 | `message-retry-manager` | Handles WhatsApp's retry-receipt protocol for undecryptable messages |
@@ -1706,6 +1710,41 @@ media.bind(sock)                                 // "no stickers in this group"
 const health = createHealthMonitor({ thresholds: { heapUsedMb: 400, eventLoopLagMs: 200 } })
 health.onAlert(({ metric, value }) => sock.sendMessage(owner, { text: `⚠️ ${metric}: ${value}` }))
 health.start()
+```
+
+```js
+// security & stability hardening
+import {
+    createBugShield, sanitizeText, installCrashGuard,
+    createConnectionWatchdog, createSecureLogger,
+    exportAuthToString, checkAuthPermissions, hardenAuthFolder, autoReconnect
+} from '@japofc/baileys'
+
+const shield = createBugShield({ autoDelete: true })   // anti bug-message
+shield.bind(sock)
+shield.onDetected(({ sender, reasons }) => gate.banUser(sender, reasons.join(',')))
+sanitizeText(dirtyText)                                // strips RTLO/zalgo/invisible flood
+
+installCrashGuard({                                     // bot never dies silently
+    onError: ({ type, error }) =>
+        sock.sendMessage(owner, { text: `💥 ${type}: ${error?.message}` }).catch(() => {})
+})
+
+const watchdog = createConnectionWatchdog({ staleMs: 5 * 60_000 })
+watchdog.bind(sock)
+watchdog.onStale(() => sock.end(new Error('stale connection'))) // reconnect takes over
+watchdog.start()
+
+const logger = createSecureLogger()                     // creds NEVER hit the logs
+const sock2 = makeWASocket({ auth: state, logger })
+
+await exportAuthToString('./auth', { password })        // AES-encrypted JAPSESS2 export
+await hardenAuthFolder('./auth')                        // chmod 700/600 everything
+await checkAuthPermissions('./auth')                    // audit for leaks
+
+autoReconnect(factory, {
+    onGiveUp: ({ reason, attempts }) => notifyOwner(reason) // new: give-up hook + getStatus()
+})
 ```
 
 ```js
