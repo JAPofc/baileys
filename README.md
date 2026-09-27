@@ -1402,6 +1402,9 @@ A sample of the utilities exported from `lib/Utils` beyond the message builders 
 | `group-tools` | Pure groupMetadata helpers — admins, owner, stats, participant diffs, info card |
 | `msg-tools` | messageTypeOf, quoted info, timestamps, one-line message previews |
 | `kv-store` | Tiny JSON key-value DB — namespaces, counters, debounced atomic saves |
+| `warmup` | Account warmup — ramp daily send volume on fresh numbers (20→50→…→unlimited) |
+| `disconnect-classifier` | Close errors → category + recommended action (reconnect / re-pair / stop) |
+| `group-op-guard` | Stay under WhatsApp's group-action ceilings (~3 adds & 2 creates per 10 min) |
 | `auto-reply` | Simple keyword/pattern-based auto-responder engine |
 | `message-search` | Search cached/stored messages, peeling off ephemeral/view-once wrappers first |
 | `message-retry-manager` | Handles WhatsApp's retry-receipt protocol for undecryptable messages |
@@ -1798,6 +1801,28 @@ summarizeMessage(msg)                   // '📷 image: caption…' for logs
 
 const db = await createKVStore('./botdata.json')   // tiny persistent DB
 db.namespace('settings').set(jid, { welcome: true })
+
+// anti-ban pack — fresh numbers, sane group ops, smart reconnects
+import { createAccountWarmup, classifyDisconnect, explainDisconnect,
+         createGroupOpGuard, randomGaussian, createPresenceCycler } from '@japofc/baileys'
+
+const warmup = createAccountWarmup({ startedAt: firstLoginTs })
+if (warmup.trySend().allowed) await sock.sendMessage(jid, content)
+// day 1 → 20 msgs, then 50, 100, 200, 400, 800, unlimited
+
+sock.ev.on('connection.update', ({ connection, lastDisconnect }) => {
+    if (connection !== 'close') return
+    const verdict = classifyDisconnect(lastDisconnect)
+    verdict.shouldReconnect ? restart() : console.log(explainDisconnect(lastDisconnect))
+    // 🔑 [auth 401] Logged out from the phone — the session is gone, pair again.
+})
+
+const ops = createGroupOpGuard()
+const safe = ops.wrap(sock)                        // guarded automatically
+await safe.groupParticipantsUpdate(jid, users, 'add') // throws past ~3 adds/10min
+
+await sleep(randomGaussian(2000, 600, { clamp: [500, 5000] })) // human-like pauses
+createPresenceCycler(sock, { chats: [ownerJid] }).start()      // opt-in activity
 
 // +18 upgrades: titleCase/slugify/generateId, shop.updateItem, notes.exportText,
 // warns.getTop, stats.getTopChats, i18n.formatNumber/formatDate, levels.getRankPosition,

@@ -15,6 +15,11 @@ export declare const randomPick: <T>(items: T[], options?: { random?: () => numb
 /** Fisher–Yates shuffle (returns a new array). */
 export declare const shuffle: <T>(items: T[], options?: { random?: () => number }) => T[];
 export declare const weightedPick: <T>(entries: Array<{ value: T; weight: number }>, options?: { random?: () => number }) => T | undefined;
+/** Normally-distributed random (Box–Muller), optional [min, max] clamp. */
+export declare const randomGaussian: (mean?: number, stdDev?: number, options?: { random?: () => number; clamp?: [number, number] }) => number;
+/** Gaussian-jittered delay in ms — human-looking pauses. */
+export declare const gaussianDelayMs: (meanMs: number, stdMs?: number, options?: { random?: () => number; clamp?: [number, number] }) => number;
+
 /** Deterministic 0-100 rating — same input, same rating forever. */
 export declare const hashRating: (text: string) => number;
 /** Deterministic 0-100 match score, order-independent. */

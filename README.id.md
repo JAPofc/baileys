@@ -1329,6 +1329,9 @@ Sampel utilitas yang diekspor dari `lib/Utils` di luar builder pesan di atas:
 | `group-tools` | Helper groupMetadata murni — admin, owner, statistik, diff member, kartu info |
 | `msg-tools` | messageTypeOf, info quoted, timestamp, preview pesan satu baris |
 | `kv-store` | Database key-value JSON mini — namespace, counter, simpan atomik debounce |
+| `warmup` | Pemanasan akun — naikkan volume kirim harian nomor baru bertahap (20→50→…→bebas) |
+| `disconnect-classifier` | Error close → kategori + aksi yang disarankan (reconnect / pair ulang / stop) |
+| `group-op-guard` | Tetap di bawah batas aksi grup WhatsApp (~3 add & 2 create per 10 menit) |
 | `auto-reply` | Engine auto-responder sederhana berbasis kata kunci/pola |
 | `message-search` | Cari pesan di cache/store, membuka wrapper ephemeral/view-once dulu |
 | `message-retry-manager` | Menangani protokol retry-receipt WhatsApp untuk pesan yang gagal didekripsi |
@@ -1725,6 +1728,28 @@ summarizeMessage(msg)                   // '📷 image: caption…' buat log
 
 const db = await createKVStore('./botdata.json')   // DB persisten mini
 db.namespace('settings').set(jid, { welcome: true })
+
+// paket anti-ban — nomor baru, aksi grup aman, reconnect cerdas
+import { createAccountWarmup, classifyDisconnect, explainDisconnect,
+         createGroupOpGuard, randomGaussian, createPresenceCycler } from '@japofc/baileys'
+
+const warmup = createAccountWarmup({ startedAt: loginPertamaTs })
+if (warmup.trySend().allowed) await sock.sendMessage(jid, content)
+// hari 1 → 20 pesan, lalu 50, 100, 200, 400, 800, bebas
+
+sock.ev.on('connection.update', ({ connection, lastDisconnect }) => {
+    if (connection !== 'close') return
+    const verdict = classifyDisconnect(lastDisconnect)
+    verdict.shouldReconnect ? restart() : console.log(explainDisconnect(lastDisconnect))
+    // 🔑 [auth 401] Keluar dari HP — sesi hilang, pairing ulang.
+})
+
+const ops = createGroupOpGuard()
+const safe = ops.wrap(sock)                        // otomatis dijaga
+await safe.groupParticipantsUpdate(jid, users, 'add') // throw kalau lewat ~3 add/10 menit
+
+await sleep(randomGaussian(2000, 600, { clamp: [500, 5000] })) // jeda ala manusia
+createPresenceCycler(sock, { chats: [ownerJid] }).start()      // aktivitas opt-in
 
 // +18 upgrade: titleCase/slugify/generateId, shop.updateItem, notes.exportText,
 // warns.getTop, stats.getTopChats, i18n.formatNumber/formatDate, levels.getRankPosition,
