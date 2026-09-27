@@ -28,6 +28,20 @@ export declare function backupAuthState(src: string, outFile: string, opts: { pa
     outFile: string; files: number; createdAt: string;
 }>;
 
+/** Timestamped, password-encrypted backups with automatic pruning. */
+export declare function backupAuthStateRotating(src: string, outDir: string, opts: {
+    password: string;
+    /** Backups to keep. Default 5. */
+    keep?: number;
+    /** File name prefix. Default 'auth-backup'. */
+    prefix?: string;
+}): Promise<{
+    outFile: string;
+    files: number;
+    createdAt: string;
+    removed: string[];
+    kept: number;
+}>;
 export declare function restoreAuthState(backupFile: string, dest: string, opts: {
     password: string; single?: boolean;
 }): Promise<{ dest: string; files: number; createdAt: string }>;

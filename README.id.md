@@ -1301,6 +1301,8 @@ Sampel utilitas yang diekspor dari `lib/Utils` di luar builder pesan di atas:
 | `i18n` | Lapisan terjemahan mini — kamus, bahasa per chat, interpolasi `{var}` |
 | `fancy-text` | Gaya teks Unicode untuk menu — 𝗯𝗼𝗹𝗱, 𝚖𝚘𝚗𝚘, ⓒⓘⓡⓒⓛⓔⓓ, ｆｕｌｌｗｉｄｔｈ, ꜱᴍᴀʟʟᴄᴀᴘꜱ (12 gaya) |
 | `join-requests` | Auto setujui/tolak permintaan join grup — allowlist/denylist, routing manual, sweep pending |
+| `session-tools` | Dokter sesi — analisis/perbaiki folder auth, export/import session-string portabel, migrasi antar backend |
+| `shutdown` | Manajer shutdown rapi — creds diflush duluan, hook berurutan, tangani sinyal, jalan sekali |
 | `auto-reply` | Engine auto-responder sederhana berbasis kata kunci/pola |
 | `message-search` | Cari pesan di cache/store, membuka wrapper ephemeral/view-once dulu |
 | `message-retry-manager` | Menangani protokol retry-receipt WhatsApp untuk pesan yang gagal didekripsi |
@@ -1551,6 +1553,42 @@ joins.onRequest(({ user, approve, reject }) => approve())
 await joins.sweep(sock, groupJid)                   // proses daftar pending
 
 // upgrade CLI: npx @japofc/baileys sticker in.webp out.webp --pack "Pack Gue" --author gue
+```
+
+```js
+// perkakas sesi & sistem
+import {
+    analyzeAuthState, repairAuthFolder,
+    exportAuthToString, importAuthFromString, migrateFolderToAuthState,
+    backupAuthStateRotating, createShutdownManager
+} from '@japofc/baileys'
+
+const laporan = await analyzeAuthState('./auth')    // dokter sesi
+laporan.registered; laporan.counts; laporan.corrupted
+await repairAuthFolder('./auth')                    // karantina file rusak
+
+// kirim seluruh login sebagai SATU string (pola SESSION_ID) — rahasiakan!
+const sessionString = await exportAuthToString('./auth')
+await importAuthFromString(sessionString, './auth') // di perangkat baru
+
+// pindahkan sesi folder ke adapter apa pun (SQLite/Redis/Mongo/single-file):
+const { state, saveCreds } = await useSQLiteAuthState('auth.db')
+await migrateFolderToAuthState('./auth', state, saveCreds)
+
+// backup terenkripsi bertimestamp yang bersih-bersih sendiri:
+await backupAuthStateRotating('./auth', './backups', { password, keep: 5 })
+
+const shutdown = createShutdownManager({ sock, saveCreds })
+shutdown.register('tutup db', () => db.close())
+shutdown.attach()                                   // SIGINT/SIGTERM → keluar rapi
+```
+
+```bash
+# CLI: kelola sesi tanpa nulis kode
+npx @japofc/baileys session analyze ./auth
+npx @japofc/baileys session repair  ./auth
+npx @japofc/baileys session export  ./auth --out session.txt
+npx @japofc/baileys session import  session.txt ./auth-baru
 ```
 | `stickerpack` | Bangun dan kirim paket stiker (termasuk animasi/Lottie) |
 | `templates` | Helper pesan template WhatsApp Business lama |

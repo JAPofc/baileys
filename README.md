@@ -1374,6 +1374,8 @@ A sample of the utilities exported from `lib/Utils` beyond the message builders 
 | `i18n` | Tiny translation layer — dictionaries, per-chat language, `{var}` interpolation |
 | `fancy-text` | Unicode restyling for menus — 𝗯𝗼𝗹𝗱, 𝚖𝚘𝚗𝚘, ⓒⓘⓡⓒⓛⓔⓓ, ｆｕｌｌｗｉｄｔｈ, ꜱᴍᴀʟʟᴄᴀᴘꜱ (12 styles) |
 | `join-requests` | Auto approve/reject group join requests — allow/deny lists, manual routing, pending sweep |
+| `session-tools` | Session doctor — analyze/repair auth folders, portable session-string export/import, cross-backend migration |
+| `shutdown` | Graceful shutdown manager — creds flushed first, ordered hooks, signal handling, run-once |
 | `auto-reply` | Simple keyword/pattern-based auto-responder engine |
 | `message-search` | Search cached/stored messages, peeling off ephemeral/view-once wrappers first |
 | `message-retry-manager` | Handles WhatsApp's retry-receipt protocol for undecryptable messages |
@@ -1624,6 +1626,42 @@ joins.onRequest(({ user, approve, reject }) => approve())
 await joins.sweep(sock, groupJid)                 // process the pending list
 
 // CLI upgrade: npx @japofc/baileys sticker in.webp out.webp --pack "My Pack" --author me
+```
+
+```js
+// session & system tools
+import {
+    analyzeAuthState, repairAuthFolder,
+    exportAuthToString, importAuthFromString, migrateFolderToAuthState,
+    backupAuthStateRotating, createShutdownManager
+} from '@japofc/baileys'
+
+const report = await analyzeAuthState('./auth')     // session doctor
+report.registered; report.counts; report.corrupted  // + issues list
+await repairAuthFolder('./auth')                    // quarantine corrupted files
+
+// ship the whole login as ONE string (SESSION_ID pattern) — keep it secret!
+const sessionString = await exportAuthToString('./auth')
+await importAuthFromString(sessionString, './auth') // on the new device
+
+// move a folder session into ANY adapter (SQLite/Redis/Mongo/single-file):
+const { state, saveCreds } = await useSQLiteAuthState('auth.db')
+await migrateFolderToAuthState('./auth', state, saveCreds)
+
+// timestamped encrypted backups that prune themselves:
+await backupAuthStateRotating('./auth', './backups', { password, keep: 5 })
+
+const shutdown = createShutdownManager({ sock, saveCreds })
+shutdown.register('close db', () => db.close())
+shutdown.attach()                                   // SIGINT/SIGTERM → clean exit
+```
+
+```bash
+# CLI: session management without writing code
+npx @japofc/baileys session analyze ./auth
+npx @japofc/baileys session repair  ./auth
+npx @japofc/baileys session export  ./auth --out session.txt
+npx @japofc/baileys session import  session.txt ./auth-new
 ```
 | `stickerpack` | Build and send sticker packs (including animated/Lottie) |
 | `templates` | Legacy WhatsApp Business template message helpers |
