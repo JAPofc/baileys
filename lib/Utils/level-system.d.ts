@@ -54,6 +54,8 @@ export interface LevelSystem {
 	levelOf(xp: number): number;
 	xpForLevel(level: number): number;
 	rankOf(level: number): string;
+	/** Ready-to-send text rank card with a progress bar, or null. */
+	renderRankCard(user: string, options?: { barSize?: number }): string | null;
 	toJSON(): Record<string, unknown>;
 	load(snapshot: Record<string, unknown>): void;
 	readonly size: number;

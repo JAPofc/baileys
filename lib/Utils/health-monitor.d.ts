@@ -45,4 +45,7 @@ export interface HealthMonitor {
 	isAlerting(metric: string): boolean;
 }
 
+/** Pretty owner-DM text for a snapshot(). */
+export declare const formatHealthSnapshot: (snapshot: HealthSnapshot) => string;
+
 export declare const createHealthMonitor: (options?: HealthMonitorOptions) => HealthMonitor;

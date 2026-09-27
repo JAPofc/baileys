@@ -170,7 +170,7 @@ test('fancy text: unicode restyling with pass-through for unknown chars', () => 
 	assert.equal([...styleText('BE', 'script')][0], '\u212c', 'script B uses the irregular code point');
 	assert.equal(styleText('🔥 ok!', 'bold'), '🔥 \ud835\uddfc\ud835\uddf8!', 'emoji and punctuation pass through');
 	assert.equal(styleText('abc', 'monospace'), '\ud835\ude8a\ud835\ude8b\ud835\ude8c');
-	assert.equal(listTextStyles().length, 12);
+	assert.equal(listTextStyles().length, 14); // 12 + negativeSquared + boldFraktur
 	assert.ok(listTextStyles().includes('smallcaps'));
 	assert.throws(() => styleText('x', 'nope'), /unknown style/);
 });

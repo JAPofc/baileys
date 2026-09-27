@@ -1,5 +1,8 @@
 /** Birthday manager — remember, list and auto-congratulate. */
 
+/** Western zodiac sign for a date: getZodiac(17, 8) → 'Leo'. */
+export declare const getZodiac: (day: number, month: number) => string | null;
+
 export interface BirthdayEntry {
 	day: number;
 	month: number;
@@ -15,6 +18,7 @@ export interface BirthdayEvent {
 	day: number;
 	month: number;
 	age?: number;
+	zodiac?: string | null;
 }
 
 export interface BirthdayManagerOptions {
@@ -28,7 +32,7 @@ export interface BirthdayManager {
 	set(user: string, entry: { day: number; month: number; year?: number; chat?: string }): BirthdayEntry;
 	remove(user: string): boolean;
 	get(user: string): BirthdayEntry | null;
-	getToday(): Array<{ user: string; chat?: string; age?: number }>;
+	getToday(): Array<{ user: string; chat?: string; age?: number; zodiac?: string | null }>;
 	getUpcoming(days?: number): Array<{ user: string; chat?: string; day: number; month: number; inDays: number }>;
 	/** Run one check; fires onBirthday max once per user per year. */
 	checkNow(): BirthdayEvent[];

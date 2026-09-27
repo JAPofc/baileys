@@ -13,6 +13,8 @@ export interface EconomyOptions {
 	streakGraceMs?: number;
 	/** Transfer fee fraction (0.05 = 5%), charged to the sender. Default 0. */
 	transferFee?: number;
+	/** Max money the bank can hold per user. Default Infinity. */
+	bankCapacity?: number;
 	allowNegative?: boolean;
 	/** Clock override (testing). */
 	now?: () => number;
@@ -21,7 +23,7 @@ export interface EconomyOptions {
 }
 
 export interface EconomyTransaction {
-	type: 'add' | 'deduct' | 'transfer' | 'daily' | 'bet-win' | 'bet-loss';
+	type: 'add' | 'deduct' | 'transfer' | 'daily' | 'bet-win' | 'bet-loss' | 'deposit' | 'withdraw';
 	user: string;
 	to?: string;
 	amount: number;
@@ -45,7 +47,12 @@ export interface Economy {
 	claimDaily(user: string): DailyClaim;
 	bet(user: string, amount: number, options?: { winChance?: number; multiplier?: number }): { won: boolean; payout: number; balance: number };
 	getStreak(user: string): number;
-	getLeaderboard(limit?: number): Array<{ rank: number; user: string; balance: number }>;
+	getBankBalance(user: string): number;
+	deposit(user: string, amount: number): { balance: number; bank: number };
+	withdraw(user: string, amount: number): { balance: number; bank: number };
+	/** Leaderboard position by wallet + bank, or null. */
+	getRank(user: string): number | null;
+	getLeaderboard(limit?: number): Array<{ rank: number; user: string; balance: number; bank: number; total: number }>;
 	onTransaction(cb: (tx: EconomyTransaction) => void): () => void;
 	toJSON(): Record<string, unknown>;
 	load(snapshot: Record<string, unknown>): void;

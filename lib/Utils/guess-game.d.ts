@@ -7,6 +7,8 @@ export interface GuessGameOptions {
 	caseSensitive?: boolean;
 	/** Trim guesses before matching. Default true. */
 	trim?: boolean;
+	/** Wrong guesses within this edit distance get close: true. Default 2. */
+	closeDistance?: number;
 	/** Clock override (testing). */
 	now?: () => number;
 }
@@ -37,7 +39,7 @@ export interface GuessGame {
 	bind(sock: unknown): () => void;
 	unbind(): void;
 	onCorrect(cb: (event: GuessCorrectEvent) => void): () => void;
-	onWrong(cb: (event: { chat: string; user: string; text: string; attempts: number; msg?: unknown }) => void): () => void;
+	onWrong(cb: (event: { chat: string; user: string; text: string; attempts: number; close: boolean; distance: number; msg?: unknown }) => void): () => void;
 	onTimeout(cb: (event: { chat: string; answer: string; hint: string; attempts: number }) => void): () => void;
 	isActive(chat: string): boolean;
 	/** Round info WITHOUT the answer. */

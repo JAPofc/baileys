@@ -16,6 +16,9 @@ export interface I18n {
 	t(key: string, vars?: Record<string, unknown>, lang?: string): string;
 	/** Translate in a chat's configured language. */
 	tFor(chat: string, key: string, vars?: Record<string, unknown>): string;
+	/** Plural-aware: key.one for count 1, else key.other ({count} available). */
+	tn(key: string, count: number, vars?: Record<string, unknown>, lang?: string): string;
+	tnFor(chat: string, key: string, count: number, vars?: Record<string, unknown>): string;
 	setChatLang(chat: string, lang: string): void;
 	getChatLang(chat: string): string;
 	resetChatLang(chat: string): boolean;

@@ -1309,6 +1309,12 @@ Sampel utilitas yang diekspor dari `lib/Utils` di luar builder pesan di atas:
 | `media-probe` | Format + dimensi gambar murni JS (PNG/JPEG/GIF/WebP/BMP) — tanpa library gambar |
 | `media-guard` | Blokir tipe media per chat ("dilarang stiker") — aturan per chat, auto-hapus |
 | `health-monitor` | Kesehatan proses — memori, lag event-loop, probe custom, alert threshold |
+| `text-extras` | Read-more, progress bar, durasi/ukuran manusiawi, pemenggalan, escape markdown, jarak fuzzy |
+| `reminders` | "!remind 10m …" — parseDuration, timer, persistensi anti-restart (telat tetap bunyi) |
+| `quota` | Jatah harian per user dengan tier — reset tengah malam, bonus, event kehabisan |
+| `tiers` | Keanggotaan premium/VIP berkedaluwarsa — extend/stack, lifetime, penyapu expiry |
+| `todo` | Daftar tugas bersama per chat — penanggung jawab, render ☐/☑, mention, persistensi |
+| `url-watcher` | Pantau URL apa pun, alert saat konten berubah — extract view, diff SHA-256 |
 | `auto-reply` | Engine auto-responder sederhana berbasis kata kunci/pola |
 | `message-search` | Cari pesan di cache/store, membuka wrapper ephemeral/view-once dulu |
 | `message-retry-manager` | Menangani protokol retry-receipt WhatsApp untuk pesan yang gagal didekripsi |
@@ -1627,6 +1633,43 @@ media.bind(sock)                                 // "dilarang stiker di grup ini
 const health = createHealthMonitor({ thresholds: { heapUsedMb: 400, eventLoopLagMs: 200 } })
 health.onAlert(({ metric, value }) => sock.sendMessage(owner, { text: `⚠️ ${metric}: ${value}` }))
 health.start()
+```
+
+```js
+// ronde 20+: perkakas teks, pengingat, jatah, tier, todo & lainnya
+import {
+    readMore, progressBar, formatDuration, chunkText, similarity,
+    parseDuration, createReminderManager, createQuotaManager,
+    createTierManager, createTodoList, createUrlWatcher, getZodiac
+} from '@japofc/baileys'
+
+readMore('Promo!', 'detail panjang…')     // tersembunyi di balik "Baca selengkapnya"
+progressBar(70, 100)                      // ███████░░░ 70%
+formatDuration(93_784_000)                // 1d 2h 3m
+chunkText(teksPanjang, 4000)              // pecah sesuai batas WA
+
+const reminders = createReminderManager()
+reminders.add({ chat, user, text: 'angkat gorengan', inMs: parseDuration('10m') })
+reminders.onDue(({ chat, user, text }) =>
+    sock.sendMessage(chat, { text: `⏰ @${user.split('@')[0]} ${text}`, mentions: [user] }))
+
+const tiers = createTierManager()
+tiers.setTier(user, 'premium', { days: 30 })
+const quota = createQuotaManager({ defaultLimit: 20, limits: { premium: 200 } })
+if (!quota.consume(sender, tiers.getTier(sender)?.name).allowed) return ctx.reply('Jatah habis!')
+
+const todos = createTodoList()
+todos.add(chat, 'bayar wifi', { assignee: member })
+await sock.sendMessage(chat, { text: todos.render(chat), mentions: todos.mentions(chat) })
+
+const watcher = createUrlWatcher('https://api.contoh.com/status.json', { intervalMs: 60_000 })
+watcher.onChange(({ body }) => sock.sendMessage(owner, { text: `🔔 berubah: ${body.slice(0, 300)}` }))
+watcher.start()
+
+// upgrade: eco.deposit/withdraw + eco.getRank, levels.renderRankCard,
+// router { onUnknownCommand } + router.remove, i18n.tn bentuk jamak,
+// styleText 'negativeSquared'/'boldFraktur', getZodiac(17, 8) → 'Leo',
+// hint "dikit lagi!" guess-game, formatHealthSnapshot buat DM owner
 ```
 | `stickerpack` | Bangun dan kirim paket stiker (termasuk animasi/Lottie) |
 | `templates` | Helper pesan template WhatsApp Business lama |

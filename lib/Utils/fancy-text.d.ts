@@ -11,6 +11,8 @@ export type TextStyle =
 	| 'monospace'
 	| 'circled'
 	| 'squared'
+	| 'negativeSquared'
+	| 'boldFraktur'
 	| 'fullwidth'
 	| 'smallcaps';
 

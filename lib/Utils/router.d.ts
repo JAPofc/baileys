@@ -44,10 +44,14 @@ export interface RouterOptions {
     onDenied?: (ctx: RouterContext, denial: RouterDenial) => void;
     /** Group-admin cache TTL in ms. Default 60000. */
     adminCacheTtlMs?: number;
+    /** Called for prefixed-but-unknown commands (message counts as handled). */
+    onUnknownCommand?: (ctx: RouterContext) => any;
 }
 export interface Router {
     command(names: string | string[], handler: (ctx: RouterContext) => any, opts?: RouterCommandOptions): Router;
     use(mw: (ctx: RouterContext, next: () => Promise<void>) => any): Router;
+    /** Unregister a command and all its aliases. */
+    remove(name: string): boolean;
     handle(sock: any, webMessage: any): Promise<boolean>;
     attach(sock: any): () => void;
     list(): Array<{

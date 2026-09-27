@@ -1382,6 +1382,12 @@ A sample of the utilities exported from `lib/Utils` beyond the message builders 
 | `media-probe` | Pure-JS image format + dimensions (PNG/JPEG/GIF/WebP/BMP) — no image library |
 | `media-guard` | Block media types per chat ("no stickers here") — per-chat rules, auto-delete |
 | `health-monitor` | Process health — memory, event-loop lag, custom probes, threshold alerts |
+| `text-extras` | Read-more collapse, progress bars, human durations/sizes, chunking, markdown escape, fuzzy distance |
+| `reminders` | "!remind 10m …" — parseDuration, timers, restart-safe persistence (overdue fire late) |
+| `quota` | Daily usage limits per user with tiers — midnight reset, bonuses, exhausted events |
+| `tiers` | Premium/VIP memberships with expiry — extend/stack, lifetime, expiry sweeper |
+| `todo` | Shared task lists per chat — assignees, ☐/☑ render, mentions, persistence |
+| `url-watcher` | Poll any URL, alert on content change — extract views, SHA-256 diffing |
 | `auto-reply` | Simple keyword/pattern-based auto-responder engine |
 | `message-search` | Search cached/stored messages, peeling off ephemeral/view-once wrappers first |
 | `message-retry-manager` | Handles WhatsApp's retry-receipt protocol for undecryptable messages |
@@ -1700,6 +1706,43 @@ media.bind(sock)                                 // "no stickers in this group"
 const health = createHealthMonitor({ thresholds: { heapUsedMb: 400, eventLoopLagMs: 200 } })
 health.onAlert(({ metric, value }) => sock.sendMessage(owner, { text: `⚠️ ${metric}: ${value}` }))
 health.start()
+```
+
+```js
+// the 20+ round: text tools, reminders, quotas, tiers, todos & more
+import {
+    readMore, progressBar, formatDuration, chunkText, similarity,
+    parseDuration, createReminderManager, createQuotaManager,
+    createTierManager, createTodoList, createUrlWatcher, getZodiac
+} from '@japofc/baileys'
+
+readMore('Promo!', 'long details…')       // collapses behind "Read more"
+progressBar(70, 100)                      // ███████░░░ 70%
+formatDuration(93_784_000)                // 1d 2h 3m
+chunkText(longText, 4000)                 // split for WA limits
+
+const reminders = createReminderManager()
+reminders.add({ chat, user, text: 'angkat gorengan', inMs: parseDuration('10m') })
+reminders.onDue(({ chat, user, text }) =>
+    sock.sendMessage(chat, { text: `⏰ @${user.split('@')[0]} ${text}`, mentions: [user] }))
+
+const tiers = createTierManager()
+tiers.setTier(user, 'premium', { days: 30 })
+const quota = createQuotaManager({ defaultLimit: 20, limits: { premium: 200 } })
+if (!quota.consume(sender, tiers.getTier(sender)?.name).allowed) return ctx.reply('Jatah habis!')
+
+const todos = createTodoList()
+todos.add(chat, 'bayar wifi', { assignee: member })
+await sock.sendMessage(chat, { text: todos.render(chat), mentions: todos.mentions(chat) })
+
+const watcher = createUrlWatcher('https://api.example.com/status.json', { intervalMs: 60_000 })
+watcher.onChange(({ body }) => sock.sendMessage(owner, { text: `🔔 changed: ${body.slice(0, 300)}` }))
+watcher.start()
+
+// upgrades: eco.deposit/withdraw + eco.getRank, levels.renderRankCard,
+// router { onUnknownCommand } + router.remove, i18n.tn plurals,
+// styleText 'negativeSquared'/'boldFraktur', getZodiac(17, 8) → 'Leo',
+// guess-game near-miss hints, formatHealthSnapshot for owner DMs
 ```
 | `stickerpack` | Build and send sticker packs (including animated/Lottie) |
 | `templates` | Legacy WhatsApp Business template message helpers |
