@@ -127,6 +127,13 @@ How `@japofc/baileys` stacks up against other Baileys libraries:
 | Built-in QR render (terminal/SVG/PNG, zero deps) | ✅ | ❌ needs `qrcode-terminal` |
 | Auto WA Web version resolution | ✅ | ❌ hardcoded |
 | Status mentions (notify users/groups of your status) | ✅ | ❌ |
+| Anti-ban toolkit (warmup ramps, group-op ceilings, disconnect classifier, Gaussian jitter) | ✅ | ❌ |
+| Crash-message shield (mention bombs, zalgo, RTLO spoofing) | ✅ | ❌ |
+| Session doctor + portable/encrypted session strings | ✅ | ❌ |
+| Community/bot modules (economy, games, rental, moderation — 140+ utils) | ✅ | ❌ |
+| Sticker EXIF branding | ✅ pure JS | ⚠️ needs `node-webpmux` |
+| CLI (`doctor` / `session` / `sticker` / `export` / `wa`) | ✅ | ❌ |
+| Credential-redacting logger | ✅ | ❌ |
 
 > This table describes package-level features, not performance benchmarks. PRs to update or correct it are welcome via [Contributing](#-contributing).
 
@@ -984,8 +991,8 @@ await sock.updateMemberLabel({ groupJid, lid, label: 'Admin' });
 - **Group message history sharing (native)** — WhatsApp began rolling out the official
   "Group Message History" feature (share the last 25–100 messages with a newly added
   member, E2EE, admin-controlled) in Feb 2026. Its wire format still hasn't been captured
-  by any public library (re-verified Sep 2026 against upstream Baileys, whatsmeow, and
-  every active fork). Until it is, this repo ships an honest *workaround* —
+  by any public library (re-verified 28 Sep 2026 by downloading and API-diffing upstream
+  Baileys 7.0.0-rc14 plus the 8 largest living forks — none carry it). Until it is, this repo ships an honest *workaround* —
   `shareGroupHistory()` forwards recent messages into the new member's DM — which is NOT
   the native flow (no in-group history bubble, no "history shared" notice). If you need
   native behaviour, the only path today is an official client.
@@ -999,7 +1006,7 @@ await sock.updateMemberLabel({ groupJid, lid, label: 'Admin' });
   (a typo'd key just vanished from the wire) — they now throw a clear 400 listing the
   supported field names. For the modern music-on-status surface, see
   `withMusicAttribution()` below.
-- **`mediaKeyDomain` — IMPLEMENTED.** Backported from rc14 onto all 5 media types
+- ~~`mediaKeyDomain`~~ — **now IMPLEMENTED** (kept here for history). Backported from rc14 onto all 5 media types
   (`Audio/Document/Image/Sticker/VideoMessage`, enum `UNSET/E2EE_CHAT/STATUS/CAPI/BOT`)
   with a send passthrough: `sendMessage(jid, { image: buf, mediaKeyDomain: 1 })`.
   Unset by default (recommended — the server labels it). Skipped only on

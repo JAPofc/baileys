@@ -77,6 +77,13 @@ Posisi `@japofc/baileys` dibanding library Baileys lain:
 | Render QR bawaan (terminal/SVG/PNG, nol deps) | ✅ | ❌ butuh `qrcode-terminal` |
 | Resolusi versi WA Web otomatis | ✅ | ❌ hardcoded |
 | Mention di status (notifikasi user/grup) | ✅ | ❌ |
+| Toolkit anti-ban (ramp pemanasan, batas aksi grup, klasifikasi disconnect, jitter Gaussian) | ✅ | ❌ |
+| Perisai pesan crash (bom mention, zalgo, spoof RTLO) | ✅ | ❌ |
+| Dokter sesi + string sesi portabel/terenkripsi | ✅ | ❌ |
+| Modul komunitas/bot (economy, game, sewa, moderasi — 140+ utils) | ✅ | ❌ |
+| Branding EXIF stiker | ✅ murni JS | ⚠️ butuh `node-webpmux` |
+| CLI (`doctor` / `session` / `sticker` / `export` / `wa`) | ✅ | ❌ |
+| Logger dengan redaksi kredensial | ✅ | ❌ |
 
 > Tabel ini menggambarkan fitur di level package, bukan benchmark performa. PR untuk memperbarui/mengoreksi tabel ini dipersilakan lewat [Kontribusi](#-kontribusi).
 
@@ -910,8 +917,7 @@ await sock.updateMemberLabel({ groupJid, lid, label: 'Admin' });
 - **Berbagi riwayat pesan grup (native)** — WhatsApp mulai merilis fitur resmi
   "Group Message History" (bagikan 25–100 pesan terakhir ke anggota yang baru
   ditambahkan, E2EE, dikontrol admin) pada Feb 2026. Format wire-nya masih belum
-  berhasil di-capture library publik mana pun (diverifikasi ulang Sep 2026 terhadap
-  upstream Baileys, whatsmeow, dan semua fork aktif). Sampai itu terjadi, repo ini
+  berhasil di-capture library publik mana pun (diverifikasi ulang 28 Sep 2026 dengan men-download dan men-diff API upstream Baileys 7.0.0-rc14 plus 8 fork hidup terbesar — tidak ada yang membawanya). Sampai itu terjadi, repo ini
   menyediakan *workaround* yang jujur — `shareGroupHistory()` meneruskan pesan
   terakhir ke DM anggota baru — yang BUKAN alur native (tanpa bubble riwayat di grup,
   tanpa notifikasi "riwayat dibagikan"). Kalau butuh perilaku native, satu-satunya
