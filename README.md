@@ -1376,6 +1376,12 @@ A sample of the utilities exported from `lib/Utils` beyond the message builders 
 | `join-requests` | Auto approve/reject group join requests — allow/deny lists, manual routing, pending sweep |
 | `session-tools` | Session doctor — analyze/repair auth folders, portable session-string export/import, cross-backend migration |
 | `shutdown` | Graceful shutdown manager — creds flushed first, ordered hooks, signal handling, run-once |
+| `conversation-flow` | Multi-step wizards per user — prompts, validation, cancel words, timeouts |
+| `webhook-bridge` | POST socket events to any HTTP endpoint — HMAC signatures, retries with backoff |
+| `wa-links` | Build/parse wa.me, group-invite & channel URLs; extract URLs from text |
+| `media-probe` | Pure-JS image format + dimensions (PNG/JPEG/GIF/WebP/BMP) — no image library |
+| `media-guard` | Block media types per chat ("no stickers here") — per-chat rules, auto-delete |
+| `health-monitor` | Process health — memory, event-loop lag, custom probes, threshold alerts |
 | `auto-reply` | Simple keyword/pattern-based auto-responder engine |
 | `message-search` | Search cached/stored messages, peeling off ephemeral/view-once wrappers first |
 | `message-retry-manager` | Handles WhatsApp's retry-receipt protocol for undecryptable messages |
@@ -1662,6 +1668,38 @@ npx @japofc/baileys session analyze ./auth
 npx @japofc/baileys session repair  ./auth
 npx @japofc/baileys session export  ./auth --out session.txt
 npx @japofc/baileys session import  session.txt ./auth-new
+```
+
+```js
+// wizards, webhooks, links, media tools & health
+import {
+    createConversationFlow, createWebhookBridge, buildWaMeLink, parseWaLink,
+    getImageDimensions, createMediaGuard, createHealthMonitor
+} from '@japofc/baileys'
+
+const flows = createConversationFlow()
+flows.define('order', [
+    { id: 'item', prompt: 'What would you like?' },
+    { id: 'qty', prompt: 'How many?', validate: t => /^\d+$/.test(t) || 'Numbers only!' }
+])
+flows.bind(sock)
+await flows.start(sock, chat, sender, 'order')   // e.g. from a !order command
+flows.onComplete(({ answers }) => console.log(answers.qty, 'x', answers.item))
+
+const bridge = createWebhookBridge('https://my.server/hook', { secret, retries: 2 })
+bridge.bind(sock)                                // messages → your backend/n8n
+
+buildWaMeLink('+62 812-3456-7890', 'Hello!')     // https://wa.me/62812…?text=Hello%21
+parseWaLink('https://chat.whatsapp.com/AbC…')    // { type: 'group-invite', code }
+
+getImageDimensions(buffer)                       // { format: 'png', width, height }
+
+const media = createMediaGuard({ blocked: ['sticker'], autoDelete: true })
+media.bind(sock)                                 // "no stickers in this group"
+
+const health = createHealthMonitor({ thresholds: { heapUsedMb: 400, eventLoopLagMs: 200 } })
+health.onAlert(({ metric, value }) => sock.sendMessage(owner, { text: `⚠️ ${metric}: ${value}` }))
+health.start()
 ```
 | `stickerpack` | Build and send sticker packs (including animated/Lottie) |
 | `templates` | Legacy WhatsApp Business template message helpers |

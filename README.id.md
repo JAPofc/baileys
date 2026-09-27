@@ -1303,6 +1303,12 @@ Sampel utilitas yang diekspor dari `lib/Utils` di luar builder pesan di atas:
 | `join-requests` | Auto setujui/tolak permintaan join grup — allowlist/denylist, routing manual, sweep pending |
 | `session-tools` | Dokter sesi — analisis/perbaiki folder auth, export/import session-string portabel, migrasi antar backend |
 | `shutdown` | Manajer shutdown rapi — creds diflush duluan, hook berurutan, tangani sinyal, jalan sekali |
+| `conversation-flow` | Wizard multi-langkah per user — prompt, validasi, kata batal, timeout |
+| `webhook-bridge` | POST event socket ke endpoint HTTP mana pun — tanda tangan HMAC, retry backoff |
+| `wa-links` | Bangun/parse URL wa.me, undangan grup & channel; ekstrak URL dari teks |
+| `media-probe` | Format + dimensi gambar murni JS (PNG/JPEG/GIF/WebP/BMP) — tanpa library gambar |
+| `media-guard` | Blokir tipe media per chat ("dilarang stiker") — aturan per chat, auto-hapus |
+| `health-monitor` | Kesehatan proses — memori, lag event-loop, probe custom, alert threshold |
 | `auto-reply` | Engine auto-responder sederhana berbasis kata kunci/pola |
 | `message-search` | Cari pesan di cache/store, membuka wrapper ephemeral/view-once dulu |
 | `message-retry-manager` | Menangani protokol retry-receipt WhatsApp untuk pesan yang gagal didekripsi |
@@ -1589,6 +1595,38 @@ npx @japofc/baileys session analyze ./auth
 npx @japofc/baileys session repair  ./auth
 npx @japofc/baileys session export  ./auth --out session.txt
 npx @japofc/baileys session import  session.txt ./auth-baru
+```
+
+```js
+// wizard, webhook, link, perkakas media & kesehatan
+import {
+    createConversationFlow, createWebhookBridge, buildWaMeLink, parseWaLink,
+    getImageDimensions, createMediaGuard, createHealthMonitor
+} from '@japofc/baileys'
+
+const flows = createConversationFlow()
+flows.define('order', [
+    { id: 'item', prompt: 'Mau pesan apa?' },
+    { id: 'qty', prompt: 'Berapa banyak?', validate: t => /^\d+$/.test(t) || 'Angka saja!' }
+])
+flows.bind(sock)
+await flows.start(sock, chat, sender, 'order')   // mis. dari command !order
+flows.onComplete(({ answers }) => console.log(answers.qty, 'x', answers.item))
+
+const bridge = createWebhookBridge('https://server.gue/hook', { secret, retries: 2 })
+bridge.bind(sock)                                // pesan → backend/n8n lu
+
+buildWaMeLink('+62 812-3456-7890', 'Halo!')      // https://wa.me/62812…?text=Halo%21
+parseWaLink('https://chat.whatsapp.com/AbC…')    // { type: 'group-invite', code }
+
+getImageDimensions(buffer)                       // { format: 'png', width, height }
+
+const media = createMediaGuard({ blocked: ['sticker'], autoDelete: true })
+media.bind(sock)                                 // "dilarang stiker di grup ini"
+
+const health = createHealthMonitor({ thresholds: { heapUsedMb: 400, eventLoopLagMs: 200 } })
+health.onAlert(({ metric, value }) => sock.sendMessage(owner, { text: `⚠️ ${metric}: ${value}` }))
+health.start()
 ```
 | `stickerpack` | Bangun dan kirim paket stiker (termasuk animasi/Lottie) |
 | `templates` | Helper pesan template WhatsApp Business lama |
