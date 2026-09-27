@@ -3,6 +3,46 @@
 All notable changes to `@japofc/baileys` are documented here.
 Format follows [Keep a Changelog](https://keepachangelog.com/); versioning follows [SemVer](https://semver.org/).
 
+## [2.4.3] - 2026-09-28
+
+### Added
+- **Community events pack** — `createGiveaway` (keyword-entry raffles, one entry per user, fair multi-winner draws with injectable RNG, deadlines, status cards), `createAttendance` ("absen" roll-calls with check-in times, missing list, consecutive-day streaks), `createAuction` ("lelang": minimum increments, anti-snipe deadline extensions, buy-now instant win, outbid alerts), `createTextPoll` (vote-by-number polls that work in every client — tallies, live bar charts, tie handling, optional revote lockout).
+- **Games pack** — `createTicTacToe` (challenge/accept flow, emoji boards, win/draw/forfeit, lifetime win-loss records + leaderboard), `createRPS` ("suit" with hidden picks, batu/gunting/kertas aliases, bets, best-of-N series where draws replay), `scrambleWord`, `generateMathProblem` (easy/medium/hard, plugs straight into `createGuessGame`), `createWordChain` ("sambung kata": last-letter chaining, no repeats, length scores, optional dictionary validator).
+- **Bot-business ops** — `createRentalManager` ("sewa bot": per-chat subscriptions, one trial per chat ever, unrented-group filter, renewal warnings, expiry sweeper, owner list), `createMessageCounter` (daily top chatters, medal digests, day-roll history), `createCommandLock` (per-chat/global command disabling with `*` wildcard, maintenance mode with owner bypass and once-per-user notices, router middleware).
+- **Fork-hunt takeaways (ecosystem fully swept — upstream 7.0.0-rc14 + 8 living forks downloaded and API-diffed; zero remaining capability gaps)** — `status-tools` (`prepareStatusContent`: text statuses get random font 0-8 + colors automatically, media statuses get text→caption normalization, audio defaults `ptt: true`; wired into the status broadcast path with `autoStyle: false` opt-out), `newsletter-tools` (`followManyNewsletters` / `unfollowManyNewsletters` / `muteManyNewsletters` — paced batches with per-jid verdicts).
+- **AI group helpers (EXPERIMENTAL, server-gated)** — `addAiBotToGroup` / `removeAiBotFromGroup` / `createAiGroup`: standard `w:g2` group operations with a `…@bot` participant (Meta AI persona `867051314767696`). Acceptance depends entirely on Meta's per-account rollout flag — there is no verification to apply for; rejections surface as status codes instead of throwing, and a gated bot add never fails group creation. Wire shapes structurally test-verified.
+- **CLI** — new `wa` command (package + baked WA Web version).
+
+### Changed
+- **36-upgrade sweep across the whole toolkit** — kv-store TTL + `getOrSet`; notes pinning; todo priorities; recurring reminders (+`renderList`, `snooze`); `warns.renderList`/`getTop`/`decay`; economy `getEconomyStats`, `work()` jobs, `rob()` heists, bank interest; `shop.renderCatalog`/`updateItem`/per-user caps; `tiers.extendAll`/`renderStatus`/`getExpiring`; `quota.renderStatus`/`getAllUsage`/live limits; level PRESTIGE ⭐ + XP multipliers + rank cards; `guess.revealHint` progressive masks; giveaway `canJoin` requirements; `poll.renderLive`; `menfess.listActiveSessions`; `afk.renderAfkList`; `shield.getReasonStats`; `gate.banMany` + temporary bans; `warmup.skipWarmup`; `opGuard.waitAndAssert`; watchdog `autoRestart`; health sparklines + probe timeouts + live thresholds; router hidden commands + `ctx.quotedText` + `onUnknownCommand`/`remove`; `i18n.addLanguages` + Intl formatting; `stats.renderTop`/`getTopChats`; `m.timestampMs`; tag-all chunking for huge groups; `isForwarded`/`getForwardInfo`; conversation-flow choice steps + `backWords`; url-watcher ETag/304 conditional polling; crash-guard alert throttling; webhook body caps; `wa.me/message/CODE` business links; `formatParticipantChanges`; `boxText`; `sparkline`.
+- **Startup banner v2** — framed health card: package version, baked WA Web client version, node/platform/pid, rotating daily tagline; emoji-aware box alignment. Permanence unchanged (once per process, plain single line on non-TTY, `NO_COLOR` strips styling only).
+- **WA Web version** bumped twice with the live rollout: → 2.3000.1048604174.
+- README (EN+ID): at-a-glance stats strip, stale counts fixed (347 → 623 tests), banner preview in the FAQ.
+
+### Fixed
+- Recurring class of unref'd-timer hangs eliminated in new code paths (presence cycler typing pause, health-monitor lag probe) — functional timers now stay referenced.
+- `parseDuration('1h30m')` silently dropped the hours (`\b` fails between `h` and `3`) — fixed with a letter lookahead + regression test.
+- Economy daily-claim sentinel bug: brand-new accounts at clock 0 could be treated as already-claimed; `lastDailyAt` now uses an explicit null.
+
+## [2.4.2] - 2026-09-27
+
+### Added
+- **Pairing & connection** — E.164 phone validation with clear errors (leading-0 detection, `00` strip, 15-digit cap); custom pairing codes accepted in any human format (`abcd-efgh`); `pairing-tools` (`pairWithCode` one-call flow registered before the request to dodge the completion race, `waitForPairingSuccess` that treats the post-pairing 515 close as success, code-expiry countdown via `creds.pairingCodeRequestedAt`); `sendMessageAcked` (race-free delivery-ack sends); `autoReconnect` gained `onGiveUp` + `getStatus()`.
+- **Security & stability** — `createBugShield` (score-based crash-message detection: mention bombs, huge texts, invisible floods, zalgo, RTL-override spoofing + `sanitizeText`), `createSecureLogger` (pino with credential redact paths) + `redactSensitive`, encrypted session export strings (`JAPSESS2`, scrypt + AES-256-GCM), `checkAuthPermissions`/`hardenAuthFolder` (0700/0600), `installCrashGuard` + `safeStringify`, `createConnectionWatchdog` (silent half-open socket detection).
+- **Anti-ban pack** — `createAccountWarmup` (fresh numbers ramp 20→50→…→unlimited), `classifyDisconnect`/`explainDisconnect` (transient/conflict/auth/banned + recommended action), `createGroupOpGuard` (~3 adds & 2 creates per 10 min ceilings with a `wrap(sock)` proxy), `randomGaussian`/`gaussianDelayMs` (human-looking jitter), `createPresenceCycler` (opt-in typing bursts in an explicit chat list).
+- **Session & database tools** — `analyzeAuthState` (session doctor), `repairAuthFolder` (quarantine corrupt JSON), `exportAuthToString`/`importAuthFromString` (whole session as one portable string), `migrateFolderToAuthState` (folder → any adapter), `backupAuthStateRotating` (timestamped encrypted snapshots, keep-N pruning), `createShutdownManager` (creds-first ordered teardown on signals), CLI `session analyze|repair|export|import`.
+- **Moderation & community** — `createFloodGuard`, `createWordFilter`, `createWarnManager`, `createGatekeeper` (deny/allowlist modes + handler filter), `createLevelSystem` (XP, quadratic curve, ranks, leaderboards), `createQuotaManager` (daily limits + tiers), `createTierManager` (premium/VIP with expiry), `createEconomy` + `createShop`, `createCommandStats`, `createAntiTagAllGuard` (visible tag-alls AND invisible hidetag), `createVerifier` (join captcha: math/emoji presets), `createJoinRequestManager` (live `group.join-request` event + pending sweeps), group-backup (snapshot/diff/restore), `createMenfessRelay` (anonymous two-way DM sessions).
+- **Bot toolkit & trackers** — `serializeMessage` (`m.reply/react/download/forward/delete`, view-once + expiration fields), `createCallGuard` + `createCallLog`, `createGroupEventsTracker`, view-once toolkit, `createAntiLinkGuard`, anti-delete/anti-edit capture, reaction/receipt/presence trackers, `createAutoRead`, `createAfkManager`, `buildMentionAll`/`sendMentionAll`/`sendHideTag`, `readRichMessage`, sticker status.
+- **Everyday modules** — router guards (adminOnly/ownerOnly/cooldowns/categories), conversation flows, webhook bridge (HMAC + retries), wa-links, media-probe (pure-JS PNG/JPEG/GIF/WebP/BMP dimensions), media guard, health monitor, i18n (+plurals), fancy-text (14 unicode styles), text-extras (read-more, progress bars, chunking, levenshtein…), reminders + `parseDuration`, notes, todo lists, birthdays (+zodiac), guess game, url watcher, kv-store, random-tools (dice/rate/jodoh meters), jid/time/group/msg tools, always-online, status watcher, button extras.
+- **Pure-JS sticker EXIF** — `setStickerExif`/`readStickerExif` mux the WebP RIFF container directly; the `node-webpmux` optional dependency was REMOVED (sticker branding now works on Termux); CLI `sticker` command.
+
+### Changed
+- WA Web version kept on the live rollout (…1048590665 during this line).
+- README (EN+ID) grew module tables + snippets for every round; version-agnostic docs cleanups.
+
+### Fixed
+- Status-mention pipeline hardening and the `withTimeout` unref'd-timer hang class (shutdown manager); guard `bind()` wrappers now return the error-swallowed promise so awaited emitters observe completion.
+
 ## [2.4.1] - 2026-09-12
 
 ### Added

@@ -2133,6 +2133,32 @@ Use responsibly and follow WhatsApp Terms of Service.
 
 ---
 
+## 📝 v2.4.2 & v2.4.3 Patch Notes
+
+> Summary — full details in [CHANGELOG.md](./CHANGELOG.md).
+
+### v2.4.3 (current)
+
+- **Community events**: `createGiveaway` (fair raffles), `createAttendance` (absen + streaks), `createAuction` (anti-snipe + buy-now), `createTextPoll` (vote-by-number, works in every client).
+- **Games**: `createTicTacToe` (records + leaderboard), `createRPS` (suit, hidden picks, best-of-N), `createWordChain` (sambung kata), `scrambleWord`, `generateMathProblem`.
+- **Bot business**: `createRentalManager` (sewa per chat, one-trial-ever, unrented-group filter), `createMessageCounter` (daily digests 🥇), `createCommandLock` (+maintenance mode with owner bypass).
+- **Fork ecosystem fully swept** (upstream rc14 + 8 living forks downloaded & API-diffed — zero gaps left): took `status-tools` (auto-styled text statuses, wired into status sends) and `newsletter-tools` (paced batch follow/unfollow/mute).
+- **AI groups (experimental, server-gated)**: `addAiBotToGroup` / `createAiGroup` — Meta AI in groups; acceptance depends on Meta's per-account rollout, rejections surface as status codes.
+- **36-upgrade sweep** across the whole toolkit (kv TTL, notes pinning, recurring reminders, economy `work()`/`rob()`/interest, level PRESTIGE ⭐, `revealHint`, temp bans, `waitAndAssert`, watchdog `autoRestart`, sparklines, `ctx.quotedText`, ETag polling, alert throttling, `boxText`, and more) + 9 follow-ups.
+- **Startup banner v2**: framed health card (package + WA Web version, node/platform/pid, daily tagline).
+- WA Web version → live `2.3000.1048604174`; CLI gained `wa` and `sticker` insights.
+
+### v2.4.2
+
+- **Anti-ban pack**: `createAccountWarmup` (20→50→…→unlimited daily ramps), `classifyDisconnect`/`explainDisconnect`, `createGroupOpGuard` (~3 adds/2 creates per 10 min + `wrap(sock)`), Gaussian jitter, opt-in `createPresenceCycler`.
+- **Security & stability**: `createBugShield` (mention bombs/zalgo/RTLO + `sanitizeText`), `createSecureLogger` + `redactSensitive`, encrypted `JAPSESS2` session strings, `hardenAuthFolder`, `installCrashGuard` + `safeStringify`, `createConnectionWatchdog`.
+- **Session & DB tools**: `analyzeAuthState` (session doctor), `repairAuthFolder`, portable session export/import strings, `migrateFolderToAuthState`, `backupAuthStateRotating`, `createShutdownManager`, CLI `session` command.
+- **Moderation & community**: flood/word-filter/warns/gatekeeper/levels/quota/tiers/economy+shop/command-stats/anti-tagall/verifier/join-requests/group-backup/menfess.
+- **Bot toolkit**: `serializeMessage`, call guard + call log, group events, view-once toolkit, anti-link, anti-delete/edit, reaction/receipt/presence trackers, auto-read, AFK, tag-all/hidetag, pairing tools (`pairWithCode`), router guards, conversation flows, webhook bridge, health monitor, i18n, fancy-text, 140+ utility modules in total.
+- **Pure-JS sticker EXIF** — `node-webpmux` dependency removed; sticker branding works on Termux; CLI `sticker` command.
+
+---
+
 ## 📝 v2.1.0 Patch Notes
 
 > Summary — full details in [CHANGELOG.md](./CHANGELOG.md).
