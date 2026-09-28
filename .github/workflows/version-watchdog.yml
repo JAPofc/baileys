@@ -79,7 +79,7 @@ jobs:
           git push origin HEAD:main
       - name: Open/update tracking issue when automation cannot fix it
         if: steps.cmp.outputs.parse_failed == 'true' || failure()
-        uses: actions/github-script@v7
+        uses: actions/github-script@v9
         with:
           script: |
             const title = 'chore: WA version watchdog needs attention (auto-bump failed or sw.js unparseable)';
@@ -118,7 +118,7 @@ jobs:
             }
       - name: Close tracking issue when healthy
         if: steps.cmp.outputs.parse_failed != 'true' && success()
-        uses: actions/github-script@v7
+        uses: actions/github-script@v9
         with:
           script: |
             const { data: issues } = await github.rest.issues.listForRepo({
