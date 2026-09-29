@@ -1,0 +1,105 @@
+import { EventEmitter } from 'events';
+export { CallState } from './types.js';
+export { createWavRecorder } from './call-recorder.js';
+export type { WavRecorder, WavRecorderOptions } from './call-recorder.js';
+
+export interface VoipClientConfig {
+    /** Pre-built WASM engine (tests + custom stacks). */
+    engine?: any;
+    /** Pre-built relay transport. */
+    relay?: any;
+    /** Path to the VOIP wasm resources directory. */
+    resourcesPath?: string;
+    /** Relay-health watchdog poll interval in ms (default 5000; 0 disables). */
+    watchdogIntervalMs?: number;
+    /** Consecutive empty-relay polls before recovery kicks in (default 3). */
+    watchdogMaxSilent?: number;
+    /**
+     * Recovery budget per call (default 3): after this many consecutive failed
+     * recoveries the client emits 'call-unrecoverable' and force-ends the call
+     * instead of retrying forever.
+     */
+    watchdogMaxRecoveries?: number;
+    [key: string]: any;
+}
+
+export interface AnswerCallOptions {
+    audioSource?: string;
+    durationMs?: number;
+    isMicEnabled?: boolean;
+}
+
+export interface JoinGroupCallOptions {
+    audioSource?: string;
+    durationMs?: number;
+    hasVideo?: boolean;
+    joinAndAccept?: boolean;
+    chatName?: string;
+}
+
+export interface StartGroupCallOptions {
+    audioSource?: string;
+    durationMs?: number;
+    useVideo?: boolean;
+    chatName?: string;
+}
+
+export interface RecoverCallOptions {
+    peerJid?: string;
+    callId?: string;
+    retryCount?: number;
+}
+
+/** A live (or recently ended) voice/video call. Emits 'audio' with PCM chunks. */
+export class ActiveCall extends EventEmitter {
+    constructor(callId: string, engine: any, durationMs: number, meta?: Record<string, any>);
+    readonly state: any;
+    startedAt: number;
+    end(): any;
+    mute(muted: boolean): any;
+    invite(pnUserJid: string, lidUserJid?: string, deviceJids?: string[]): any;
+    removeParticipant(peerJid: string): any;
+    requestMute(peerJid: string): any;
+    react(reaction: string): any;
+    setHandRaised(raised: boolean): any;
+    getDurationMs(): number;
+    recordToFile(filePath: string, opts?: Record<string, any>): any;
+    /**
+     * Swap what the call is playing WITHOUT hanging up: a file path/URL,
+     * `{ data: Buffer, ext }`, a `lavfi:` graph, or `"silence"`. Returns true
+     * when a live decoder was swapped, false when audio capture has not
+     * started yet (the source is remembered for when it does).
+     */
+    setAudioSource(source: string | { data: Buffer; ext?: string }): boolean;
+    waitForEnd(): Promise<any>;
+}
+
+/**
+ * Audio-only WhatsApp voice-call client (WASM call stack + WebRTC relay).
+ * Emits 'incoming-call' / 'outgoing-call' / 'call-ended'.
+ */
+export class VoipClient extends EventEmitter {
+    constructor(config?: VoipClientConfig);
+    connectWithSocket(existingSock: any): Promise<void>;
+    isBusy(): boolean;
+    getActiveCall(): ActiveCall | null;
+    /** Swap the active call's uplink audio source mid-call. Throws when no call is active. */
+    setAudioSource(source: string | { data: Buffer; ext?: string }): boolean;
+    getPendingCalls(): any[];
+    rejectCall(callId: string, callFrom: string, options?: { text?: string }): Promise<any>;
+    answerCall(callId: string, options?: AnswerCallOptions): Promise<any>;
+    joinGroupCall(callId: string, options?: JoinGroupCallOptions): Promise<any>;
+    startGroupCall(groupJid: string, participants?: string[], options?: StartGroupCallOptions): Promise<any>;
+    rejoinGroupCall(overrides?: Record<string, any>): Promise<any>;
+    inviteToGroupCall(phoneNumber: string, deviceJids?: string[]): Promise<any>;
+    removeGroupParticipant(peerJid: string): Promise<any>;
+    previewCallLink(token: string, opts?: Record<string, any>): any;
+    joinCallLink(): any;
+    getStats(): any;
+    recoverCall(options?: RecoverCallOptions): Promise<any>;
+    call(phoneNumber: string, opts?: Record<string, any>): Promise<any>;
+    disconnect(): any;
+}
+
+/** Instantiate VoipClient on an active socket (also sets `sock.voip`). */
+export declare const attachVoip: (sock: any, config?: VoipClientConfig) => Promise<VoipClient>;
