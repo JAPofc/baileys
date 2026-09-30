@@ -1,0 +1,25 @@
+{
+  "generatedAt": "2026-09-28T16:49:19.321Z",
+  "verifiedAgainstLiveAt": "2026-09-30T00:00:00.000Z",
+  "source": "bootloader-endpoint",
+  "clientRevision": 1048638736,
+  "urls": {
+    "wasm": "https://static.whatsapp.net/rsrc.php/y_/r/XLyfuhDLM3g.wasm",
+    "worker": "https://static.whatsapp.net/rsrc.php/v4/yD/r/r-x_ghPDQe2.js",
+    "loader": "https://static.whatsapp.net/rsrc.php/v4/y6/r/nZtQhSipHK-.js"
+  },
+  "files": {
+    "whatsapp.wasm": {
+      "sha256": "67bc7cefb07b65282640413b25c1ad9712bb19f84663ff40680a1b68d5e693c0",
+      "size": 11060464
+    },
+    "worker-modules.js": {
+      "sha256": "2e0db90ffa664ad629dc547bf921f84f793752f211ae0acbfc385ec114334d9d",
+      "size": 910184
+    },
+    "loader.js": {
+      "sha256": "7b82ec5d1f10348beadad27569763a28b93c9164ad12b95c6c3e5921e661f288",
+      "size": 167807
+    }
+  }
+}
