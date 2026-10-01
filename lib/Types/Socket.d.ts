@@ -1,0 +1,173 @@
+import type { Agent } from 'https';
+import type { URL } from 'url';
+import { proto } from '../../WAProto/index.js';
+import type { ILogger } from '../Utils/logger.js';
+import type { AuthenticationState, LIDMapping, SignalAuthState, TransactionCapabilityOptions } from './Auth.js';
+import type { GroupMetadata } from './GroupMetadata.js';
+import { type MediaConnInfo, type WAMessageKey } from './Message.js';
+import type { SignalRepositoryWithLIDStore } from './Signal.js';
+export type WAVersion = [number, number, number];
+export type WABrowserDescription = [string, string, string];
+export type CacheStore = {
+    /** get a cached key and change the stats */
+    get<T>(key: string): Promise<T> | T | undefined;
+    /** set a key in the cache */
+    set<T>(key: string, value: T): Promise<void> | void | number | boolean;
+    /** delete a key from the cache */
+    del(key: string): void | Promise<void> | number | boolean;
+    /** flush all data */
+    flushAll(): void | Promise<void>;
+    close?: () => void;
+};
+export type PossiblyExtendedCacheStore = CacheStore & {
+    mget?: <T>(keys: string[]) => Promise<Record<string, T | undefined>>;
+    mset?: <T>(entries: {
+        key: string;
+        value: T;
+    }[]) => Promise<void> | void | number | boolean;
+    mdel?: (keys: string[]) => void | Promise<void> | number | boolean;
+};
+export type PatchedMessageWithRecipientJID = any & {
+    recipientJid?: string;
+};
+export type SocketConfig = {
+    /** the WS url to connect to WA */
+    waWebSocketUrl: string | URL;
+    /** Fails the connection if the socket times out in this interval */
+    connectTimeoutMs: number;
+    /** Default timeout for queries, undefined for no timeout */
+    defaultQueryTimeoutMs: number | undefined;
+    /** ping-pong interval for WS connection */
+    keepAliveIntervalMs: number;
+    /** should baileys use the mobile api instead of the multi device api
+     * @deprecated This feature has been removed
+     */
+    mobile?: boolean;
+    /** proxy agent */
+    agent?: Agent;
+    /** logger */
+    logger: ILogger;
+    /** version to connect with */
+    version: WAVersion;
+    /** override browser config */
+    browser: WABrowserDescription;
+    /** Initial pushName carried in the registration ClientPayload (used by mock servers for deterministic phone assignment). */
+    pushName?: string;
+    /** agent used for fetch requests -- uploading/downloading media */
+    fetchAgent?: Agent;
+    /**
+     * Print pairing QRs to the terminal automatically on `connection.update`
+     * (rendered with the built-in zero-dependency engine — see
+     * `renderQRToTerminal` in Utils for manual/custom rendering).
+     */
+    printQRInTerminal?: boolean;
+    /**
+     * Override the captured GraphQL query_ids used by the username APIs
+     * (checkUsername/setUsername/...). WhatsApp rotates these server-side;
+     * a rotated id fails with "GraphQL server error: Bad Request" and can be
+     * hot-patched here without waiting for a package update.
+     * Keys: CHECK, CHECK_MULTI, SET, GET, GET_RECOMMENDATIONS, PIN_SET.
+     */
+    usernameQueryIds?: Partial<Record<'CHECK' | 'CHECK_MULTI' | 'SET' | 'GET' | 'GET_RECOMMENDATIONS' | 'PIN_SET', string>>;
+    /**
+     * Auto-refresh the username GraphQL query_ids from the repo's main branch
+     * at socket creation (background, never throws, pinned IDs remain the
+     * fallback). Manual `usernameQueryIds` overrides always win. Default: false.
+     */
+    autoRotateQueryIds?: boolean;
+    /**
+     * Anti-ban outgoing pacing, applied transparently inside sendMessage():
+     * a global messages/minute token bucket plus a minimum per-chat gap with
+     * jitter. Off by default. Individual calls can bypass with
+     * `options.skipRateLimit`. See createSendGuard().
+     */
+    sendRateLimit?: import('../Utils/send-guard.js').SendGuardOptions;
+    /** should events be emitted for actions done by this socket connection */
+    emitOwnEvents: boolean;
+    /** custom upload hosts to upload media to */
+    customUploadHosts: MediaConnInfo['hosts'];
+    /** time to wait between sending new retry requests */
+    retryRequestDelayMs: number;
+    /** max retry count */
+    maxMsgRetryCount: number;
+    /** time to wait for the generation of the next QR in ms */
+    qrTimeout?: number;
+    /** provide an auth state object to maintain the auth state */
+    auth: AuthenticationState;
+    /** manage history processing with this control; by default will sync up everything */
+    shouldSyncHistoryMessage: (msg: any) => boolean;
+    /** transaction capability options for SignalKeyStore */
+    transactionOpts: TransactionCapabilityOptions;
+    /** marks the client as online whenever the socket successfully connects */
+    markOnlineOnConnect: boolean;
+    /** alphanumeric country code (USA -> US) for the number used */
+    countryCode: string;
+    /** provide a cache to store media, so does not have to be re-uploaded */
+    mediaCache?: CacheStore;
+    /**
+     * map to store the retry counts for failed messages;
+     * used to determine whether to retry a message or not */
+    msgRetryCounterCache?: CacheStore;
+    /** provide a cache to store a user's device list */
+    userDevicesCache?: PossiblyExtendedCacheStore;
+    /** cache to store call offers */
+    callOfferCache?: CacheStore;
+    /** cache to track placeholder resends */
+    placeholderResendCache?: CacheStore;
+    /** width for link preview images */
+    linkPreviewImageThumbnailWidth: number;
+    /** Should Baileys ask the phone for full history, will be received async */
+    syncFullHistory: boolean;
+    /** Should baileys fire init queries automatically, default true */
+    fireInitQueries: boolean;
+    /**
+     * generate a high quality link preview,
+     * entails uploading the jpegThumbnail to WA
+     * */
+    generateHighQualityLinkPreview: boolean;
+    /** Enable automatic session recreation for failed messages */
+    enableAutoSessionRecreation: boolean;
+    /** Enable recent message caching for retry handling */
+    enableRecentMessageCache: boolean;
+    /**
+     * Rate-limit repeated decrypt-failure log lines for a dead session so a broken
+     * session cannot flood logs / exhaust the heap (see #2234). Pass an options
+     * object to tune the window/budget, or `false` to restore unlimited logging.
+     * Default: `{ windowMs: 60000, maxPerWindow: 5 }`.
+     */
+    decryptFailureLog: false | {
+        /** length of each counting window in ms (default 60000) */
+        windowMs?: number;
+        /** how many failures to log per session key per window (default 5) */
+        maxPerWindow?: number;
+        /** cap on tracked session keys before oldest is pruned (default 5000) */
+        max?: number;
+    };
+    /**
+     * Returns if a jid should be ignored,
+     * no event for that jid will be triggered.
+     * Messages from that jid will also not be decrypted
+     * */
+    shouldIgnoreJid: (jid: string) => boolean | undefined;
+    /**
+     * Optionally patch the message before sending out
+     * */
+    patchMessageBeforeSending: (msg: any, recipientJids?: string[]) => Promise<PatchedMessageWithRecipientJID[] | PatchedMessageWithRecipientJID> | PatchedMessageWithRecipientJID[] | PatchedMessageWithRecipientJID;
+    /** verify app state MACs */
+    appStateMacVerification: {
+        patch: boolean;
+        snapshot: boolean;
+    };
+    /** options for HTTP fetch requests */
+    options: RequestInit;
+    /**
+     * fetch a message from your store
+     * implement this so that messages failed to send
+     * (solves the "this message can take a while" issue) can be retried
+     * */
+    getMessage: (key: WAMessageKey) => Promise<any | undefined>;
+    /** cached group metadata, use to prevent redundant requests to WA & speed up msg sending */
+    cachedGroupMetadata: (jid: string) => Promise<GroupMetadata | undefined>;
+    makeSignalRepository: (auth: SignalAuthState, logger: ILogger, pnToLIDFunc?: (jids: string[]) => Promise<LIDMapping[] | undefined>) => SignalRepositoryWithLIDStore;
+};
+//# sourceMappingURL=Socket.d.ts.map

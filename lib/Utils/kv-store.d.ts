@@ -1,0 +1,36 @@
+/** KV store — tiny JSON key-value database with namespaces. */
+
+export interface KVNamespace {
+	get<T = unknown>(key: string, fallback?: T): T;
+	set<T>(key: string, value: T, options?: { ttlMs?: number }): T;
+	/** Return the cached value or create-and-store it. */
+	getOrSet<T>(key: string, factory: T | (() => T), options?: { ttlMs?: number }): T;
+	has(key: string): boolean;
+	delete(key: string): boolean;
+	/** All entries of this namespace. */
+	all(): Record<string, unknown>;
+	keys(): string[];
+	entries(): Array<[string, unknown]>;
+	readonly size: number;
+	increment(key: string, by?: number): number;
+	clear(): void;
+}
+
+export interface KVStore extends KVNamespace {
+	/** Isolated sub-store; keys never collide across namespaces. */
+	namespace(ns: string): KVNamespace;
+	/** Write pending changes now (saves are debounced + atomic). */
+	flush(): Promise<void>;
+	readonly isDirty: boolean;
+	readonly file: string | null;
+}
+
+/** Pass a file path for persistence, or nothing for in-memory. */
+/** One-line persistence for any module with toJSON()/load(). Returns a stop() that flushes. */
+export declare const autoPersist: (
+	kv: KVNamespace,
+	module: { toJSON(): unknown; load(snapshot: any): void },
+	options?: { key?: string; intervalMs?: number; loadNow?: boolean }
+) => () => void;
+
+export declare const createKVStore: (file?: string, options?: { debounceMs?: number }) => Promise<KVStore>;
