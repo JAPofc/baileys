@@ -15,3 +15,14 @@ export declare const humanDate: (timestamp?: number, lang?: string, options?: In
 
 /** Time-of-day greeting ('en' | 'id'). */
 export declare const getGreeting: (hour?: number, lang?: string) => string;
+/** Local midnight of the day containing `timestamp`, as epoch ms. */
+export declare const startOfDay: (timestamp?: number) => number;
+/** True when two timestamps fall on the same local calendar day. */
+export declare const isSameDay: (a: number, b: number) => boolean;
+/** Add `n` calendar days to a timestamp (n may be negative/fractional), as epoch ms. */
+export declare const addDays: (timestamp: number, n: number) => number;
+/** Whole calendar days between two timestamps (local); sign follows a→b. */
+export declare const daysBetween: (a: number, b: number) => number;
+/** Local weekday name for a timestamp ('en' | 'id'). */
+export declare const weekdayName: (timestamp?: number, lang?: string) => string;
+export declare const formatCountdown: (ms: number) => string;

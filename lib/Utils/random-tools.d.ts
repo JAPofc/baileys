@@ -24,3 +24,10 @@ export declare const gaussianDelayMs: (meanMs: number, stdMs?: number, options?:
 export declare const hashRating: (text: string) => number;
 /** Deterministic 0-100 match score, order-independent. */
 export declare const matchScore: (a: string, b: string) => number;
+export declare const randomString: (length?: number, alphabet?: string, opts?: { random?: () => number }) => string;
+/** Weighted coin: true with probability `p` (default 0.5). */
+export declare const randomBool: (p?: number, opts?: { random?: () => number }) => boolean;
+/** Cryptographically-strong random hex string of `bytes` bytes. */
+export declare const randomHex: (bytes?: number) => string;
+/** RFC 4122 v4 UUID (crypto-strong). */
+export declare const uuid: () => string;

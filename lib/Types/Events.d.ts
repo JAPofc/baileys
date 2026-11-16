@@ -85,6 +85,16 @@ export type BaileysEventMap = {
         key: WAMessageKey;
         reaction: any;
     }[];
+    /**
+     * an inbound message failed to decrypt (emitted alongside the CIPHERTEXT stub in `messages.upsert`).
+     * Lets apps observe decryption failures for metrics/alerting or to proactively reset a dead session,
+     * without scraping logs. `willRetry` is true when Baileys will send a retry receipt for this failure.
+     */
+    'messages.decrypt-failed': {
+        key: WAMessageKey;
+        error: string;
+        willRetry: boolean;
+    }[];
     'message-receipt.update': MessageUserReceiptUpdate[];
     'groups.upsert': GroupMetadata[];
     'groups.update': Partial<GroupMetadata>[];
@@ -137,6 +147,16 @@ export type BaileysEventMap = {
             count?: number;
             removed?: boolean;
         };
+    };
+    /** A plaintext post on a channel you follow (carries the server id, unlike messages.upsert). */
+    'newsletter.message': {
+        id: string;
+        server_id?: string;
+        fromMe: boolean;
+        author?: string;
+        timestamp: number;
+        message: any;
+        key: any;
     };
     'newsletter.view': {
         id: string;

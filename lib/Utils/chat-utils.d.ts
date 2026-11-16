@@ -70,9 +70,25 @@ export function decodeSyncdSnapshot(name: any, snapshot: any, getAppStateSyncKey
     };
     mutationMap: {};
 }>;
+/** Why a patch could not be applied (§2.75). */
+export type AppStatePatchFailure = {
+    /** version of the patch that failed; everything below it was applied */
+    version: number;
+    reason: 'decode-failed' | 'lthash-mismatch';
+    error?: string;
+};
 export function decodePatches(name: any, syncds: any, initial: any, getAppStateSyncKey: any, options: any, minimumVersionNumber: any, logger: any, validateMacs?: boolean): Promise<{
+    /** the last state that applied AND verified -- never a half-applied one */
     state: any;
     mutationMap: {};
+    /**
+     * Non-null when at least one patch could not be applied. The collection must not be
+     * treated as synced: re-request from `state.version` or force a snapshot, otherwise
+     * the skipped mutations are lost for good.
+     */
+    incomplete: AppStatePatchFailure | null;
+    /** convenience inverse of `incomplete` */
+    synced: boolean;
 }>;
 export function chatModificationToAppPatch(mod: any, jid: any): {
     syncAction: {

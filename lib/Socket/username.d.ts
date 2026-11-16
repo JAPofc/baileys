@@ -14,6 +14,12 @@ export declare const USERNAME_QUERY_IDS: UsernameQueryIds;
 export type USERNAME_QUERY_IDS = UsernameQueryIds;
 
 /**
+ * Parse a `USERNAME_QUERY_IDS = { ... }` block out of source text. Returns a
+ * complete id map, or null when missing/incomplete. Pure.
+ */
+export declare const parseUsernameQueryIds: (sourceText?: string) => UsernameQueryIds | null;
+
+/**
  * Fetch the freshest USERNAME_QUERY_IDS from the repo's main branch (used by
  * `autoRotateQueryIds`). Never throws — resolves to the pinned fallback set
  * (`isLatest: false`) on any failure.
@@ -87,6 +93,12 @@ export interface UsernameSocketMethods {
     fetchContactUsernames: (...jids: string[]) => Promise<any[]>;
     /** Get username recommendations. */
     getUsernameRecommendations: (source?: string | null) => Promise<any>;
+    /** Snapshot the query_ids currently in effect. */
+    getUsernameQueryIds: () => UsernameQueryIds;
+    /** Hot-patch query_ids at runtime after WA rotates them (manual pins win over auto-rotation). */
+    setUsernameQueryIds: (patch: Partial<UsernameQueryIds>) => UsernameQueryIds;
+    /** Fetch the latest query_ids from the repo and apply them (manual pins preserved). Never throws. */
+    refreshUsernameQueryIds: (options?: { timeoutMs?: number; dispatcher?: unknown }) => Promise<{ queryIds: UsernameQueryIds; isLatest: boolean }>;
 }
 
 export declare const makeUsernameSocket: (config: any) => ReturnType<typeof makeCommunitiesSocket> & UsernameSocketMethods;

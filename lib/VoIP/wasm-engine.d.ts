@@ -1,3 +1,5 @@
+/** Copy one playback frame out of the WASM heap (never a live view into it). */
+export declare const copyPlaybackFrame: (heapF32: Float32Array | null | undefined, ptr: number, byteLength: number) => Float32Array | null;
 export type WasmAudioConfig = {
     sampleRate: number;
     channels: number;

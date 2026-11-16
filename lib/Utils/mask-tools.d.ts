@@ -3,3 +3,4 @@ export declare const maskPhone: (input: string, options?: { keepStart?: number; 
 export declare const maskEmail: (input: string, options?: { keep?: number; char?: string }) => string;
 /** Star out listed words (first+last letter kept for 3+ letters). */
 export declare const censorText: (text: string, words: string[], options?: { char?: string }) => string;
+export declare const maskJid: (jid?: string) => string;

@@ -10,6 +10,10 @@ export interface InviteTracker {
 	/** Who brought this member in, or null. */
 	getInviter(chat: string, member: string): string | null;
 	getLeaderboard(chat: string, limit?: number): Array<{ inviter: string; total: number; active: number }>;
+	/** An inviter's combined { total, active } across all tracked chats. */
+	getGlobalCount(inviter: string): { total: number; active: number };
+	/** Top inviters aggregated across every tracked chat. */
+	getGlobalLeaderboard(limit?: number): Array<{ inviter: string; total: number; active: number }>;
 	renderLeaderboard(chat: string, options?: { title?: string; limit?: number }): string;
 	readonly size: number;
 	toJSON(): Record<string, unknown>;

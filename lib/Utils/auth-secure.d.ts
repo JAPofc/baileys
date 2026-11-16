@@ -46,6 +46,19 @@ export declare function restoreAuthState(backupFile: string, dest: string, opts:
     password: string; single?: boolean;
 }): Promise<{ dest: string; files: number; createdAt: string }>;
 
+/**
+ * Re-encrypt every auth file in `folder` with a new password (or encrypt a legacy plaintext
+ * folder for the first time). Atomic per file; unreadable files are reported, never deleted.
+ */
+export declare function rotateAuthPassword(folder: string, opts: {
+    oldPassword?: string; newPassword: string; logger?: Logger;
+}): Promise<{
+    rotated: number;
+    migratedFromPlaintext: number;
+    failed: { file: string; reason: string }[];
+    skipped: string[];
+}>;
+
 export declare function writeAuthIntegrity(folder: string, opts?: { secret?: string }): Promise<{
     createdAt: string; hmac: boolean; sums: Record<string, string>;
 }>;
@@ -69,7 +82,18 @@ export declare function createRateLimiter(opts?: {
     max?: number; windowMs?: number; minIntervalMs?: number; now?: () => number;
 }): {
     stats: { allowed: number; blocked: number };
+    /** Spend a slot if the key is allowed. Updates `stats`. */
     check: (key?: string) => RateLimitResult;
+    /**
+     * Would `check()` allow this key right now? Consumes nothing and leaves
+     * `stats` alone — ask before deciding whether to spend the slot.
+     */
+    peek: (key?: string) => RateLimitResult;
+    /**
+     * Requests this key may still make inside the current window. Consumes
+     * nothing. Ignores `minIntervalMs` (a spacing rule, not a budget).
+     */
+    remaining: (key?: string) => number;
     reset: (key?: string) => void;
 };
 
@@ -98,3 +122,6 @@ export declare function secureLogger(base: Logger, opts?: { extraKeys?: string[]
 export declare function secureLogout(sock: any, opts?: {
     authFolder?: string; authFile?: string; passes?: number; logger?: Logger;
 }): Promise<{ loggedOut: boolean; wiped: string[]; credsScrubbed: boolean }>;
+
+/** How many per-file mutexes the encrypted auth states hold (with paths when `detail`). */
+export declare function countAuthFileLocks(opts?: { detail?: boolean }): number | { count: number; paths: string[] };

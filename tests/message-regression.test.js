@@ -92,11 +92,26 @@ describe('message regression: carousel', () => {
         assert.ok(cards[0].header.imageMessage, 'card header carries the image');
         assert.equal(JSON.parse(cards[1].nativeFlowMessage.buttons[0].buttonParamsJson).id, 'b');
     });
-    it('rejects a card without a valid media/product header', async () => {
+    it('rejects a truly empty card (no media, text, caption, or buttons)', async () => {
         await assert.rejects(
             generateWAMessage(JID, { text: 'x', cards: [{ title: 'no-media' }] }, OPTS),
+            /Carousel card requires media, text, or buttons/
+        );
+    });
+    it('still rejects a card that intended media but failed to resolve', async () => {
+        await assert.rejects(
+            generateWAMessage(JID, { text: 'x', cards: [{ image: { url: 'bad://nope' }, caption: 'boom' }] }, OPTS),
             /Invalid media type for carousel card/
         );
+    });
+    it('accepts a text-only carousel card (WhatsApp renders it)', async () => {
+        const m = await generateWAMessage(JID, {
+            text: 'menu', cards: [{ text: 'Text card', nativeFlow: { buttons: [{ name: 'quick_reply', buttonParamsJson: '{"display_text":"Go","id":"g"}' }] } }],
+        }, OPTS);
+        const w = wire(m);
+        const cards = w.interactiveMessage.carouselMessage.cards;
+        assert.equal(cards.length, 1);
+        assert.equal(cards[0].body.text, 'Text card');
     });
 });
 

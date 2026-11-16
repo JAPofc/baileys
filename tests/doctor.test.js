@@ -1,7 +1,7 @@
 import { describe, it, afterEach } from 'node:test';
 import assert from 'node:assert/strict';
 import { checkEnvironment } from '../lib/Utils/doctor.js';
-import { printBanner, _resetBannerShown } from '../lib/Utils/banner.js';
+import { printBanner, _resetBannerShown, setBannerEnabled, isBannerEnabled } from '../lib/Utils/banner.js';
 
 describe('doctor: checkEnvironment()', () => {
     it('returns a complete, well-shaped report and never throws', async () => {
@@ -98,15 +98,30 @@ describe('banner: printBanner()', () => {
         }
     });
 
-    it('cannot be disabled: no opt-out via env or options', () => {
+    // §2.84: the banner is opt-out now (JAP_NO_BANNER / NO_BANNER / setBannerEnabled(false)
+    // / makeWASocket({ printBanner: false })) -- it used to be unconditional.
+    it('can be silenced with JAP_NO_BANNER, and prints again without it', () => {
         process.env.JAP_NO_BANNER = '1';
         process.env.NO_COLOR = '1';
         try {
-            const out = capture(() => printBanner({ enabled: false }));
-            assert.match(out, /@japofc\/baileys/, 'banner prints regardless of env vars and options');
+            assert.equal(capture(() => printBanner()), '', 'JAP_NO_BANNER should silence the banner');
+            _resetBannerShown();
+            delete process.env.JAP_NO_BANNER;
+            assert.match(capture(() => printBanner()), /@japofc\/baileys/, 'banner should print without the env var');
         } finally {
             delete process.env.JAP_NO_BANNER;
             delete process.env.NO_COLOR;
         }
+    });
+
+    it('can be silenced programmatically with setBannerEnabled(false)', () => {
+        setBannerEnabled(false);
+        try {
+            assert.equal(isBannerEnabled(), false);
+            assert.equal(capture(() => printBanner()), '');
+        } finally {
+            setBannerEnabled(true);
+        }
+        assert.equal(isBannerEnabled(), true);
     });
 });

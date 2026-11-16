@@ -78,7 +78,13 @@ export function decryptMessageEdit({ encPayload, encIv }: {
     editorJid: any;
 }): any;
 export function cleanMessage(message: any, meId: any, meLid: any): void;
-export function isRealMessage(message: any): boolean;
+/**
+ * Whether a message should surface in the chat list (bump `conversationTimestamp`, attach
+ * to the chat, unarchive). Missed-call stubs count even though they carry no content
+ * (fixed in v2.4.7, BUGREPORT §2.57).
+ * @param meId when given, a "participant added" stub only counts if it names us.
+ */
+export function isRealMessage(message: any, meId?: string): boolean;
 export function shouldIncrementChatUnread(message: any): boolean;
 export function getChatId({ remoteJid, participant, fromMe }: {
     remoteJid: any;

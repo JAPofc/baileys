@@ -9,6 +9,14 @@ export class SignalingBridge {
     constructor(config: SignalingBridgeConfig);
     attachEngine(voip: any): void;
     init(): Promise<void>;
+    /**
+     * Detach from the shared auth state (`keys.set`) and drop every cache this bridge holds.
+     * Idempotent; a reconnecting client should dispose the previous bridge — `VoipClient`
+     * does it for you on reconnect and on `disconnect()`.
+     */
+    dispose: () => void;
+    /** False while the bridge is still attached to the auth state. */
+    readonly isDisposed: boolean;
     sendSignaling(peerJid: string, callId: string, xmlPayload: string): any;
     processIncomingCall(node: any, voip: any, activeCallId: string | null): any;
     processIncomingReceipt(node: any, voip: any, activeCallId: string | null): any;

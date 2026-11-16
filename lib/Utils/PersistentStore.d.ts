@@ -66,6 +66,19 @@ export function makePersistentStore(config: MakePersistentStoreConfig): Promise<
 		loadMessage(jid: string, id: string): Promise<any | undefined>;
 		/** Convenience alias for loading messages before a cursor key from backend history. */
 		loadOlderMessages(jid: string, count: number, before?: { id?: string }): Promise<any[]>;
+		/**
+		 * How many messages the BACKEND holds for a chat. `maxMessagesPerChat` only
+		 * caps the hydrated in-memory window, so this is the only way to see what is
+		 * actually persisted.
+		 */
+		countStoredMessages(jid: string): Promise<number>;
+		/**
+		 * Trim a chat's persisted history to its newest `keep` messages and return how
+		 * many were deleted. Nothing in the write-through path ever deletes, so this is
+		 * the counterpart to `maxMessagesPerChat` for keeping the backend bounded.
+		 * `keep: 0` clears the chat. Throws if `keep` is negative or not a number.
+		 */
+		pruneStoredMessages(jid: string, keep: number): Promise<number>;
 		/** Await all pending write-through persistence (use before shutdown). */
 		flush(): Promise<void>;
 		close(): Promise<void>;

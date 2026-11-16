@@ -39,6 +39,20 @@ export interface WordFilter {
 	addChatWords(chat: string, ...words: Array<string | string[]>): void;
 	removeChatWords(chat: string, ...words: Array<string | string[]>): void;
 	getChatWords(chat: string): string[];
+	/** Add exempt chat jid(s) to the allowlist at runtime. Returns the new allowlist size. */
+	allow(...chats: Array<string | string[]>): number;
+	/** Remove chat jid(s) from the allowlist at runtime. Returns the new allowlist size. */
+	unallow(...chats: Array<string | string[]>): number;
+	/** Is this chat currently exempt from filtering? */
+	isAllowed(chat: string): boolean;
+	/** Current allowlist (exempt chat jids). */
+	getAllowlist(): string[];
+	/** Toggle delete-for-everyone on matches at runtime. Returns the new state. */
+	setAutoDelete(on: boolean): boolean;
+	/** Whether auto-delete is currently enabled. */
+	readonly autoDelete: boolean;
+	/** Running counters since creation. */
+	readonly stats: { matches: number; deleted: number };
 	addWords(...words: Array<string | string[]>): void;
 	removeWords(...words: Array<string | string[]>): void;
 	addPatterns(...patterns: Array<RegExp | RegExp[]>): void;

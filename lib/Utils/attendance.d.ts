@@ -28,6 +28,12 @@ export interface Attendance {
 	/** Consecutive-day attendance streak for a user. */
 	getStreak(chat: string, user: string): number;
 	readonly size: number;
+	/** Serialize streaks + any open session for persistence. */
+	toJSON(): Record<string, unknown>;
+	/** Restore a toJSON() snapshot (streaks survive restarts). */
+	load(snapshot: Record<string, unknown>): void;
+	/** Drop all sessions and streaks. */
+	clear(): void;
 }
 
 export declare const createAttendance: (options?: { keyword?: string; now?: () => number }) => Attendance;

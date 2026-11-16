@@ -29,13 +29,13 @@ describe('mini-app url mode', () => {
 });
 
 describe('mini-app flow mode', () => {
-    it('builds flow_action with token passthrough', async () => {
+    it('builds flow with token passthrough', async () => {
         const c = await buildMiniAppContent({ body: 'Isi', flow: { id: 'F1', screen: 'W', token: 'tok' } });
         assert.equal(c.nativeFlow.length, 1);
         assert.equal(c.externalAdReply, undefined);
         const m = await generateWAMessage(JID, c, OPTS);
         const btn = m.message.interactiveMessage.nativeFlowMessage.buttons[0];
-        assert.equal(btn.name, 'flow_action');
+        assert.equal(btn.name, 'flow');
         const params = JSON.parse(btn.buttonParamsJson);
         assert.equal(params.flow_id, 'F1');
         assert.equal(params.flow_token, 'tok');

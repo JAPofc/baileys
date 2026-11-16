@@ -30,6 +30,16 @@ export interface BloksWidgetOptions {
     version?: string;
 }
 
+export interface OpenWebviewOptions {
+    /** Force WhatsApp's in-app webview when the account/client supports it. Default true. */
+    inAppWebview?: boolean;
+    /** Wire-name alias for inAppWebview. */
+    in_app_webview?: boolean;
+    /** Extra keys to merge inside the `link` object; `url` is preserved from the method argument unless explicitly supplied here. */
+    link?: Record<string, any>;
+    [key: string]: any;
+}
+
 /** Native-flow interactive message builder (buttons, lists, CTAs, payments, flows). */
 export class Button extends BaseBuilder {
     constructor(client: any);
@@ -51,10 +61,11 @@ export class Button extends BaseBuilder {
     addCancelReminder(display_text: string, id: string, options?: Record<string, any>): this;
     addAddress(display_text: string, id: string, options?: Record<string, any>): this;
     addLocation(options?: Record<string, any>): this;
+    /** cta_url. `webview_interaction` is kept for compatibility; use addOpenWebview() for the real in-app-webview native-flow button. */
     addUrl(display_text: string, url: string, webview_interaction?: boolean, options?: Record<string, any>): this;
     addCopy(display_text: string, copy_code: string, options?: Record<string, any>): this;
-    /** open_webview — opens a titled in-app webview. */
-    addOpenWebview(title: string, url: string, options?: Record<string, any>): this;
+    /** open_webview — opens a titled in-app webview and emits link.in_app_webview by default. */
+    addOpenWebview(title: string, url: string, options?: OpenWebviewOptions): this;
     /** cta_catalog — opens the sender's WhatsApp Business catalog. Business-account gated. */
     addCatalog(display_text?: string, options?: Record<string, any>): this;
     /** automated_greeting_message_view_catalog. Business-account gated. */
@@ -87,9 +98,18 @@ export class Button extends BaseBuilder {
     setLimitedTimeOffer(params?: LimitedTimeOfferParams): this;
     setBottomSheet(params?: BottomSheetParams): this;
     setTapTargetConfiguration(params?: TapTargetConfigurationParams): this;
+    /** The accumulated button names, in order. */
+    getButtonNames(): string[];
+    /** How many buttons have been added so far. */
+    countButtons(): number;
+    /** Pre-flight validation of the card (no socket): empty/malformed params, missing ids/urls, duplicate reply ids. */
+    validate(): { ok: boolean; errors: string[]; warnings: string[] };
+    /** Throw when validate() reports errors; returns `this` when valid. */
+    assertValid(): this;
     toCard(): Promise<Record<string, any>>;
     build(jid: string, options?: Record<string, any>): Promise<Record<string, any>>;
-    send(jid: string, options?: Record<string, any>): Promise<any>;
+    /** Send the message. Pass `{ validate: true }` to assertValid() before sending. */
+    send(jid: string, options?: Record<string, any> & { validate?: boolean }): Promise<any>;
     /** Param-type presets for validated native-flow params. */
     static paramsList: Record<string, Record<string, any>>;
 }

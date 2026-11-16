@@ -1,6 +1,6 @@
 {
 	"name": "@japofc/baileys",
-	"version": "2.4.4",
+	"version": "2.4.8",
 	"description": "Feature-rich WhatsApp Multi-Device library for Node.js — interactive messages, native flows, polls, newsletters, VoIP, mini-apps and everyday bot utilities.",
 	"type": "module",
 	"main": "./lib/index.js",
@@ -44,6 +44,7 @@
 	},
 	"scripts": {
 		"voip:fetch-wasm": "node --experimental-websocket ./scripts/fetch-wasm-resources.mjs",
+		"voip:verify-wasm": "CALL_WASM_FETCH_MODE=pinned node ./scripts/fetch-wasm-resources.mjs",
 		"test": "node --test",
 		"test:types": "tsc -p tests/tscheck/tsconfig.json",
 		"wa:check": "node lib/cli.js wa",
@@ -58,6 +59,7 @@
 		"url": "git+https://github.com/JAPofc/baileys.git"
 	},
 	"files": [
+		"LICENSE",
 		"lib/**/*",
 		"WAProto/**/*",
 		"Media/**/*",
@@ -117,7 +119,7 @@
 	],
 	"homepage": "https://github.com/JAPofc/baileys#readme",
 	"author": "JAPofc",
-	"license": "MIT",
+	"license": "GPL-3.0-or-later",
 	"dependencies": {
 		"@adiwajshing/keyed-db": "^0.2.4",
 		"@cacheable/node-cache": "^3.0.1",
@@ -130,7 +132,6 @@
 		"lru-cache": "^11.5.3",
 		"music-metadata": "^11.16.1",
 		"p-queue": "^9.3.3",
-		"pino": "^10.3.1",
 		"protobufjs": "^8.8.0",
 		"ws": "^8.22.0"
 	},
@@ -148,7 +149,8 @@
 		"mongodb": ">=6.10.0 <8",
 		"mysql2": "^3.11.0",
 		"pg": "^8.13.0",
-		"sharp": "*"
+		"sharp": ">=0.35.5",
+		"pino": "^8 || ^9 || ^10"
 	},
 	"peerDependenciesMeta": {
 		"@napi-rs/image": {
@@ -192,6 +194,9 @@
 		},
 		"axios": {
 			"optional": true
+		},
+		"pino": {
+			"optional": true
 		}
 	},
 	"resolutions": {
@@ -230,6 +235,7 @@
 	"devDependencies": {
 		"@types/node": "^26.6.3",
 		"jsqr": "^1.4.0",
+		"pino": "^10.3.1",
 		"typedoc": "^0.28.20",
 		"typescript": "6.0.x"
 	}

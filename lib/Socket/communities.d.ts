@@ -5,7 +5,7 @@ export function makeCommunitiesSocket(config: any): {
         subject: any;
         subjectOwner: any;
         subjectTime: number;
-        size: any;
+        size: number;
         creation: number;
         owner: string | undefined;
         desc: any;
@@ -19,18 +19,18 @@ export function makeCommunitiesSocket(config: any): {
         memberAddMode: boolean;
         participants: any;
         ephemeralDuration: number | undefined;
-        addressingMode: any;
+        addressingMode: string;
     }>;
     communityCreate: (subject: any, body: any) => Promise<{
         id: any;
         notify: any;
-        addressingMode: any;
+        addressingMode: string;
         subject: any;
         subjectOwner: any;
         subjectOwnerPn: any;
         subjectOwnerUsername: any;
         subjectTime: number;
-        size: any;
+        size: number;
         creation: number;
         owner: string | undefined;
         ownerPn: string | undefined;
@@ -55,13 +55,13 @@ export function makeCommunitiesSocket(config: any): {
     communityCreateGroup: (subject: any, participants: any, parentCommunityJid: any) => Promise<{
         id: any;
         notify: any;
-        addressingMode: any;
+        addressingMode: string;
         subject: any;
         subjectOwner: any;
         subjectOwnerPn: any;
         subjectOwnerUsername: any;
         subjectTime: number;
-        size: any;
+        size: number;
         creation: number;
         owner: string | undefined;
         ownerPn: string | undefined;
@@ -124,7 +124,7 @@ export function makeCommunitiesSocket(config: any): {
         subject: any;
         subjectOwner: any;
         subjectTime: number;
-        size: any;
+        size: number;
         creation: number;
         owner: string | undefined;
         desc: any;
@@ -138,7 +138,7 @@ export function makeCommunitiesSocket(config: any): {
         memberAddMode: boolean;
         participants: any;
         ephemeralDuration: number | undefined;
-        addressingMode: any;
+        addressingMode: string;
     }>;
     communityToggleEphemeral: (jid: any, ephemeralExpiration: any) => Promise<void>;
     communitySettingUpdate: (jid: any, setting: any) => Promise<void>;
@@ -302,13 +302,13 @@ export function makeCommunitiesSocket(config: any): {
     groupMetadata: (jid: any) => Promise<{
         id: any;
         notify: any;
-        addressingMode: any;
+        addressingMode: string;
         subject: any;
         subjectOwner: any;
         subjectOwnerPn: any;
         subjectOwnerUsername: any;
         subjectTime: number;
-        size: any;
+        size: number;
         creation: number;
         owner: string | undefined;
         ownerPn: string | undefined;
@@ -333,13 +333,13 @@ export function makeCommunitiesSocket(config: any): {
     groupCreate: (subject: any, participants: any) => Promise<{
         id: any;
         notify: any;
-        addressingMode: any;
+        addressingMode: string;
         subject: any;
         subjectOwner: any;
         subjectOwnerPn: any;
         subjectOwnerUsername: any;
         subjectTime: number;
-        size: any;
+        size: number;
         creation: number;
         owner: string | undefined;
         ownerPn: string | undefined;
@@ -375,13 +375,13 @@ export function makeCommunitiesSocket(config: any): {
     groupGetInviteInfo: (code: any) => Promise<{
         id: any;
         notify: any;
-        addressingMode: any;
+        addressingMode: string;
         subject: any;
         subjectOwner: any;
         subjectOwnerPn: any;
         subjectOwnerUsername: any;
         subjectTime: number;
-        size: any;
+        size: number;
         creation: number;
         owner: string | undefined;
         ownerPn: string | undefined;
@@ -544,7 +544,7 @@ export function extractCommunityMetadata(result: any): {
     subject: any;
     subjectOwner: any;
     subjectTime: number;
-    size: any;
+    size: number;
     creation: number;
     owner: string | undefined;
     desc: any;
@@ -558,5 +558,5 @@ export function extractCommunityMetadata(result: any): {
     memberAddMode: boolean;
     participants: any;
     ephemeralDuration: number | undefined;
-    addressingMode: any;
+    addressingMode: string;
 };

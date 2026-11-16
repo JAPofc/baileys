@@ -27,6 +27,10 @@ export interface GroupOpGuard {
 	wrap<T>(sock: T): T;
 	onBlocked(cb: (info: { op: string } & GroupOpCheck) => void): () => void;
 	getUsage(): Record<string, { used: number; max: number }>;
+	/** Serialize the rate-limit history so it survives a restart. */
+	toJSON(): { history: Array<[string, number[]]> };
+	/** Restore a toJSON() snapshot of the rate-limit history. */
+	load(snapshot: { history?: Array<[string, number[]]> }): void;
 	reset(): void;
 }
 

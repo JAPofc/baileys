@@ -40,8 +40,10 @@ describe('fetchLatestUsernameQueryIds', () => {
         assert.match(dts, /autoRotateQueryIds\?\s*:\s*boolean/);
         const impl = await readFile(new URL('../lib/Socket/username.js', import.meta.url), 'utf-8');
         assert.match(impl, /config\?\.autoRotateQueryIds/);
-        // overrides must be re-applied on top of the fetched set
-        assert.match(impl, /Object\.assign\(queryIds,\s*fresh,\s*config\?\.usernameQueryIds/);
+        // manual overrides must survive auto-rotation: applyRotation skips any
+        // key the caller pinned (tracked in manualKeys).
+        assert.match(impl, /applyRotation/);
+        assert.match(impl, /!manualKeys\.has\(k\)/);
     });
 });
 

@@ -50,7 +50,20 @@ export function getStream(item: any, opts: any): Promise<{
     type: string;
 }>;
 export function isPrivateHost(hostname: string): boolean;
-export function assertSafeHttpUrl(url: any, options?: { allowPrivate?: boolean; checkDns?: boolean }): Promise<URL>;
+/** Strip the brackets a URL keeps around an IPv6 literal (`[::1]` -> `::1`). */
+export function unbracketHost(hostname: string): string;
+export function assertSafeHttpUrl(url: any, options?: {
+    /** disable the private/loopback check entirely */
+    allowPrivate?: boolean;
+    /** also reject hosts whose DNS records point at a private address (default true) */
+    checkDns?: boolean;
+    /**
+     * Hosts exempted from the private/loopback check, e.g. `['127.0.0.1', 'media.lan']`.
+     * Lets you reach your own intranet host without switching the guard off for
+     * everything else. Compared case-insensitively; IPv6 brackets optional.
+     */
+    allowHosts?: string[];
+}): Promise<URL>;
 export function getHttpStream(url: any, options?: any): Promise<any>;
 export function fetchBuffer(url: any, options?: any): Promise<Buffer>;
 export function encryptedStream(media: any, mediaType: any, { logger, saveOriginalFileIfRequired, opts }?: any): Promise<{

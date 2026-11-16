@@ -1,6 +1,23 @@
 import { EventEmitter } from 'events';
 export { CallState } from './types.js';
 export { createWavRecorder } from './call-recorder.js';
+export { AudioFeeder } from './audio-feeder.js';
+export { VideoFeeder, VIDEO_FORMAT_I420, i420FrameSize } from './video-feeder.js';
+
+/** Construct a VoipClient without attaching it to a socket yet. */
+export declare function makeVoipClient(config?: Record<string, any>): VoipClient;
+
+export interface VoiceRecognitionHandle {
+    readonly transcript: string;
+    readonly segments: string[];
+    stop: () => Promise<string>;
+}
+/** Pipe a call's inbound audio into a speech-recognition callback. */
+export declare function bindVoiceRecognition(
+    call: ActiveCall,
+    recognize: (pcm: Buffer, info: { sampleRate: number; channels: number; encoding: 'pcm16' }) => Promise<string | { text?: string }> | string | { text?: string },
+    opts?: { chunkMs?: number; sampleRate?: number; onText?: (text: string, info: { final: boolean }) => void; onError?: (err: unknown) => void }
+): VoiceRecognitionHandle;
 export type { WavRecorder, WavRecorderOptions } from './call-recorder.js';
 
 export interface VoipClientConfig {
@@ -10,6 +27,8 @@ export interface VoipClientConfig {
     relay?: any;
     /** Path to the VOIP wasm resources directory. */
     resourcesPath?: string;
+    /** Logger used for relay/transport warnings (e.g. a failed relay connection). */
+    logger?: { warn?: (obj: any, msg?: string) => void; [key: string]: any };
     /** Relay-health watchdog poll interval in ms (default 5000; 0 disables). */
     watchdogIntervalMs?: number;
     /** Consecutive empty-relay polls before recovery kicks in (default 3). */
@@ -64,6 +83,15 @@ export class ActiveCall extends EventEmitter {
     setHandRaised(raised: boolean): any;
     getDurationMs(): number;
     recordToFile(filePath: string, opts?: Record<string, any>): any;
+    /**
+     * Inbound (remote peer) audio as a Node stream: object-mode `Float32Array` frames by
+     * default, or raw 16-bit little-endian PCM with `{ encoding: 'pcm16' }`. Ends with the
+     * call; `stop()` detaches early.
+     */
+    audioStream(opts?: {
+        encoding?: 'float32' | 'pcm16';
+        highWaterMark?: number;
+    }): import('node:stream').Readable & { stop: () => void };
     /**
      * Swap what the call is playing WITHOUT hanging up: a file path/URL,
      * `{ data: Buffer, ext }`, a `lavfi:` graph, or `"silence"`. Returns true

@@ -16,8 +16,18 @@ export function makeMessagesSocket(config: any): {
         statusJidList: any;
     }) => Promise<any>;
     sendReceipt: (jid: any, participant: any, messageIds: any, type: any) => Promise<void>;
-    sendReceipts: (keys: any, type: any) => Promise<void>;
-    readMessages: (keys: any) => Promise<void>;
+    /** The socket's group-invite icon cache (inspect/clear it, or pass your own in the config). */
+    groupInviteThumbnailCache?: {
+        readonly ttlMs: number; readonly max: number; readonly size: number;
+        get: (jid: string) => { hit: boolean; value?: Buffer };
+        set: (jid: string, value?: Buffer) => Buffer | undefined;
+        delete: (jid: string) => boolean;
+        clear: () => void;
+    };
+    /** Bulk receipts. Id-less keys are skipped, ids de-duplicated, big batches split. */
+    sendReceipts: (keys: any, type: any, opts?: { batchSize?: number }) => Promise<void>;
+    /** Bulk read. `{ batchSize }` caps how many ids go in one receipt stanza. */
+    readMessages: (keys: any, opts?: { batchSize?: number }) => Promise<void>;
     refreshMediaConn: (forceGet?: boolean) => Promise<any>;
     getMediaHost: () => string;
     waUploadToServer: (filePath: any, { mediaType, fileEncSha256B64, timeoutMs, newsletter }: {
@@ -44,7 +54,16 @@ export function makeMessagesSocket(config: any): {
     messageRetryManager: MessageRetryManager | null;
     updateMemberLabel: (jid: any, memberLabel: any) => Promise<any>;
     updateMediaMessage: (message: any) => Promise<any>;
-    sendMessage: (jid: any, content: any, options?: {}) => Promise<any>;
+    /**
+     * Interactive shapes (`interactiveButtons`, `interactiveMessage`, carousels,
+     * payment requests, products, group invites, events, poll results, group
+     * stories) are routed through the Japyea handler set. Pass
+     * `options.disableJapyea = true` to force the core message builder instead.
+     */
+    sendMessage: (jid: any, content: any, options?: {
+        disableJapyea?: boolean;
+        [key: string]: any;
+    }) => Promise<any>;
     sendReaction: (jid: any, reaction: any, key: any) => Promise<any>;
     sendPin: (jid: any, key: any, opts?: {
         durationSec?: number;
@@ -56,6 +75,18 @@ export function makeMessagesSocket(config: any): {
     sendScheduledCall: (jid: any, scheduledCall: any, options?: any) => Promise<any>;
     cancelScheduledCall: (jid: any, key: any, options?: any) => Promise<any>;
     sendMiniApp: (jid: any, miniApp: any, options?: any) => Promise<any>;
+    /** Send an AIRich card from a one-liner input: { title, markdown, table, latex, code, image, actions, … } */
+    sendJapRich: (jid: string, input?: import('../Builders/Rich.js').RichOneLiner, options?: any) => Promise<any>;
+    /** Send a plain string[][] as a rendered table card. */
+    sendJapTable: (jid: string, table: string[][], options?: { title?: string; footer?: string; [key: string]: any }) => Promise<any>;
+    /** Send a rendered LaTeX expression. */
+    sendJapLatex: (jid: string, expression: string, options?: { title?: string; footer?: string; [key: string]: any }) => Promise<any>;
+    /** Neutral alias for sendJapRich(). */
+    sendRich: (jid: string, input?: import('../Builders/Rich.js').RichOneLiner, options?: any) => Promise<any>;
+    /** Neutral alias for sendJapTable(). */
+    sendTable: (jid: string, table: string[][], options?: { title?: string; footer?: string; [key: string]: any }) => Promise<any>;
+    /** Neutral alias for sendJapLatex(). */
+    sendLatex: (jid: string, expression: string, options?: { title?: string; footer?: string; [key: string]: any }) => Promise<any>;
     sendPoll: (jid: any, poll: any, options?: any) => Promise<any>;
     sendQuiz: (jid: any, quiz: any, options?: any) => Promise<any>;
     editPoll: (jid: any, key: any, poll: any, options?: any) => Promise<any>;
@@ -91,6 +122,72 @@ export function makeMessagesSocket(config: any): {
         disableRetry?: boolean;
         [k: string]: any;
     }) => Promise<any>;
+    /** Download only a byte range of a media message (resume / slice / header peek). */
+    downloadMediaRange: (message: any, range?: import('../Utils/messages.js').MediaRange, options?: {
+        disableRetry?: boolean;
+        [k: string]: any;
+    }) => Promise<Buffer>;
+    /** First `bytes` of a media message — enough to sniff the real file type/magic. */
+    downloadMediaHeader: (message: any, bytes?: number, options?: {
+        disableRetry?: boolean;
+        [k: string]: any;
+    }) => Promise<Buffer>;
+    /** Forget the group sender-key memory so the next message re-distributes it. */
+    clearSenderKeyMemory: (jids: string | string[]) => Promise<{ cleared: number; devices: number }>;
+    /** Read the sender-key memory: `{ [groupJid]: { [deviceJid]: true } }`. */
+    readSenderKeyMemory: (jids: string | string[]) => Promise<Record<string, Record<string, boolean>>>;
+    /** Drop specific devices from one group's sender-key memory. */
+    forgetSenderKeyDevices: (jid: string, deviceJids: string | string[]) => Promise<{ removed: number; remaining: number }>;
+    /** Send an HTML bundle as a document (works on any account, no hosting). */
+    sendHtmlDocument: (jid: string, html: string | Buffer, options?: { fileName?: string; caption?: string; validate?: boolean; [k: string]: any }) => Promise<any>;
+    /** Send any file as an artifact card. */
+    sendHtmlArtifact: (jid: string, input: any, options?: { title?: string; description?: string; fileName?: string; mimetype?: string; [k: string]: any }) => Promise<any>;
+    /** Send an HTML app: a webview card with `url`, a document otherwise. */
+    sendHtmlApp: (jid: string, html?: string | Buffer | null, options?: { url?: string; title?: string; body?: string; footer?: string; buttonText?: string; fallback?: boolean; [k: string]: any }) => Promise<{ mode: 'webview' | 'document'; message: any }>;
+    /** Send an album (2+ images/videos) in one call. */
+    sendAlbumMessage: (jid: string, medias: Record<string, any>[], options?: {
+        delayMs?: number; caption?: string; [k: string]: any;
+    }) => Promise<any>;
+    /** Neutral alias for sendAlbumMessage(). */
+    sendAlbum: (jid: string, medias: Record<string, any>[], options?: Record<string, any>) => Promise<any>;
+    /** Post a status as a channel (needs `statusJidList`, e.g. from makeStatusAudienceMetadata()). */
+    sendNewsletterStatus: (newsletterJid: string, content: Record<string, any>, options?: {
+        statusJidList: string[]; newsletterName?: string; serverMessageId?: number; contentType?: number; [k: string]: any;
+    }) => Promise<any>;
+    /** React to a channel status post. */
+    reactToNewsletterStatus: (newsletterJid: string, serverMessageId: number, code?: string) => Promise<{ sent: boolean; serverMessageId: number; code: string | null }>;
+    /** Delete a channel status post for everyone. */
+    revokeNewsletterStatus: (newsletterJid: string, serverMessageId: number) => Promise<{ revoked: boolean; serverMessageId: number }>;
+    /** Only the channel posts that changed since a timestamp. */
+    fetchNewsletterStatusUpdates: (newsletterJid: string, options?: { since?: number; count?: number }) => Promise<{
+        newsletterJid: string; since: number; updates: import('../Utils/newsletter-status.js').NewsletterStatusEntry[]; latestTimestamp: number;
+    }>;
+    /** Recent status posts of a channel. */
+    fetchNewsletterStatus: (newsletterJid: string, options?: { count?: number; before?: string | number }) => Promise<import('../Utils/newsletter-status.js').NewsletterStatusEntry[]>;
+    /** Invite someone to be an admin of a channel. */
+    sendNewsletterAdminInvite: (jid: string, invite: {
+        newsletterJid: string; newsletterName: string; caption?: string; inviteExpiration?: number; jpegThumbnail?: Uint8Array | Buffer;
+    }, options?: Record<string, any>) => Promise<any>;
+    /** Reshare a status you were mentioned in, to your own status. */
+    sendStatusReshare: (status: any, options: { statusJidList: string[]; group?: boolean; [k: string]: any }) => Promise<any>;
+    /** Answer a question sticker on a status. */
+    sendStatusQuestionAnswer: (jid: string, statusKey: any, text: string, options?: Record<string, any>) => Promise<any>;
+    /** React to a sticker on a status. */
+    sendStatusStickerInteraction: (jid: string, statusKey: any, stickerKey?: any, options?: { type?: number; [k: string]: any }) => Promise<any>;
+    /** Schedule a message for later; the timer is unref'd. */
+    scheduleMessage: (jid: string, content: Record<string, any>, options: {
+        at: Date | number | string; scheduleId?: string; timezone?: string; [k: string]: any;
+    }) => {
+        scheduleId: string;
+        scheduledAt: number;
+        delayMs: number;
+        content: Record<string, any>;
+        readonly status: import('../Utils/scheduled-message.js').ScheduledMessageStatus;
+        cancel: () => boolean;
+        waitUntilSent: () => Promise<any>;
+    };
+    /** Tell the other side to drop an already-announced scheduled message. */
+    unscheduleMessage: (jid: string, key: any, options?: { scheduleId?: string; [k: string]: any }) => Promise<any>;
     copyNForward: (jid: any, message: any, forceForward?: boolean, options?: {}) => Promise<any>;
     executeWMexQuery: (variables: any, queryId: any, dataPath: any) => Promise<any>;
     newsletterCreate: (name: any, description: any) => Promise<{

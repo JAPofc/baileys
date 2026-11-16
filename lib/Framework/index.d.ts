@@ -1,5 +1,9 @@
 export { Bot, resolveSocketVersionConfig } from './Bot.js';
 export { Context } from './Context.js';
+export { CommandRouter, createGroupAdminResolver, CommandOutcome, PermissionReason } from './CommandRouter.js';
+export type { CommandDefinition, CommandRouterOptions, CommandHandler, HandleResult, CommandOutcomeValue, PermissionReasonValue } from './CommandRouter.js';
+export { createBroadcaster, createScheduler } from './Broadcaster.js';
+export type { Broadcaster, BroadcasterOptions, BroadcastHandle, BroadcastSummary, BroadcastProgress, BroadcastRecipientResult, Scheduler, SchedulerOptions, ScheduledJobInfo, ScheduledJobStatus } from './Broadcaster.js';
 export { MediaManager } from './MediaManager.js';
 export { SessionManager } from './SessionManager.js';
 export { StatsManager } from './StatsManager.js';

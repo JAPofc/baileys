@@ -8,3 +8,11 @@ export declare const terbilang: (n: number) => string;
 export declare const toRoman: (n: number) => string;
 /** Canonical Roman numerals → number (round-trip validated). */
 export declare const fromRoman: (input: string) => number;
+/** Greatest common divisor (absolute, integer). */
+export declare const gcd: (a: number, b: number) => number;
+/** Least common multiple (absolute, integer). */
+export declare const lcm: (a: number, b: number) => number;
+/** `part` as a percentage of `whole`, rounded to `decimals` (default 1). */
+export declare const percentage: (part: number, whole: number, decimals?: number) => number;
+/** Round to `decimals` places, half-up and free of float drift. */
+export declare const roundTo: (value: number, decimals?: number) => number;

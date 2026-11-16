@@ -9,8 +9,30 @@ export class Context {
     readonly remoteJid: string | undefined;
     /** Text content, including image/video/document captions. */
     readonly text: string | undefined;
+    /** True when the message came from a group chat. */
+    readonly isGroup: boolean;
+    /** Individual sender (group participant, else the chat JID). */
+    readonly sender: string | undefined;
+    /** Whether the bot itself sent this message. */
+    readonly isFromMe: boolean;
+    /** Sender's WhatsApp display name, when provided. */
+    readonly pushName: string | undefined;
+    /** JIDs @-mentioned in the message (empty when none). */
+    readonly mentionedJids: string[];
     /** The quoted message content (contextInfo.quotedMessage), if any. */
     readonly quoted: unknown;
+    /** Command word matched by CommandRouter (set during dispatch). */
+    command?: string;
+    /** Prefix that triggered the command (set during dispatch). */
+    prefix?: string;
+    /** Positional arguments after the command (set during dispatch). */
+    args?: string[];
+    /** Raw argument string after the command (set during dispatch). */
+    argString?: string;
+    /** Parsed flags/options (set during dispatch). */
+    flags?: Record<string, string | boolean | Array<string | boolean>>;
+    /** The matched command definition (set during dispatch). */
+    matchedCommand?: import('./CommandRouter.js').CommandDefinition;
     session(): Record<string, unknown>;
     setSession(data: Record<string, unknown>): void;
     updateSession(updater: (prev: Record<string, unknown>) => Record<string, unknown>): void;

@@ -63,3 +63,12 @@ export declare function useMySQLAuthState(opts?: {
     table?: string;
     session?: string;
 }): Promise<DBAuthState>;
+
+/** Key-value auth state for simple document stores (get/set/delete clients) or a JSON file. */
+export declare function useJAPDBAuth(opts?: {
+    client?: any; file?: string; session?: string; prefix?: string;
+}): Promise<Awaited<ReturnType<typeof makeAuthStateFromStore>>>;
+/** Drop-in alias of {@link useJAPDBAuth}; same behaviour and storage layout. */
+export declare function useNekoDBAuth(opts?: {
+    client?: any; file?: string; session?: string; prefix?: string;
+}): Promise<Awaited<ReturnType<typeof makeAuthStateFromStore>>>;

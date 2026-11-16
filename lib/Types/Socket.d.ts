@@ -31,6 +31,20 @@ export type PatchedMessageWithRecipientJID = any & {
     recipientJid?: string;
 };
 export type SocketConfig = {
+    /** JAP: silence the one-time startup banner for this socket. */
+    printBanner?: boolean;
+    /** JAP: emit `{ conversation }` instead of `{ extendedTextMessage }` for plain text (compat; default false). */
+    textAsConversation?: boolean;
+    /**
+     * JAP: `<enc type>` values acknowledged and skipped instead of decrypted.
+     * Default `['msmsg']`; pass `[]` to send them down the normal decrypt path.
+     */
+    unsupportedEnvelopeTypes?: string[];
+    /**
+     * JAP: cache for group-invite icons. Defaults to one per socket;
+     * pass your own (`createGroupInviteThumbnailCache()`) or `false` to disable.
+     */
+    groupInviteThumbnailCache?: any | false;
     /** the WS url to connect to WA */
     waWebSocketUrl: string | URL;
     /** Fails the connection if the socket times out in this interval */
@@ -129,6 +143,20 @@ export type SocketConfig = {
     enableAutoSessionRecreation: boolean;
     /** Enable recent message caching for retry handling */
     enableRecentMessageCache: boolean;
+    /**
+     * Rate-limit repeated decrypt-failure log lines for a dead session so a broken
+     * session cannot flood logs / exhaust the heap (see #2234). Pass an options
+     * object to tune the window/budget, or `false` to restore unlimited logging.
+     * Default: `{ windowMs: 60000, maxPerWindow: 5 }`.
+     */
+    decryptFailureLog: false | {
+        /** length of each counting window in ms (default 60000) */
+        windowMs?: number;
+        /** how many failures to log per session key per window (default 5) */
+        maxPerWindow?: number;
+        /** cap on tracked session keys before oldest is pruned (default 5000) */
+        max?: number;
+    };
     /**
      * Returns if a jid should be ignored,
      * no event for that jid will be triggered.

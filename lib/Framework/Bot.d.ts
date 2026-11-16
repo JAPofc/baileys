@@ -1,4 +1,5 @@
 import type { Context } from './Context.js';
+import type { CommandRouter, CommandRouterOptions } from './CommandRouter.js';
 import type { SessionManager } from './SessionManager.js';
 import type { StatsManager } from './StatsManager.js';
 import type { SQLiteStore } from './Store/SQLiteStore.js';
@@ -60,8 +61,14 @@ export class Bot {
     store: SQLiteStore | null;
     config: BotConfig;
     logger: ILogger;
+    /** The CommandRouter attached via createRouter()/useRouter(), if any. */
+    router?: CommandRouter;
     /** Register a middleware function (Express/Koa-style `use()`/`next()`). */
     use(middleware: BotMiddleware): this;
+    /** Create a CommandRouter, wire it into the chain, and return it. */
+    createRouter(opts?: CommandRouterOptions): CommandRouter;
+    /** Attach an already-built CommandRouter to the middleware chain. */
+    useRouter(router: CommandRouter): this;
     /** Register a `!command` handler (exact match or prefix + whitespace). */
     command(cmd: string, handler: BotCommandHandler): this;
     /** Register a handler that fires on any non-empty text. */

@@ -167,7 +167,9 @@ test('fancy text: unicode restyling with pass-through for unknown chars', () => 
 	assert.equal(styleText('hello', 'smallcaps'), 'ʜᴇʟʟᴏ');
 	assert.equal(styleText('AbZ', 'fullwidth'), 'ＡｂＺ');
 	assert.equal(styleText('a1', 'circled'), 'ⓐ①', 'circled digits via special map');
-	assert.equal([...styleText('BE', 'script')][0], '\u212c', 'script B uses the irregular code point');
+	// §2.25 fix: script is uniformly BOLD-script (contiguous from U+1D4D0); it no
+	// longer injects non-bold Letterlike glyphs (ℬ/ℰ/…) that broke the weight.
+	assert.deepEqual([...styleText('BE', 'script')].map(c => c.codePointAt(0)), [0x1d4d1, 0x1d4d4], 'script uses contiguous bold-script code points');
 	assert.equal(styleText('🔥 ok!', 'bold'), '🔥 \ud835\uddfc\ud835\uddf8!', 'emoji and punctuation pass through');
 	assert.equal(styleText('abc', 'monospace'), '\ud835\ude8a\ud835\ude8b\ud835\ude8c');
 	assert.equal(listTextStyles().length, 15); // + negativeSquared + boldFraktur + upsideDown

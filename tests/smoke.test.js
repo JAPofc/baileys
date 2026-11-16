@@ -19,7 +19,9 @@ describe('smoke: makeWASocket construct + end', () => {
             'end', 'logout', 'query',
             'checkUsername', 'checkUsernameMulti', 'setUsername', 'reserveUsername',
             'deleteUsername', 'getMyUsername', 'setUsernamePin',
-            'findUserByUsername', 'fetchContactUsernames', 'getUsernameRecommendations'
+            'findUserByUsername', 'fetchContactUsernames', 'getUsernameRecommendations',
+            // LID<->PN mapping helpers exposed as first-class socket methods
+            'getLIDForPN', 'getPNForLID', 'getLIDsForPNs', 'getPNsForLIDs', 'storeLIDPNMappings'
         ]) {
             assert.equal(typeof sock[fn], 'function', `sock.${fn} must be a function`);
         }

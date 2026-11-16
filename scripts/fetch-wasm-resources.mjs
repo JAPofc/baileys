@@ -12,10 +12,10 @@
  *   CALL_CHROME_DEBUGGER_JSON_URL=http://127.0.0.1:9222/json/list \
  *   node --experimental-websocket scripts/fetch-wasm-resources.mjs
  */
-import { writeFileSync } from "fs";
+import { writeFileSync, readFileSync, existsSync } from "fs";
 import { createHash } from "crypto";
 import { resolve, dirname } from "path";
-import { fileURLToPath } from "url";
+import { fileURLToPath, pathToFileURL } from "url";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const RESOURCES_DIR = resolve(__dirname, "../lib/assets/wasm");
@@ -127,6 +127,62 @@ async function fetchFromBootloaderEndpoint() {
   };
 }
 
+/**
+ * Pure verifier: given a pinned integrity manifest and a map of freshly
+ * downloaded `{ name: Buffer }`, report which files match their pinned
+ * sha256 + size. No network, no fs — unit-testable in the offline suite.
+ * Returns `{ ok, files: [{ name, ok, reason?, expected, actual }] }`.
+ */
+export function verifyPinnedManifest(manifest, downloads) {
+  const pinned = manifest?.files || {};
+  const files = [];
+  for (const [name, meta] of Object.entries(pinned)) {
+    const buf = downloads?.[name];
+    if (!buf) {
+      files.push({ name, ok: false, reason: "missing", expected: meta, actual: null });
+      continue;
+    }
+    const actualSha = createHash("sha256").update(buf).digest("hex");
+    const actualSize = buf.length;
+    const shaOk = !meta?.sha256 || actualSha === meta.sha256;
+    const sizeOk = meta?.size == null || actualSize === meta.size;
+    files.push({
+      name,
+      ok: shaOk && sizeOk,
+      reason: shaOk ? (sizeOk ? undefined : "size-mismatch") : "sha256-mismatch",
+      expected: { sha256: meta?.sha256 ?? null, size: meta?.size ?? null },
+      actual: { sha256: actualSha, size: actualSize }
+    });
+  }
+  return { ok: files.length > 0 && files.every((f) => f.ok), files };
+}
+
+/**
+ * Refresh straight from the URLs already recorded in `integrity.json`.
+ * Browser-free and independent of WhatsApp's (occasionally-moving) bootloader
+ * endpoint — the robust "re-verify / repair the pinned bundle" path.
+ */
+async function fetchFromPinnedManifest() {
+  const manifestFile = resolve(RESOURCES_DIR, "integrity.json");
+  if (!existsSync(manifestFile)) {
+    throw new Error(`pinned mode needs an existing integrity.json at ${manifestFile}`);
+  }
+  const manifest = JSON.parse(readFileSync(manifestFile, "utf8"));
+  const urls = manifest?.urls || {};
+  if (!urls.wasm || !urls.worker) {
+    throw new Error("integrity.json is missing pinned wasm/worker URLs");
+  }
+  return {
+    source: "pinned-manifest",
+    clientRevision: manifest?.clientRevision || null,
+    workerUrl: urls.worker,
+    wasmUrl: urls.wasm,
+    loaderUrl: urls.loader || null,
+    loaderCode: null,
+    pinnedManifest: manifest
+  };
+}
+
 async function fetchFromBrowserDebugger() {
   const resp = await fetchOk(DEBUGGER_URL, { headers: {} });
   const targets = await resp.json();
@@ -179,13 +235,23 @@ async function fetchFromBrowserDebugger() {
 
 async function resolveResourceInfo() {
   if (FETCH_MODE === "browser") return await fetchFromBrowserDebugger();
+  if (FETCH_MODE === "pinned") return await fetchFromPinnedManifest();
   if (FETCH_MODE === "direct" || FETCH_MODE === "bootloader") return await fetchFromBootloaderEndpoint();
   try {
     return await fetchFromBootloaderEndpoint();
   } catch (directError) {
     console.warn(`Direct bootloader fetch failed: ${directError.message}`);
-    console.warn("Falling back to Chrome remote-debugging mode...");
-    return await fetchFromBrowserDebugger();
+    // Prefer the browser-free pinned refresh before requiring a running Chrome —
+    // WA's bootloader endpoint moves, but the URLs pinned in integrity.json keep
+    // serving the exact bundle until the next deliberate revision bump.
+    try {
+      console.warn("Falling back to pinned-manifest refresh (from integrity.json URLs)...");
+      return await fetchFromPinnedManifest();
+    } catch (pinnedError) {
+      console.warn(`Pinned-manifest refresh failed: ${pinnedError.message}`);
+      console.warn("Falling back to Chrome remote-debugging mode...");
+      return await fetchFromBrowserDebugger();
+    }
   }
 }
 
@@ -242,10 +308,32 @@ async function main() {
     },
     files
   };
+  // When refreshing from the pinned manifest, the whole point is that nothing
+  // changed — verify the freshly downloaded bytes still match the pins and shout
+  // if the CDN drifted (a deliberate WA revision bump), instead of silently
+  // rewriting the manifest to whatever was served.
+  if (resourceInfo.pinnedManifest) {
+    const downloads = { "whatsapp.wasm": wasmBuffer, "worker-modules.js": Buffer.from(workerCode) };
+    if (loaderCode) downloads["loader.js"] = Buffer.from(loaderCode);
+    const report = verifyPinnedManifest(resourceInfo.pinnedManifest, downloads);
+    for (const f of report.files) {
+      console.log(`  verify ${f.name}: ${f.ok ? "OK (matches pin)" : `DRIFTED (${f.reason})`}`);
+    }
+    if (report.ok) {
+      console.log("  All pinned assets re-verified byte-for-byte — bundle is current.");
+    } else {
+      console.warn("  WARNING: live bytes differ from the pins; manifest updated to the newly-fetched values.");
+    }
+  }
+
   writeFileSync(resolve(RESOURCES_DIR, "integrity.json"), JSON.stringify(manifest, null, 2));
   console.log("  Written: integrity.json (pinned sha256 manifest)");
 
   console.log("\nDone! Resources updated.");
 }
 
-main().catch(e => { console.error("Error:", e.message); process.exit(1); });
+// Only run when executed directly (`node scripts/fetch-wasm-resources.mjs`), so
+// the pure helpers above stay importable — e.g. from the offline test suite.
+if (import.meta.url === pathToFileURL(process.argv[1] || "").href) {
+  main().catch(e => { console.error("Error:", e.message); process.exit(1); });
+}

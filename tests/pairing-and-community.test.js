@@ -41,10 +41,13 @@ test('normalizePairingCode accepts human formats and rejects invalid codes', () 
 	assert.equal(normalizePairingCode(' 1234 5678 '), '12345678');
 	assert.equal(normalizePairingCode('AB-CD-EF-GH'), 'ABCDEFGH');
 	assert.throws(() => normalizePairingCode('SHORT'), /8 characters/);
-	assert.throws(() => normalizePairingCode('ABCDEFG0'), /Crockford/, 'zero is not in the alphabet');
-	assert.throws(() => normalizePairingCode('ABCDEFGO'), /Crockford/, 'O is not in the alphabet');
+	// WhatsApp accepts any 8 alphanumeric chars — O, U, I and 0 are all valid.
+	assert.equal(normalizePairingCode('ABCDEFG0'), 'ABCDEFG0', 'zero is allowed');
+	assert.equal(normalizePairingCode('ABCDEFGO'), 'ABCDEFGO', 'O is allowed');
+	assert.throws(() => normalizePairingCode('ABCDEF@1'), /alphanumeric/, 'symbols are rejected');
 	assert.equal(isValidPairingCode('wxyz-2345'), true);
-	assert.equal(isValidPairingCode('OOOOOOOO'), false);
+	assert.equal(isValidPairingCode('OOOOOOOO'), true); // all-O is a valid custom code
+	assert.equal(isValidPairingCode('!!!!!!!!'), false);
 	assert.equal(isValidPairingCode(''), false);
 });
 

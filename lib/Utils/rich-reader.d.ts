@@ -1,6 +1,15 @@
 /** One parsed block of a rich-response card. */
 export interface RichBlock {
-    type: 'heading' | 'text' | 'code' | 'table' | 'latex' | 'divider' | 'spacer' | 'suggestion' | 'image' | 'sources' | 'unknown';
+    type: 'heading' | 'text' | 'code' | 'table' | 'latex' | 'divider' | 'spacer' | 'suggestion' | 'image' | 'sources' | 'compact' | 'unknown';
+    /** compact card (addCompact): title/subtitle/image + tap action */
+    subtitle?: string;
+    secondarySubtitle?: string;
+    image?: string;
+    entityId?: string;
+    entityUrl?: string;
+    entityType?: string;
+    actionType?: string;
+    isVerified?: boolean;
     /** heading/text/suggestion */
     text?: string;
     /** text: resolved inline entities (links etc.) */
@@ -33,6 +42,18 @@ export interface ReadRichMessageResult {
     blocks: RichBlock[];
     /** convenience: texts of every suggestion pill */
     suggestions: string[];
+    /** convenience: every social-entity embed (addSocialEntity / GenAISocialEntityItem) found in the card */
+    socialEntities?: Array<{
+        key: string;
+        label: string;
+        url?: string;
+        name?: string;
+        fullName?: string;
+        pictureUrl?: string;
+        type?: string;
+        isVerified: boolean;
+        raw: any;
+    }>;
     /** flat text rendering of the whole card (headings, text, fenced code, tables) */
     text: string;
     raw?: { rich: any; unified: any; botMetadata: any };

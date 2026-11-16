@@ -1,3 +1,25 @@
+/**
+ * JAP@Add (v2.4.7) --- WhatsApp rejects oversized participant arrays on w:g2 writes, so
+ * every participant-mutating query is chunked at this size.
+ */
+export declare const GROUP_PARTICIPANTS_CHUNK_SIZE: number;
+
+/** One LID↔PN address pair for a single user, device-suffix normalized. */
+export interface LIDPNPair {
+    lid: string;
+    pn: string;
+}
+
+/**
+ * Pull every LID↔PN pair out of already-parsed group/community metadata. Pure and
+ * null-safe, so it also works on cached/offline metadata. The socket feeds the result into
+ * the signal LID mapping store on every `groupMetadata()` / `groupFetchAllParticipating()`
+ * / `communityMetadata()` call.
+ */
+export declare function extractLIDPNPairs(metadata: {
+    participants?: Array<{ id?: string; lid?: string; phoneNumber?: string }>;
+} | null | undefined): LIDPNPair[];
+
 export function makeGroupsSocket(config: any): {
     groupQuery: (jid: any, type: any, content: any) => Promise<any>;
     groupMetadata: (jid: any) => Promise<{
@@ -8,9 +30,9 @@ export function makeGroupsSocket(config: any): {
         subjectOwner: any;
         subjectOwnerPn: any;
         subjectOwnerUsername: any;
-        subjectTime: number;
-        size: any;
-        creation: number;
+        subjectTime: number | undefined;
+        size: number | undefined;
+        creation: number | undefined;
         owner: string | undefined;
         ownerPn: string | undefined;
         ownerUsername: any;
@@ -39,9 +61,9 @@ export function makeGroupsSocket(config: any): {
         subjectOwner: any;
         subjectOwnerPn: any;
         subjectOwnerUsername: any;
-        subjectTime: number;
-        size: any;
-        creation: number;
+        subjectTime: number | undefined;
+        size: number | undefined;
+        creation: number | undefined;
         owner: string | undefined;
         ownerPn: string | undefined;
         ownerUsername: any;
@@ -92,9 +114,9 @@ export function makeGroupsSocket(config: any): {
         subjectOwner: any;
         subjectOwnerPn: any;
         subjectOwnerUsername: any;
-        subjectTime: number;
-        size: any;
-        creation: number;
+        subjectTime: number | undefined;
+        size: number | undefined;
+        creation: number | undefined;
         owner: string | undefined;
         ownerPn: string | undefined;
         ownerUsername: any;
@@ -260,9 +282,9 @@ export function extractGroupMetadata(result: any): {
     subjectOwner: any;
     subjectOwnerPn: any;
     subjectOwnerUsername: any;
-    subjectTime: number;
-    size: any;
-    creation: number;
+    subjectTime: number | undefined;
+    size: number | undefined;
+    creation: number | undefined;
     owner: string | undefined;
     ownerPn: string | undefined;
     ownerUsername: any;

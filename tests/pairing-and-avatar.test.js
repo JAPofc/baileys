@@ -4,32 +4,34 @@ import assert from 'node:assert/strict';
 // Tests for the pairing-code input validation + full-size profile picture
 // support added in the fork-parity sweep. All offline.
 
-const CROCKFORD_RE = /^[123456789ABCDEFGHJKLMNPQRSTVWXYZ]{8}$/;
+// WhatsApp accepts any 8 ALPHANUMERIC chars in a custom code (matches upstream
+// WhiskeySockets/Baileys, which only length-checks). O/U/I/0 are all valid.
+const ALNUM_RE = /^[A-Z0-9]{8}$/;
 
-describe('custom pairing code validation (crockford base32)', () => {
+describe('custom pairing code validation (8 alphanumeric)', () => {
     // mirror of the socket's validation logic, kept in sync by the
     // integration path below (requestPairingCode is exercised via socket.js)
     const validate = (code) => {
-        const normalized = String(code).toUpperCase();
+        const normalized = String(code).replace(/[\s-]+/g, '').toUpperCase();
         if (normalized.length !== 8) return { ok: false, reason: 'length' };
-        if (!CROCKFORD_RE.test(normalized)) return { ok: false, reason: 'alphabet' };
+        if (!ALNUM_RE.test(normalized)) return { ok: false, reason: 'alphabet' };
         return { ok: true, code: normalized };
     };
 
-    it('accepts a valid 8-char crockford code', () => {
+    it('accepts a valid 8-char alphanumeric code', () => {
         assert.deepEqual(validate('JAPJAP12'), { ok: true, code: 'JAPJAP12' });
     });
     it('uppercases lowercase input instead of failing on the phone', () => {
         assert.deepEqual(validate('japjap12'), { ok: true, code: 'JAPJAP12' });
     });
-    it('rejects O, I, U and 0 (not in the crockford alphabet)', () => {
-        for (const bad of ['JAPJAP1O', 'JAPJAP1I', 'JAPJAP1U', 'JAPJAP10']) {
-            assert.equal(validate(bad).ok, false, bad);
+    it('ACCEPTS O, I, U and 0 (WhatsApp does not restrict the alphabet)', () => {
+        for (const good of ['JAPJAP1O', 'JAPJAP1I', 'JAPJAP1U', 'JAPJAP10', 'OTHERCOD', 'SH1Z0D3V']) {
+            assert.equal(validate(good).ok, true, good);
         }
     });
     it('rejects wrong length and symbols', () => {
         assert.equal(validate('SHORT').ok, false);
-        assert.equal(validate('JAP-JA12').ok, false);
+        assert.equal(validate('JAP@JA12').ok, false);
         assert.equal(validate('JAPJAP123').ok, false);
     });
 });
@@ -53,9 +55,9 @@ describe('requestPairingCode wiring (socket surface)', () => {
         const { readFile } = await import('node:fs/promises');
         const src = await readFile(new URL('../lib/Socket/socket.js', import.meta.url), 'utf-8');
         // the validation must run BEFORE creds.pairingCode is assigned
-        const validateIdx = src.indexOf('Crockford base32 characters');
+        const validateIdx = src.indexOf('8 alphanumeric characters');
         const assignIdx = src.indexOf('authState.creds.pairingCode = pairingCode');
-        assert.ok(validateIdx > -1, 'crockford validation present');
+        assert.ok(validateIdx > -1, 'alphanumeric validation present');
         assert.ok(assignIdx > -1, 'creds assignment present');
         assert.ok(validateIdx < assignIdx, 'validation precedes creds mutation');
         // the connection-race guard must also precede the send

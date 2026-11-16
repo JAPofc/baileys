@@ -13,8 +13,9 @@ export interface RentalInfo {
 export interface RentalManager {
 	/** Grant/replace a rental; { lifetime: true } for forever. */
 	add(chat: string, options?: { days?: number; hours?: number; ms?: number; by?: string; lifetime?: boolean }): { chat: string; expiresAt: number };
-	/** Stack time (adds a rental when none exists). */
-	extend(chat: string, duration: { days?: number; hours?: number; ms?: number }): { chat: string; expiresAt: number };
+	/** Stack time (adds a rental when none exists). A paid top-up: clears the
+	 * trial flag and, if `by` is given, records the payer. */
+	extend(chat: string, duration: { days?: number; hours?: number; ms?: number; by?: string }): { chat: string; expiresAt: number };
 	/** One free trial per chat, ever. Returns false when already used. */
 	startTrial(chat: string, options?: { days?: number }): { chat: string; expiresAt: number } | false;
 	revoke(chat: string): boolean;
@@ -28,6 +29,12 @@ export interface RentalManager {
 	list(): Array<{ chat: string; expiresAt: number; trial: boolean }>;
 	/** Owner overview of every active rental. */
 	renderList(options?: { title?: string }): string;
+	/** Owner dashboard counts across all rentals. `paid` is non-trial (incl. lifetime). */
+	stats(): { active: number; trial: number; paid: number; lifetime: number; expiringSoon: number; trialsEverUsed: number };
+	/** Migrate a rental to a new chat jid (e.g. a re-created group). Carries the
+	 * "trial burned" marker across. Returns false if there is nothing to move or
+	 * the destination already has a rental (unless `overwrite: true`). */
+	transfer(fromChat: string, toChat: string, options?: { overwrite?: boolean }): { from: string; to: string; expiresAt: number } | false;
 	/** Fire expiries + renewal warnings now. Returns expired chats. */
 	sweep(): string[];
 	startSweeper(): () => void;

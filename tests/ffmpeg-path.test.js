@@ -16,17 +16,26 @@ afterEach(() => {
 });
 
 describe('ffmpeg-path: resolution order', () => {
+    // §2.67 (v2.4.8): an override must now point at an executable regular file --
+    // this used to assert on '/custom/ffmpeg-bin', a path that does not exist, which
+    // only passed because the resolver accepted anything. process.execPath is a real
+    // executable, so it still proves the precedence this case is about.
     it('explicit setFfmpegPath() wins over everything', async () => {
+        setFfmpegPath(process.execPath);
+        assert.equal(await resolveFfmpegPath(), process.execPath);
+        assert.equal(await requireFfmpegPath(), process.execPath);
+    });
+
+    it('an override that is not an executable file is skipped (§2.67)', async () => {
         setFfmpegPath('/custom/ffmpeg-bin');
-        assert.equal(await resolveFfmpegPath(), '/custom/ffmpeg-bin');
-        assert.equal(await requireFfmpegPath(), '/custom/ffmpeg-bin');
+        assert.notEqual(await resolveFfmpegPath(), '/custom/ffmpeg-bin');
     });
 
     it('setFfmpegPath(null) clears the override', async () => {
-        setFfmpegPath('/custom/ffmpeg-bin');
+        setFfmpegPath(process.execPath);
         setFfmpegPath(null);
         const resolved = await resolveFfmpegPath();
-        assert.notEqual(resolved, '/custom/ffmpeg-bin');
+        assert.notEqual(resolved, process.execPath);
     });
 
     it('FFMPEG_PATH env var is honored when the file exists', async () => {

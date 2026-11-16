@@ -1,9 +1,43 @@
 import type { BaseBuilder } from './shared.js';
 
+/** Meta's unified-response primitive namespace prefix (`'GenAI'`). Protocol-fixed — not our branding. */
+export const META_RICH_PREFIX: string;
+
+/**
+ * Canonicalise a rich-card CTA action string to the exact value WhatsApp's renderer
+ * expects. Maps the common open-a-link aliases (`open_url`, `openUrl`, `url`, `link`,
+ * `open_link`, any case/spacing) to `OPEN_URL`; otherwise trims + upper-cases the value
+ * through unchanged. No-op for already-correct input. Used by addCompact/addProfileCard/addFooterAction.
+ */
+export function normalizeRichActionType(value?: string | null, fallback?: string): string;
+
+/** A raw primitive spec: a string (→ markdown text), or an object with a `typename`/`__typename` (bare or fully-qualified) plus its own props. */
+export type AIRichPrimitiveSpec = string | ({ typename?: string; __typename?: string } & Record<string, any>);
+
+export interface AIRichViewModelOptions {
+    /** extra top-level fields merged onto the section wrapper */
+    extra?: Record<string, any>;
+    /** extra fields merged into the view_model object */
+    viewModel?: Record<string, any>;
+    /** plain-text submessage fallback so the bubble is never empty */
+    fallback?: string;
+}
+
 export interface AddTextOptions {
     hyperlink?: boolean;
     citation?: boolean;
     latex?: boolean;
+}
+
+export interface AIRichStackItem {
+    text?: string;
+    heading?: boolean;
+    image?: string;
+    alignment?: string;
+    tapLinkUrl?: string;
+    spacer?: boolean;
+    divider?: boolean;
+    primitive?: Record<string, any>;
 }
 
 export interface AddInlineImageOptions {
@@ -37,6 +71,8 @@ export interface AIRichEditOptions {
 
 /** AI rich-response builder (Meta AI / GenAI message primitives). */
 export class AIRich extends BaseBuilder {
+    /** Every primitive currently on the card, flattened across sections (read-only view). */
+    readonly items: Record<string, any>[];
     /** `new AIRich(client).addMarkdown(md)` in one call. */
     static fromMarkdown(md: string, client: any): AIRich;
     constructor(client: any);
@@ -46,7 +82,13 @@ export class AIRich extends BaseBuilder {
     static EXPERIMENTAL_METHODS: Set<string>;
     /** True when `name` is a reverse-engineered primitive with no public schema backing. */
     static isExperimental(name: string): boolean;
+    /** Normalize a primitive spec into a `{ __typename, ... }` object (Meta prefix added to bare names). */
+    static primitive(spec: AIRichPrimitiveSpec): Record<string, any> | null;
     addSubmessage(submessage: Record<string, any>): this;
+    /** Push a raw custom view_model section by typename (bare or fully-qualified), with one primitive or an array. */
+    addViewModel(typename: string, primitives: AIRichPrimitiveSpec | AIRichPrimitiveSpec[], opts?: AIRichViewModelOptions): this;
+    /** Push a single raw primitive wrapped in a SingleLayoutViewModel — quickest custom-primitive escape hatch. */
+    addRawPrimitive(typename: string, props?: Record<string, any>, opts?: AIRichViewModelOptions): this;
     addSection(section: Record<string, any>): this;
     addText(text: string, options?: AddTextOptions): this;
     addCode(language: string, code: string): this;
@@ -61,8 +103,66 @@ export class AIRich extends BaseBuilder {
     addVideo(videoUrl: string, options?: { autoFill?: boolean; resolveUrl?: boolean }): this;
     addProduct(data?: Record<string, any>, options?: { resolveUrl?: boolean }): this;
     addPost(data?: Record<string, any>, options?: { resolveUrl?: boolean }): this;
+    /** Add a tappable social-entity embed (IG/FB/etc. profile card). EXPERIMENTAL. */
+    addSocialEntity(data?: {
+        username?: string;
+        entity_id?: string;
+        entity_name?: string;
+        full_name?: string;
+        entity_full_name?: string;
+        picture_url?: string;
+        entity_picture_url?: string;
+        image?: string;
+        url?: string;
+        entity_url?: string;
+        type?: string;
+        entity_type?: string;
+        is_verified?: boolean;
+        verified?: boolean;
+        label?: string;
+        key?: string;
+        heading?: boolean;
+    }, options?: { resolveUrl?: boolean }): this;
+    /** One-call profile card (compact header + divider + social-entity embed) — the igstalk pattern. EXPERIMENTAL. */
+    addProfileCard(profile?: {
+        username: string;
+        full_name?: string;
+        entity_full_name?: string;
+        entity_name?: string;
+        entity_id?: string;
+        picture_url?: string;
+        image?: string;
+        url?: string;
+        entity_url?: string;
+        action_url?: string;
+        type?: string;
+        entity_type?: string;
+        title?: string;
+        subtitle?: string;
+        label?: string;
+        is_verified?: boolean;
+        verified?: boolean;
+    }, options?: { divider?: boolean; resolveUrl?: boolean }): this;
+    /** Add a compact header card (avatar + title + verified + subtitle, tappable). EXPERIMENTAL. */
+    addCompact(data?: {
+        title: string;
+        subtitle?: string;
+        secondary_subtitle?: string;
+        image?: string;
+        image_url?: string;
+        picture_url?: string;
+        entity_id?: string;
+        entity_url?: string;
+        url?: string;
+        entity_type?: string;
+        action_type?: string;
+        is_verified?: boolean;
+        verified?: boolean;
+    }, options?: { resolveUrl?: boolean }): this;
     addTip(text: string): this;
     addMetadata(text: string): this;
+    addHStack(items?: Array<string | AIRichStackItem>): this;
+    addVStack(items?: Array<string | AIRichStackItem>): this;
     setResponseId(id: string): this;
     refreshResponseId(): this;
     setBotResponseId(id: string): this;

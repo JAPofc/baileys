@@ -324,8 +324,10 @@ test('menfess: stop words, TTL expiry, group messages ignored', async () => {
 
 test('WA web version bumped to the live revision', () => {
 	const defaults = readFileSync(new URL('../lib/Defaults/index.js', import.meta.url), 'utf8');
-	assert.match(defaults, /\[2, 3000, 1048638736\]/, 'baked version matches live sw.js revision');
-	assert.ok(!defaults.includes('1048570357'), 'old revision gone');
+	// Structural check: the pin auto-bumps weekly (version-watchdog), so assert the
+	// SHAPE [2, 3000, <9+ digit revision>] instead of a literal that goes stale in days.
+	assert.match(defaults, /const version\s*=\s*\[2, 3000, \d{9,}\]/, 'baked version is a valid [2,3000,<revision>] triple');
+	assert.ok(!defaults.includes('1048570357') && !defaults.includes('1048638736'), 'stale revisions gone');
 });
 
 test('barrel and type definitions export the new modules and upgrades', () => {

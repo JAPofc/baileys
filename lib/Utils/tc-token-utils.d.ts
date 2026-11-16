@@ -1,3 +1,5 @@
+/** Normalise a timestamp (seconds, ms, string, bigint, Date, protobuf Long) to unix seconds, or null. */
+export declare function toTcTokenSeconds(value: any): number | null;
 /** Read the persisted tctoken JID index and return its entries (never contains the sentinel key itself). */
 export function readTcTokenIndex(keys: any): Promise<any[]>;
 /** Build a SignalDataSet fragment that writes the merged index (persisted ∪ added) under the sentinel key. */

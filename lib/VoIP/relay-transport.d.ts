@@ -27,9 +27,38 @@ export type RelayTransportStats = {
     droppedPackets: number;
     openConnections: number;
 };
+/** Per-connection counters + live state, as returned by `getConnectionStats()`. */
+export type RelayConnectionStats = {
+    id: string;
+    relayName: string;
+    ip: string;
+    port: number;
+    state: 'none' | 'connecting' | 'open' | 'closed' | 'failed';
+    bufferedPackets: number;
+    bufferedBytes: number;
+    lastIceRttMs: number | null;
+    sentPackets: number;
+    receivedPackets: number;
+    sentBytes: number;
+    receivedBytes: number;
+    droppedPackets: number;
+    openConnections: number;
+};
+/** Relay info the transport reports a failure against. */
+export type RelayEndpointInfo = {
+    id: string;
+    relayId: number;
+    ip: string;
+    port: number;
+    name: string;
+    [key: string]: any;
+};
 export type RelayTransportConfig = {
     onTransportMessage: (data: Uint8Array, ip: string, port: number) => void;
     onIceRtt?: (rttMs: number, ip: string, port: number) => void;
+    /** Called when a relay connection cannot be established (e.g. the optional @roamhq/wrtc package is missing). */
+    onTransportError?: (err: Error, relay: RelayEndpointInfo) => void;
+    logger?: { warn?: (obj: any, msg?: string) => void; [key: string]: any };
 };
 export declare class RelayRtcTransport {
     #private;
@@ -38,6 +67,8 @@ export declare class RelayRtcTransport {
     updateRelayList: (update: RelayListUpdatePayload) => void;
     send: (packet: Uint8Array | Buffer, ip: string, port: number) => number;
     getStats: () => RelayTransportStats;
+    /** Per-connection counters, buffer depth, state and last ICE RTT. */
+    getConnectionStats: () => RelayConnectionStats[];
     closeAll: () => Promise<void>;
 }
 export {};

@@ -35,6 +35,26 @@ export interface AntiLinkGuard {
 	unbind(): void;
 	onDetected(cb: (detection: AntiLinkDetection) => void): () => void;
 	onError(cb: (info: { msg: unknown; error: unknown }) => void): () => void;
+	/** Add exempt chat jid(s) to the allowlist at runtime. Returns the new allowlist size. */
+	allow(...chats: Array<string | string[]>): number;
+	/** Remove chat jid(s) from the allowlist at runtime. Returns the new allowlist size. */
+	unallow(...chats: Array<string | string[]>): number;
+	/** Is this chat currently exempt? */
+	isAllowed(chat: string): boolean;
+	/** Current allowlist (exempt chat jids). */
+	getAllowlist(): string[];
+	/** Add allowed link domain(s) at runtime (non-invite mode). Returns the new count. */
+	allowDomain(...domains: Array<string | string[]>): number;
+	/** Remove allowed link domain(s) at runtime. Returns the new count. */
+	disallowDomain(...domains: Array<string | string[]>): number;
+	/** Current allowed link domains. */
+	getAllowedDomains(): string[];
+	/** Toggle delete-for-everyone on detections at runtime. Returns the new state. */
+	setAutoDelete(on: boolean): boolean;
+	/** Whether auto-delete is currently enabled. */
+	readonly autoDelete: boolean;
+	/** Running counters since creation. */
+	readonly stats: { detected: number; deleted: number };
 }
 
 export declare const createAntiLinkGuard: (options?: AntiLinkGuardOptions) => AntiLinkGuard;

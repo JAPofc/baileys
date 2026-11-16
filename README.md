@@ -1,25 +1,89 @@
 <div align="center" id="top">
 
-<img src="./Media/japofc-logo.png" width="128" alt="JAPofc logo" />
+<img src="./Media/japofc-logo.png" width="140" alt="JAPofc logo" />
 
 # @japofc/baileys
 
-**WhatsApp Web API for Node.js.**  
-A maintained Baileys fork with typed ESM exports, current WA Web versioning, protocol-safe tooling, and production bot utilities.
+### ⚡ The maintained WhatsApp Web API for Node.js
 
+<em>Typed ESM&nbsp;·&nbsp;always-current WA&nbsp;Web versioning&nbsp;·&nbsp;protocol-safe tooling&nbsp;·&nbsp;140+ production bot utilities</em>
+
+<br/>
+
+<!-- identity -->
 <p>
-<a href="https://www.npmjs.com/package/@japofc/baileys"><img src="https://img.shields.io/npm/v/@japofc/baileys?color=2ecc71&label=npm&style=flat-square" alt="npm version" /></a>
-<a href="https://www.npmjs.com/package/@japofc/baileys"><img src="https://img.shields.io/npm/dt/@japofc/baileys?color=3498db&style=flat-square" alt="npm downloads" /></a>
-<img src="https://img.shields.io/badge/node-%3E%3D20-2ecc71?style=flat-square" alt="Node >=20" />
-<img src="https://img.shields.io/badge/ESM-only-3178c6?style=flat-square" alt="ESM only" />
-<img src="https://img.shields.io/badge/tests-668%20passing-2ecc71?style=flat-square" alt="tests passing" />
-<img src="https://img.shields.io/badge/audit-0%20vulnerabilities-2ecc71?style=flat-square" alt="npm audit clean" />
-<a href="./NOTICE.md"><img src="https://img.shields.io/badge/license-MIT-lightgrey?style=flat-square" alt="MIT license" /></a>
+<a href="https://www.npmjs.com/package/@japofc/baileys"><img src="https://img.shields.io/npm/v/@japofc/baileys?color=25D366&label=npm&logo=npm&logoColor=white&style=for-the-badge" alt="npm version" /></a>
+<a href="https://www.npmjs.com/package/@japofc/baileys"><img src="https://img.shields.io/npm/dt/@japofc/baileys?color=128C7E&label=downloads&logo=npm&logoColor=white&style=for-the-badge" alt="npm downloads" /></a>
+<a href="./LICENSE"><img src="https://img.shields.io/badge/license-GPL--3.0--or--later-555?style=for-the-badge" alt="GPL-3.0-or-later license" /></a>
 </p>
 
-[Install](#install) · [Quick start](#quick-start) · [Features](#-features) · [Examples](#-usage-examples) · [TypeScript](#-typescript-support) · [FAQ](#-faq--troubleshooting) · [Bahasa Indonesia](./README.id.md)
+<!-- quality -->
+<p>
+<img src="https://img.shields.io/badge/node-%E2%89%A5%2020-3C873A?style=flat-square&logo=node.js&logoColor=white" alt="Node >=20" />
+<img src="https://img.shields.io/badge/module-ESM-F7DF1E?style=flat-square&logo=javascript&logoColor=black" alt="ESM only" />
+<img src="https://img.shields.io/badge/types-bundled%20.d.ts-3178C6?style=flat-square&logo=typescript&logoColor=white" alt="TypeScript types" />
+<img src="https://img.shields.io/badge/tests-1804%20passing-2ecc71?style=flat-square&logo=nodedotjs&logoColor=white" alt="tests passing" />
+<img src="https://img.shields.io/badge/audit-0%20vulnerabilities-2ecc71?style=flat-square&logo=npm&logoColor=white" alt="npm audit clean" />
+</p>
+
+<p>
+<a href="https://whatsapp.com/channel/0029VbEVFrILtOjAOu4FXa3r"><img src="https://img.shields.io/badge/Follow%20on%20WhatsApp-JAPofc%20Channel-25D366?style=for-the-badge&logo=whatsapp&logoColor=white" alt="JAPofc WhatsApp Channel" /></a>
+</p>
+
+<h4>
+
+[📦 Install](#install)&nbsp;·&nbsp;[🚀 Quick start](#quick-start)&nbsp;·&nbsp;[🔥 Features](#-features)&nbsp;·&nbsp;[💡 Examples](#-usage-examples)&nbsp;·&nbsp;[📘 TypeScript](#-typescript-support)&nbsp;·&nbsp;[❓ FAQ](#-faq--troubleshooting)&nbsp;·&nbsp;[🇮🇩 Bahasa Indonesia](./README.id.md)
+
+</h4>
 
 </div>
+
+---
+
+<table>
+<tr>
+<td width="33%" valign="top" align="center">
+
+### 🔌 Reliable core
+
+Predictable socket, auto WA-Web version resolution, reconnect + anti-ban toolkit — **no hidden side effects**.
+
+</td>
+<td width="33%" valign="top" align="center">
+
+### 🧩 Batteries included
+
+Buttons, native flows, carousel, AIRich cards, polls, channels, VoIP, and **140+ bot utilities**.
+
+</td>
+<td width="33%" valign="top" align="center">
+
+### 🛡️ Production-ready
+
+Bundled `.d.ts`, multi-backend auth, credential redaction, session tools — **1804 tests, 0 vulns**.
+
+</td>
+</tr>
+</table>
+
+<details>
+<summary><b>📑 Table of contents</b> — click to expand</summary>
+
+<br/>
+
+> **Getting started** &nbsp;›&nbsp; [Install](#install) · [Quick start](#quick-start) · [Overview](#overview) · [Installation](#-installation) · [Authentication](#-authentication) · [Store backends](#️-store-backends)
+>
+> **What's inside** &nbsp;›&nbsp; [Comparison](#-comparison) · [Built with](#-built-with) · [Features](#-features) · [Exclusive J.AP enhancements](#-exclusive-jap-enhancements) · [New in v2.4.5](#-new-in-v245)
+>
+> **Messaging** &nbsp;›&nbsp; [Usage examples](#-usage-examples) · [Message helpers](#-message-helpers) · [Channels, history & transcripts](#-channels-history--transcripts) · [WA 2026 catch-up](#-wa-2026-catch-up)
+>
+> **Calls & sync** &nbsp;›&nbsp; [Voice & video calls](#-voice--video-calls) · [User sync queries](#-user-sync-queries) · [Username management](#-username-management)
+>
+> **Toolkit** &nbsp;›&nbsp; [Everyday utilities](#-everyday-utilities) · [Security pack](#-security-pack) · [Bot framework](#-bot-framework) · [Utility modules](#-utility-modules)
+>
+> **Reference** &nbsp;›&nbsp; [Recommended environment](#-recommended-environment) · [TypeScript support](#-typescript-support) · [FAQ & troubleshooting](#-faq--troubleshooting) · [Contributing](#-contributing) · [Credits](#-credits) · [Maintainer](#-maintainer)
+
+</details>
 
 ---
 
@@ -128,6 +192,7 @@ How `@japofc/baileys` stacks up against other Baileys libraries:
 - Carousel Messages
 - Poll & Quiz Messages
 - Rich Response Messages (AIRich)
+- HTML cards (experimental)
 - CTA / Reply / URL Buttons
 - Call Buttons
 - OTP Buttons
@@ -211,52 +276,255 @@ Audio status uses a more compatible implementation to avoid unsupported-version 
 ### AIRich — the rich-response message builder
 A chainable builder (`AIRich`, also exported as `AIJap` / `LeafRich` / `JapAI` / `JapRich`) with 40+ `add*()`/`set*()` methods covering headings, formatted text (hyperlinks/citations/LaTeX), code blocks, tables, image/video/product/post cards, task & progress cards, tip banners, and quick-reply suggestions — the kind of rich card layout you'd normally only see from an official AI/assistant-style bot. See [Usage Examples](#airich--rich-response-cards) below.
 
+### Interactive buttons
+
+`sendMessage()` routes interactive content through the handler set, so all of these send
+as the message type they name — no extra helper, no manual `relayMessage`:
+
+```ts
+// native-flow shorthands: id = quick_reply, url = cta_url, copy = cta_copy,
+// call = cta_call, sections = single_select, webview, flow, catalog, … (~30 of them)
+await sock.sendMessage(jid, {
+    text: 'Pick one',
+    footer: 'powered by JAP',
+    nativeFlow: [
+        { text: 'Yes', id: '.yes' },
+        { text: 'Open', url: 'https://example.com' },
+        { text: 'Copy code', copy: 'JAP2026' }
+    ]
+})
+
+// or hand-built native-flow buttons, for anything the shorthands do not cover
+await sock.sendMessage(jid, {
+    text: 'Do you agree?',
+    title: 'Confirmation',
+    interactiveButtons: [
+        { name: 'quick_reply', buttonParamsJson: JSON.stringify({ display_text: 'Yes', id: '.yes' }) }
+    ]
+})
+```
+
+The same path handles `interactiveMessage`, carousels, `requestPaymentMessage`,
+`productMessage`, `groupInviteMessage`, `eventMessage`, `pollResultMessage` and
+`groupStatusMessage`. Each returns a normal `WAMessage` and is emitted on
+`messages.upsert` like any other send. Pass `{ disableJapyea: true }` in the options to
+force the core message builder instead.
+
+A button shape that matches no shorthand is now **rejected with an error** rather than
+sent as an invisible empty button, so a typo fails loudly at send time.
+
+### Knowing when an app-state sync was only partial
+
+`decodePatches()` no longer pretends a collection is synced when one of its patches could
+not be applied. The state it returns is the last patch that actually applied **and**
+verified, and the failure is reported instead of swallowed:
+
+```js
+const { state, mutationMap, incomplete, synced } = await decodePatches(/* … */)
+
+if (!synced) {
+    // incomplete = { version, reason: 'decode-failed' | 'lthash-mismatch', error? }
+    console.warn(`app state stopped at v${state.version}, patch v${incomplete.version} failed`)
+}
+```
+
+Persist `state` as usual — because it never runs ahead of the mutations it actually
+delivered, the next resync re-fetches the missing patches instead of skipping them. The
+socket does this for you: an incomplete sync is retried with a full snapshot, the same way
+a thrown sync error already was.
+
+### Telling fatal disconnects apart
+
+Not every close deserves a reconnect. `classifyDisconnect()` labels each one and
+`autoReconnect()` acts on it:
+
+| close | what happens |
+| --- | --- |
+| `connectionReplaced` (440) | **stops** — another process owns this session; reconnecting starts a kick-war |
+| `forbidden` (403) | **stops** — the number is restricted; retrying can escalate it |
+| `multideviceMismatch` (411) | **stops** — re-pair required |
+| `loggedOut` (401) | **stops** — credentials are dead |
+| `badSession` (500) | retries, and only stops after **3 in a row** (`badSessionStreak`) |
+| `connectionLost`, `timedOut`, `restartRequired`, … | retries with backoff, as before |
+
+```ts
+const manager = autoReconnect(() => makeWASocket({ auth: state }), {
+    badSessionStreak: 3, // default
+    onFatal: ({ verdict, message, badSessions }) => {
+        console.error(message) // "⚔️ [conflict 440] … ↳ FATAL: STOP this process. …"
+        if (verdict.category === 'auth') void wipeAuthFolder()
+    }
+})
+```
+
+`explainDisconnect(code)` gives the same one-liner for any code, and
+`explainDisconnect(code, { streak: 2 })` reports `2/3 in a row — retrying` instead of
+declaring a corrupt session on the first bad decrypt. Set `reconnectOnFatal: true` to opt
+back into the old always-retry behaviour.
+
+### Fetching from your own intranet
+
+The SSRF guard that protects link previews and `getHttpStream()` rejects loopback,
+private, link-local and cloud-metadata addresses — including IPv4-mapped IPv6 such as
+`[::ffff:169.254.169.254]`. To reach one specific internal host, exempt just that host
+instead of disabling the guard:
+
+```ts
+await assertSafeHttpUrl(url, { allowHosts: ['media.lan', '127.0.0.1'] })
+```
+
+`allowPrivate: true` still exists, but it switches the check off for *every* host — prefer
+`allowHosts` when the URL can come from anywhere.
+
+### Checking a rate limit without spending it
+
+`createRateLimiter()` (used by `withPairingGuard`) can be asked for a verdict without
+consuming anything:
+
+```ts
+const { allowed, retryAfterMs } = limiter.peek(phoneNumber)
+if (!allowed) {
+    console.log(`try again in ${Math.ceil(retryAfterMs / 1000)}s`)
+}
+
+console.log(`${limiter.remaining(phoneNumber)} pairing attempts left this hour`)
+```
+
+`peek()` leaves both the window and `stats` untouched — only `check()` spends a slot. The
+pairing guard uses exactly this, so a request it refuses no longer costs you budget.
+
+### Keeping a persistent store bounded
+
+`maxMessagesPerChat` only caps what is hydrated into memory — the backend keeps every
+message that was ever written through. Trim it yourself:
+
+```ts
+const stored = await store.countStoredMessages(jid) // what is really on disk
+const removed = await store.pruneStoredMessages(jid, 5_000) // keep the newest 5k
+```
+
+`pruneStoredMessages()` deletes oldest-first and returns how many rows went; `keep: 0`
+clears the chat. The in-memory view is untouched (it is already capped).
+
+### Which ffmpeg am I using?
+
+```ts
+import { inspectFfmpegPath, setFfmpegPath } from '@japofc/baileys'
+
+const { path, source, rejected } = await inspectFfmpegPath()
+console.log(path, 'via', source) // e.g. '/usr/bin/ffmpeg via PATH'
+for (const r of rejected) {
+    console.warn(`skipped ${r.source} "${r.path}": ${r.problem}`)
+}
+```
+
+A candidate is only accepted if it is an executable regular file, so a path that lost its
+`+x` bit — or a typo in `FFMPEG_PATH` — is skipped instead of being handed to `spawn()`,
+and auto-detection carries on to `ffmpeg-static` / the system binary. `rejected` tells you
+exactly what was passed over and why.
+
+### Waiting for an event
+
+`waitForEvent` awaits the next matching event and detaches its listener on every exit path
+— resolve, timeout, abort, or a throwing predicate — so the usual "do something, then wait
+for the confirming event" pattern stops leaking listeners.
+
+```ts
+import { waitForEvent } from '@japofc/baileys'
+
+// wait for the metadata of one specific group
+const update = await waitForEvent(sock.ev, 'groups.update', {
+    pick: updates => updates.find(u => u.id === groupJid), // undefined keeps waiting
+    timeoutMs: 10_000
+})
+
+// or keep the whole payload, with an abort signal instead of a timeout
+const upsert = await waitForEvent(sock.ev, 'messages.upsert', {
+    filter: up => up.type === 'notify',
+    timeoutMs: 0,
+    signal: controller.signal
+})
+```
+
+`timeoutMs` defaults to 30 s; `0` or a negative value disables it. Remember that buffered
+events arrive consolidated, so the payload is whatever the flush produced — that is what
+`pick` is for.
+
+### HTML cards — experimental
+
+WhatsApp's rich-response surface also carries an **unshipped** primitive that renders a full
+HTML/CSS/JS document inside the chat card, in the client's own sandboxed webview. Its
+internal typename is `FOAHtmlPrimitiveDemoDONOTUSE` — the `DemoDONOTUSE` suffix is
+WhatsApp's own feature-flag naming, not a warning from this library.
+
+```js
+await sock.sendMessage(jid, {
+    html: `<!doctype html><html><head><style>
+      body { background:#111b21; color:#e9edef; font-family:system-ui; text-align:center; padding:24px }
+      button { background:#00a884; color:#0b141a; border:0; border-radius:10px; padding:12px 24px; font-weight:bold }
+    </style></head><body>
+      <h2>Mini Clicker</h2><div id="n" style="font-size:36px">0</div>
+      <button onclick="document.getElementById('n').textContent = ++c">TAP ME</button>
+      <script>let c = 0</script>
+    </body></html>`
+})
+```
+
+- Several cards at once: `{ html: [docA, docB] }`.
+- Mix it with the other primitives: `{ richResponse: [{ text: 'play:' }, { html: doc }] }`.
+- Allow-list origins the document may reach with `{ html: doc, trustedSources: ['https://example.com'] }`.
+- Socket-free helpers: `assessHtmlCard(html)` / `assertHtmlCard(html)` (non-empty string, 256 KiB
+  default ceiling, byte-accurate), plus `buildHtmlPrimitiveSection()` and
+  `buildHtmlUnifiedResponse()` if you assemble the payload yourself.
+
+> **Treat this as experimental.** It is not a documented, stable message type: rendering
+> depends on the recipient's client build and may disappear without notice. Markup is sent
+> verbatim — never interpolate untrusted input into it.
+
 ### Native Flow Expansion
 
-<table>
-<tr>
-<td valign="top" width="33%">
+Every shorthand below is a key you put on a button object in `nativeFlow: [...]`; the
+right-hand column is the native-flow `name` that goes on the wire. `text` sets the label
+on all of them, `icon` is optional.
 
-**Buttons & Actions**
-- cta_reminder
-- cta_cancel_reminder
-- otp_button
-- authentication_button
-- call_button
-- url_button
-- reply_button
-- voice_call
-- video_call_button
+| shorthand | native-flow name | | shorthand | native-flow name |
+| --- | --- | --- | --- | --- |
+| `id` | `quick_reply` | | `card` | `card_message` |
+| `reply` | `quick_reply` | | `orderDetails` | `order_details` |
+| `url` (or `urlBtn`) | `cta_url` | | `orderStatus` | `order_status` |
+| `copy` | `cta_copy` | | `reviewAndPay` | `review_and_pay` |
+| `call` (or `phoneNumber`) | `cta_call` | | `paymentStatus` | `payment_status` |
+| `sections` | `single_select` | | `paymentMethod` | `payment_method` |
+| `webview` / `openWebview` | `open_webview` | | `trackOrder` | `track_order` |
+| `reminder` | `cta_reminder` | | `reorder` | `reorder` |
+| `cancelReminder` | `cta_cancel_reminder` | | `cancelOrder` | `cancel_order` |
+| `address` | `address_message` | | `clearChat: true` | `clear_chat` |
+| `location: true` | `send_location` | | `screen` | `navigateToScreen` |
+| `catalog` | `catalog_message` | | `flow` | `flow` |
+| `products` | `mpm` | | `voiceCall` / `videoCall` | `voice_call` / `video_call_button` |
 
-</td>
-<td valign="top" width="33%">
+```js
+await sock.sendMessage(jid, {
+    text: 'Order #1234',
+    nativeFlow: [
+        { text: 'Track', trackOrder: 'ORD-1234' },
+        { text: 'Open app', webview: { url: 'https://shop.example/track', inAppWebview: true } },
+        { text: 'Menu', sections: [{ title: 'Help', rows: [{ title: 'Contact us', id: '.cs' }] }] }
+    ]
+})
+```
 
-**Commerce Flow**
-- catalog_message
-- mpm
-- card_message
-- order_details
-- order_status
-- review_and_pay
-- payment_status
-- payment_method
+**`open_webview` is a real in-app WebView button** and is its own native-flow name — it is
+not the same thing as `cta_url`'s `webview_interaction` flag, which modern WhatsApp clients
+ignore. Pass a url string or `{ url, title?, inAppWebview? }`.
 
-</td>
-<td valign="top" width="33%">
-
-**Navigation & Misc**
-- address_message
-- send_location
-- track_order
-- reorder
-- cancel_order
-- clear_chat
-- navigateToScreen
-- flow_action
-
-</td>
-</tr>
-</table>
+**Not supported, on purpose:** `otp_button` / `authentication_button` are WhatsApp Business
+Platform (Cloud API) template buttons gated behind Meta template approval — no MD-protocol
+library can produce them. The old `call_button` / `url_button` / `reply_button` names come
+from the deprecated `buttonsMessage` system and are silently ignored by current clients;
+`phoneNumber`, `urlBtn` and `reply` above are their working equivalents. Commerce buttons
+(`card_message`, `order_*`, `review_and_pay`, `payment_*`) only render when the ids resolve
+to a real Commerce order on your catalog/business account; `flow` needs a published Flow ID.
 
 ### System Notification Filter
 
@@ -565,9 +833,33 @@ await new Poll(sock)
     .send(jid)
 ```
 
+> **v2.4.7** — the poll builder now validates before it sends. Duplicate options are
+> rejected (poll results are bucketed by option text, so duplicates used to merge into
+> one result), `setEndDate()` throws on an unparseable date instead of wiring
+> `endTime: NaN`, and `setQuiz()` can no longer be combined with
+> `setAnnouncementGroup()` (that path emits `pollCreationMessageV2`, which has no
+> `correctAnswer` field, so the quiz was silently dropped). Quiz polls are also finally
+> readable: `getAggregateVotesInPollMessage()` now recognises `pollCreationMessageV5`.
+
+```js
+const poll = new Poll(sock)
+    .setName('Quiz: ibu kota Indonesia?')
+    .addOptions(['Jakarta', 'Bandung', 'Surabaya'])
+    .setQuiz('Jakarta')
+
+poll.validate()        // [] when safe to send — collects every problem at once
+poll.assertValid()     // throws the first problem (build()/send() run this for you)
+poll.countOptions()    // 3
+poll.getOptions()      // ['Jakarta', 'Bandung', 'Surabaya'] (a copy)
+poll.removeOption('Surabaya')
+Poll.MAX_OPTIONS       // 12 — enforced, like MAX_NAME_LENGTH (255) / MAX_OPTION_LENGTH (100)
+
+await poll.send(jid)
+```
+
 ### Carousel
 
-> Each card must be built with `Button(...).toCard()` first — a carousel card is really just a button card with an image/video header.
+> Cards are usually built with `Button(...).toCard()` first. Media cards work as before, and v2.4.7 also allows valid text/button-only carousel cards (WhatsApp renders them) via `addTextCard()` or a `Button(...).toCard()` card with no media header.
 
 ```js
 import { Button, Carousel } from '@japofc/baileys'
@@ -588,6 +880,19 @@ await new Carousel(sock)
     .setBody('Pilih salah satu produk di bawah ini')
     .addCard([cardA, cardB])
     .send(jid)
+
+// Text/button-only card, no image required:
+await new Carousel(sock)
+    .setBody('Quick actions')
+    .addTextCard({
+        title: 'Support',
+        text: 'Choose an action',
+        buttons: [
+            { id: 'faq', text: 'FAQ' },
+            { webview: 'https://example.com/help', text: 'Open Help' }
+        ]
+    })
+    .send(jid)
 ```
 
 ### AIRich — rich response cards
@@ -606,6 +911,47 @@ await new AIRich(sock)
     .addSuggest('Track Order')
     .send(jid)
 ```
+
+For the common case, v2.4.7 also exports a one-liner wrapper around the same builder:
+
+```js
+import { sendJapRich, jap } from '@japofc/baileys'
+
+await sendJapRich(sock, jid, {
+    title: 'Order Summary',
+    markdown: '# Paid\nYour order is being processed.',
+    actions: { text: 'Track', url: 'https://example.com/order/123' },
+    suggestions: ['Track Order', 'Contact Support']
+})
+
+// Or keep chaining after the shortcut builds the card:
+await jap(sock, '# Quick Report').addTip('Generated now').send(jid)
+```
+
+Neutral aliases (`sendRich`, `Rich`, `createRich`, `buildRich`) remain available, but the JAP-branded helpers (`jap`, `japRich`, `createJapRich`, `buildJapRich`, `sendJapRich`) are the preferred names for new code.
+
+**Since v2.4.8 the socket speaks rich directly** — no free function, no passing `sock` around:
+
+```js
+await sock.sendJapRich(jid, { title: 'Order Summary', markdown: '# Paid', suggestions: ['Track'] })
+await sock.sendJapTable(jid, [['Item', 'Qty'], ['Coffee', '2']], { title: 'Cart' })
+await sock.sendJapLatex(jid, 'E = mc^2')
+
+// sendMessage() routes these shapes too
+await sock.sendMessage(jid, { table: [['Item', 'Qty'], ['Coffee', '2']], title: 'Cart' })
+await sock.sendMessage(jid, { latex: '\\frac{a}{b}' })
+await sock.sendMessage(jid, { jap: { markdown: '# Hi', suggestions: ['More'] } })
+```
+
+`sendRich` / `sendTable` / `sendLatex` are neutral aliases of the three socket methods, and
+`{ disableJapyea: true }` opts a call out of the auto-routing layer entirely.
+
+The one-liner now covers **every** AIRich primitive — `latex`, `task(s)`, `widget(s)`,
+`progressStatus`, `thinking`, `quotaUpsell`, `bloks`, `reels`, `post(s)`, `product(s)`,
+`socialEntity`, `inlineVideo`, `contentItems`, `generating` — and a key it does not recognise
+is now an error with a suggestion (`unknown key 'tabel' (did you mean 'table'?)`) instead of
+a silently blank card. Pass `{ allowUnknown: true }` to carry your own extra fields through,
+and import `ONE_LINER_KEYS` if you want to validate input yourself.
 
 `AIRich` supports `{ id, insertAt }` on every `add*()`/`set*()` call, so you can insert a block relative to one you added earlier instead of always appending to the end — handy for streaming/edit-in-place style responses combined with `sendEdit(jid, id)`.
 
@@ -648,13 +994,14 @@ Every message builder lives in its own file under `lib/Builders/`, so you can tr
 |---|---|---|
 | `shared.js` | `Toolkit`, `BaseBuilder`, `RowBuilder` | The shared foundation every other builder is built on. `BaseBuilder` holds the common chainable `send()`/context-info plumbing, `RowBuilder` is the shared row/section helper, and `Toolkit` is the static-helper grab bag (`resize`, `fetchBuffer`, `waitAllPromises`, `extractIE`, media-duration/preview helpers). Nothing here is meant to be instantiated directly in bot code — it exists so `Button`, `Poll`, `Carousel`, etc. don't each reimplement the same plumbing. |
 | `Button.js` | `Button`, `CardBuilder` | The main interactive/native-flow button builder — headers (image/video/document), CTA helpers (`addUrl`, `addCall`, `addReply`, and the wider native-flow set), and `.toCard()` to turn a button message into a `Carousel` card. |
-| `ButtonV2.js` | `ButtonV2` | A lighter-weight variant limited to simple quick-reply buttons — reach for this when you don't need the full native-flow surface of `Button`. |
-| `ButtonV3.js` | `ButtonV3` | Built around `loadFrom(msg)` — loads an existing `templateMessage` (e.g. one you fetched or that was quoted) so you can edit it in place instead of building one from scratch. |
-| `Carousel.js` | `Carousel` | Chains `Button(...).toCard()` results into a swipeable card carousel. Capped at `Carousel.MAX_CARDS` (10) since WhatsApp silently truncates anything beyond that. |
+| `ButtonV2.js` | `ButtonV2` | A lighter-weight legacy `buttonsMessage` variant limited to up to 3 quick-reply buttons — includes `validate()`/`assertValid()`, `countButtons()`/`getButtons()`/`clearButtons()`, and relays with the same canonical `getBizBinaryNode()` envelope as the socket path. |
+| `ButtonV3.js` | `ButtonV3` | Built around `loadFrom(msg)` — loads an existing `templateMessage` (e.g. one you fetched or that was quoted) so you can edit it in place. Also validates hydrated quick-reply/url/call buttons and relays with the canonical biz node. |
+| `Carousel.js` | `Carousel` | Chains `Button(...).toCard()` results into a swipeable card carousel. Accepts media cards and text/button-only cards (`addTextCard()`), validates before send, and is capped at `Carousel.MAX_CARDS` (10) since WhatsApp silently truncates anything beyond that. |
 | `Poll.js` | `Poll` | Poll/vote message builder — question, options, single/multi-select, hidden-voter mode, correct-answer marking, expiry. |
 | `AIRich.js` | `AIRich` (+ aliases `ORich`, `AIJap`, `LeafRich`, `JapAI`, `JapRich`, `RichJap`) | The rich AI-assistant-style response builder described above — headings, formatted text, tables, media/product/post cards, task/progress cards, tip banners, quick-reply suggestions. |
+| `Rich.js` | `jap`, `japRich`, `createJapRich`, `buildJapRich`, `sendJapRich` (+ neutral aliases `Rich`, `createRich`, `buildRich`, `sendRich`) | One-liner convenience wrapper over `AIRich` for common cards (`markdown`, `text`, `actions`, `suggestions`, media, etc.) without replacing the full chainable builder. |
 | `A2UI.js` | `A2UI`, `sendA2UIWidget` | Lower-level A2UI/Bloks widget builder. Builds the flat `components` tree (Column/Row → `children`, Card/Button → `child`, Modal → `trigger`/`content`) that Bloks widgets expect and sends it through the same `getBizBinaryNode()` path as `Button`/`ButtonV2`, so the wire-level node always matches the button names actually sent. |
-| `JapBaileys.js` | `JapBaileys` | A unified builder **hub** — one object that wraps all the builders above behind short method names (`.button()`, `.buttonV2()`, `.buttonV3()`, `.carousel()`, `.poll()`, `.airich()`, `.a2ui()`), plus PascalCase aliases (`.Button()`, `.Carousel()`, `.Poll()`, `.AIRich()`, `.A2UI()`) for developers who prefer that naming style. Nothing new is implemented here — it's purely a single entry point over the individual classes. |
+| `JapBaileys.js` | `JapBaileys` | A unified builder **hub** — one object that wraps all the builders above behind short method names (`.button()`, `.buttonV2()`, `.buttonV3()`, `.carousel()`, `.poll()`, `.airich()`, `.rich()`, `.a2ui()`), plus PascalCase aliases (`.Button()`, `.Carousel()`, `.Poll()`, `.AIRich()`, `.Rich()`, `.A2UI()`) for developers who prefer that naming style. |
 | `index.js` | everything above, plus `MESSAGE_BUILDER_VERSION` | The barrel file — re-exports every builder and its aliases so `import { Button, Poll, AIRich, JapBaileys } from '@japofc/baileys'` works without reaching into individual files. `MESSAGE_BUILDER_VERSION` tracks the builder API surface's own version, independent of the package version. |
 
 **Unified hub example** — useful if you'd rather carry one object around than import each builder individually:
@@ -835,6 +1182,11 @@ import {
 
 // 1. AES-256-GCM encrypted auth state (reads legacy plaintext, migrates on save)
 const { state, saveCreds } = await useEncryptedFileAuthState('./auth', { password: process.env.AUTH_PW })
+
+// A damaged creds.json (wrong password, truncated, empty, not JSON) throws instead of
+// silently minting a new identity on top of your session — since v2.4.8 that guard covers
+// legacy plaintext files too. Recover with restoreAuthState()/repairAuthState(), or delete
+// the folder on purpose to reset.
 const sock = makeWASocket({
   auth: state,
   logger: secureLogger(pino({ level: 'info' })), // 7. redacts qr/tokens/keys in every log line
@@ -1111,13 +1463,741 @@ connection lifecycle simulation, read-receipt/presence capture, and
 `reset()` between tests. Honest scope: it does not emulate WhatsApp servers —
 rate limits, sessions, and encryption are out of scope by design.
 
-`npm test` runs the offline suite (`tests/`, 668 tests, no network needed).
+`npm test` runs the offline suite (`tests/`, 1226 tests, no network needed).
 
 ---
+
+## 🆕 New in v2.4.5
+
+Fresh helpers added this release. All are exported from the package root and fully typed.
+
+### 🗳️ Poll manager — track who voted what (`createPollManager`)
+
+`getAggregateVotesInPollMessage` is stateless and double-counts a voter who changes their mind (WhatsApp re-sends the voter's *full* selection on every change). `createPollManager` keeps that state — each voter counts once, latest choice wins:
+
+```js
+import { createPollManager } from '@japofc/baileys'
+
+const polls = createPollManager()
+const sent = await sock.sendMessage(jid, { poll: { name: 'Lunch?', values: ['Pizza', 'Sushi'], selectableCount: 1 } })
+polls.register(sent) // remembers options + key
+
+// feed it decrypted votes (option names, sha256 hex, or the raw hash Buffers WA sends):
+polls.applyVote(sent.key.id, voterJid, ['Pizza'])
+
+polls.tally(sent.key.id)   // [{ name:'Pizza', count, voters:[] }, ...]
+polls.winner(sent.key.id)  // { winners:['Pizza'], count } (tie-aware)
+console.log(polls.render(sent.key.id)) // live bar chart
+```
+
+### ❤️‍🩹 Session-health monitor (`createSessionHealthMonitor`)
+
+Detects bursts of undecryptable messages (a dead Signal session / Bad-MAC drift) per contact and alerts you — purely observational, never throws into your event loop:
+
+```js
+import { createSessionHealthMonitor } from '@japofc/baileys'
+
+const health = createSessionHealthMonitor({ badMacThreshold: 3, windowMs: 60_000 })
+health.bind(sock)
+health.onUnhealthy(({ jid, failures }) => console.warn(`${jid} session looks broken (${failures} decrypt fails)`))
+health.onRecover(({ jid }) => console.log(`${jid} recovered`))
+```
+
+Ships with `canonicalizeJid()` and `makeJidCanonicalizer(sock)` to key a contact by one identity across the PN/LID split.
+
+### 🔁 Message de-dupe / idempotency (`createMessageDedupe`)
+
+Stops double-replies when WhatsApp re-delivers a message (reconnect, history sync, placeholder resend, retries):
+
+```js
+import { createMessageDedupe } from '@japofc/baileys'
+
+const dedupe = createMessageDedupe({ maxSize: 5000 }) // optional ttlMs
+sock.ev.on('messages.upsert', ({ messages }) => {
+  for (const m of messages) {
+    if (dedupe.seen(m.key)) continue // already handled → skip
+    // ...handle exactly once
+  }
+})
+```
+
+### 🔗 LID ↔ PN helpers on the socket
+
+The mapping helpers are now first-class socket methods (no more reaching into `signalRepository`):
+
+```js
+await sock.getLIDForPN('62812…@s.whatsapp.net') // → '…@lid' | null
+await sock.getPNForLID('123…@lid')              // → '…@s.whatsapp.net' | null
+await sock.getLIDsForPNs([...])                  // batch
+await sock.getPNsForLIDs([...])                  // batch
+await sock.storeLIDPNMappings([{ lid, pn }])     // seed the cache
+```
+
+### 🧩 Small toolkit helpers
+
+Ten new pure, typed helpers exported from the root:
+
+```js
+import { partition, zip, formatCountdown, wordCount, ellipsisMiddle,
+         jidType, randomString, isNumeric, firstEmoji, maskJid } from '@japofc/baileys'
+
+partition([1, 2, 3, 4], n => n % 2 === 0) // [[2,4],[1,3]]
+zip([1, 2], ['a', 'b'])                    // [[1,'a'],[2,'b']]
+formatCountdown(90_061_000)                // '1d 01:01:01'
+ellipsisMiddle('abcdefgh', 5)             // 'ab…gh'
+jidType('123@g.us')                        // 'group'
+maskJid('628123456789@s.whatsapp.net')     // '628******89@s.whatsapp.net'
+```
+
+---
+
+## 🆕 New in v2.4.8 — release summary
+
+**37 reproduced bugs fixed · 58 additions · 1804 tests green · `tsc --strict` clean · 1299 exports.**
+
+Every fix below began as a reproduction script in `scripts/` and is locked by a regression
+test; every addition is implemented against the real protobuf, not stubbed. Full detail:
+[`CHANGELOG.md`](./CHANGELOG.md) and [`BUGREPORT.md`](./BUGREPORT.md) §2.44–§2.97.
+
+**The fixes that matter most**
+
+| What was broken | Why it hurt |
+|---|---|
+| A failed group send persisted "everyone has the sender key" **before** the stanza was sent | the retry distributed nothing — the whole group saw *waiting for this message* until the key rotated |
+| Read receipts shipped `null` ids and duplicates | WhatsApp drops the whole receipt, so *valid* ids in the same stanza were never acknowledged either |
+| Call audio frames were windows into live WASM memory | anything that did not consume a frame synchronously recorded later audio, or silence |
+| A corrupt/empty **plaintext** `creds.json` read as "fresh install" | a new identity was minted and the next `saveCreds()` overwrote the real session |
+| A non-pino logger crashed the Noise handshake | `console`, bunyan/winston, pino v8 or `{}` all died with `logger.child is not a function` |
+| Messages wrapped more than 5 deep stayed wrapped | `getContentType()` answered with a wrapper name and bots missed the message entirely |
+| Accepting an invite forwarded into a group credited the **group** as the inviter | the server was told `admin: <group jid>` and the join stub was filed against it |
+| A stale `cachedGroupMetadata` made PN groups claim LID addressing | every message to that group went out addressed the wrong way |
+| An unreadable tc-token timestamp meant "never refresh" | that contact silently stopped getting privacy tokens |
+| The group-invite icon cache existed but was never wired up | five invites = five profile-picture queries (and a failing 404 each time for an iconless group) |
+
+**The big additions**
+
+- **Albums** (`sendAlbumMessage`), **Newsletter Status API** (post/react/revoke/fetch as a channel), **Status & story** helpers, **Scheduled messages** (+ conditional reveal), **Polls & quizzes**, **Money & split payments**, **HTML apps**, the rest of **A2UI / AI-rich**, **bot-signature verification**, **VoIP** (`makeVoipClient`, `VideoFeeder`, `bindVoiceRecognition`, `call.audioStream()`).
+- **Quality-of-life**: any logger via `ensureLogger()`, pino is optional, `MessageBuilder.bind(sock)`, refreshable native-flow definitions, `TTLCache`, strict JID tooling, read-receipt blocking, and the startup banner is finally opt-out (`printBanner: false` / `JAP_NO_BANNER`).
+
+## 🆕 New in v2.4.6
+
+The v2.4.6 release added a lot that never made it into this file. Here it is, grouped. All
+of it is exported from the package root and typed.
+
+### ✨ AIRich — stacks, raw primitives, profile cards
+
+`addHStack(...)` / `addVStack(...)` lay primitives out side by side or top to bottom
+(SwiftUI-style), and `addProfileCard(profile)` renders an avatar + name + subtitle card:
+
+```js
+import { AIRich } from '@japofc/baileys' // RichAI is the same class, under its brand name
+
+await new AIRich(sock)
+    .addHStack(['**Today**', '12 orders', 'Rp 1.4jt'])
+    .addProfileCard({ username: 'tokojap', full_name: 'Toko JAP', subtitle: 'Online store', picture_url: 'https://…/logo.jpg', is_verified: true })
+    .send(jid)
+```
+
+Meta ships new unified-response primitives constantly, so there are two escape hatches for
+the ones we have no helper for yet:
+
+```js
+// any view_model by name — the GenAI prefix is added for you
+rich.addViewModel('HStackLayoutViewModel', ['**left**', '**right**'], { fallback: 'left / right' })
+// a single primitive, wrapped in a SingleLayoutViewModel
+rich.addRawPrimitive('SomeBrandNewUXPrimitive', { title: 'hi' })
+```
+
+`META_RICH_PREFIX` (`'GenAI'`) is exported so you can build those names yourself.
+
+### 🚨 Seeing decryption failures instead of scraping logs
+
+A dead Signal session used to be visible only as log spam. Now it's an event, and the log
+spam is capped by default:
+
+```js
+sock.ev.on('messages.decrypt-failed', ({ key, error, willRetry }) => {
+    if (!willRetry) metrics.increment('decrypt.dead', { jid: key.remoteJid })
+})
+```
+
+Log-flood protection is **on by default** (`decryptFailureLog: { windowMs: 60000, maxPerWindow: 5 }`);
+pass `decryptFailureLog: false` to the socket for unlimited logging, or build your own
+limiter with `createDecryptFailureTracker({ windowMs, maxPerWindow, max })` — `hit(key)`
+returns `{ log, occurrences, suppressedSincePrevWindow }`, so you log only when `log` is
+true and can still report how many were swallowed.
+
+### 🤖 Bot framework — command router, broadcaster, scheduler
+
+`CommandRouter` is a dispatcher with prefixes, aliases, parsed args, per-user cooldowns,
+owner/admin/group gates and generated help:
+
+```js
+import { CommandRouter, createGroupAdminResolver } from '@japofc/baileys'
+
+const router = new CommandRouter({
+    prefixes: ['.', '!'],
+    ownerJids: ['628111@s.whatsapp.net'],
+    isAdmin: createGroupAdminResolver(sock)
+})
+
+router.command({
+    name: 'kick', aliases: ['remove'], category: 'Group',
+    groupOnly: true, adminOnly: true, botAdmin: true, cooldownMs: 3000,
+    handler: async ctx => ctx.reply(`kicking ${ctx.args._[0]}`)
+})
+
+console.log(router.help())      // grouped, formatted help text
+await router.handle(ctx)        // { matched, executed, outcome, … }
+```
+
+`createBroadcaster({ send, throttleMs, maxRetries, onProgress })` fans one message out to
+many chats at a safe pace, with retries, progress and a `cancel()`:
+
+```js
+const caster = createBroadcaster({ send: (jid, msg) => sock.sendMessage(jid, msg), throttleMs: 1500 })
+const run = caster.broadcast(jids, { text: 'Promo hari ini!' })
+const summary = await run.done  // { total, sent, failed, cancelled, results }
+```
+
+`createScheduler()` runs things later without leaking timers — `scheduleAt(date, fn)`,
+`scheduleAfter(ms, fn)`, `cancel(id)`, `cancelAll()`, `list()`, `size`.
+
+### 🔐 Mini App links that cannot be replayed
+
+Deep links can now be signed and expiring, and inbound requests verified:
+
+```js
+const nonceStore = createNonceStore({ ttlMs: 10 * 60_000 })
+
+const link = createMiniAppLink('https://app.example/order', { orderId: 42 }, {
+    secret: process.env.MINIAPP_SECRET,
+    expiresIn: 5 * 60_000,       // link dies after 5 minutes
+    audience: jid,               // only this chat may open it
+    nonce: nonceStore.issue()    // and only once
+})
+
+// on your web side
+const params = verifyMiniAppRequest(req.url, {
+    secret: process.env.MINIAPP_SECRET, audience: jid, nonceStore
+})
+```
+
+`createNonceStore({ ttlMs, max })` makes each signed link single-use, so a forwarded link
+cannot be replayed by someone else. `parseMiniAppParams` reads params without verifying,
+for links you issued unsigned.
+
+### 🧰 Everyday utilities
+
+```js
+import {
+    unstyleText, parseArgs, paginate, textTable,
+    compactNumber, ordinal, formatIDR, detectCountry, countryFlagOf,
+    mimeToExtension, extensionToMime, mediaKindFromMime, retryWithBackoff
+} from '@japofc/baileys'
+
+unstyleText('𝓙𝓸𝓱𝓷')                    // 'John' — fancy Unicode back to ASCII, so your
+                                        //  word filter and search actually match
+
+parseArgs('ban @x --days 3 "two words"') // { _: ['ban','@x','two words'], days: '3' }
+
+paginate(items, { page: 2, perPage: 10 }) // { items, page, pages, hasPrev, hasNext, … }
+
+console.log(textTable([['Item', 'Qty'], ['Kopi', '12']])) // aligned monospace table
+
+compactNumber(1234567)  // '1.2M'
+ordinal(23)             // '23rd'
+formatIDR(15000)        // 'Rp15.000'
+
+detectCountry('6281234567890') // { dialCode: '62', iso2: 'ID', name: 'Indonesia' }
+countryFlagOf('6281234567890') // '🇮🇩'
+
+mimeToExtension('image/webp')  // 'webp'
+extensionToMime('mp3')         // 'audio/mpeg'
+mediaKindFromMime('audio/ogg') // 'audio'
+```
+
+`retryWithBackoff(fn, { retries, signal })` is now cancelable — the signal aborts before
+the first attempt if already aborted, and interrupts a backoff wait mid-flight.
+
+`createInviteTracker()` gained cross-chat totals: `getGlobalCount(inviter)` returns
+`{ total, active }` across every tracked group and `getGlobalLeaderboard(limit)` ranks
+inviters globally, so "who brought the most people" works for a bot in many groups.
+
+### 📞 VoIP — a full WhatsApp ⇆ RTP/SIP audio bridge
+
+`createCallBridge()` ties the G.711 codecs, the RTP packetizer and the jitter buffer into
+one transport-agnostic object, so you can wire a WhatsApp call to a SIP/PBX leg:
+
+```js
+const bridge = createCallBridge({
+    codec: 'pcmu',
+    onRtp: (rtp) => sipSocket.send(rtp),            // WA → SIP
+    onPcm: (pcm) => waCall.sendAudio(pcm)           // SIP → WA
+})
+
+bridge.sendAudio(pcmFromWhatsApp)   // transcodes + emits RTP packets
+bridge.receiveRtp(packetFromSip)    // buffers for in-order playout
+bridge.drainAudio()                 // decodes what's ready, calls onPcm
+bridge.stats()                      // codec, ssrc, frames, jitter stats
+```
+
+The pieces are also exported on their own: `encodeMulaw`/`encodeAlaw` (+ decoders),
+`createRtpPacketizer`, `createJitterBuffer`, `rtpSequenceNext`/`rtpTimestampNext`, and the
+PCM helpers.
+
+### 🎨 Startup banner
+
+The banner picks a fresh theme and tagline every run. Pin one with
+`JAP_BANNER_THEME=leaf|ocean|sunset|violet|aurora|ember` (or `=daily` for once-a-day
+rotation). Colour follows the usual conventions, read at call time: `NO_COLOR` /
+`FORCE_COLOR=0` turns colour off (the banner still prints), `FORCE_COLOR=1|2|3` forces it
+on even off a TTY — useful in CI and pm2 dashboards.
+
+## 🗂️ Albums, channel status, status interactions & scheduling (v2.4.8)
+
+```js
+// Albums — 2+ images/videos as one gallery (validated up front, paced between items)
+await sock.sendAlbumMessage(jid, [{ image: { url: './1.jpg' } }, { video: { url: './2.mp4' } }], {
+    caption: 'Weekend dump',   // goes on the first item
+    delayMs: 1500              // pacing BETWEEN items (never after the last one)
+})
+await sock.sendAlbum(jid, medias)                       // same thing, neutral name
+
+// Who sees a status — contacts, an allowlist, or everyone except a few
+const audience = makeStatusAudienceMetadata({ contacts, except: ['628x@s.whatsapp.net'] })
+// → { type: 'denylist', statusJidList, excluded, truncated, limit }
+await sock.sendMessage('status@broadcast', { image }, { statusJidList: audience.statusJidList })
+
+// Post a status AS a channel (renders "from <channel>" on the recipient's phone)
+await sock.sendNewsletterStatus('1234@newsletter', { image: { url: './promo.jpg' } }, {
+    statusJidList: audience.statusJidList, newsletterName: 'JAP News'
+})
+await sock.fetchNewsletterStatus('1234@newsletter', { count: 20 })
+// → [{ serverId, timestamp, views, reactions: [{ code, count }] }, …]
+await sock.sendNewsletterAdminInvite(jid, { newsletterJid: '1234@newsletter', newsletterName: 'JAP News' })
+
+// Status interactions — reshare a mention, answer a question sticker, react to a sticker
+await sock.sendStatusReshare(statusMsg, { statusJidList: audience.statusJidList })
+await sock.sendStatusQuestionAnswer(jid, statusMsg.key, 'Nasi goreng, obviously')
+await sock.sendStatusStickerInteraction(jid, statusMsg.key, stickerKey)
+
+// Scheduled messages — encode/decode the envelope, or let the socket hold the timer
+const handle = sock.scheduleMessage(jid, { text: 'Happy new year!' }, { at: new Date('2027-01-01T00:00:00Z') })
+handle.scheduleId; handle.scheduledAt; handle.status   // 'pending' → 'sent' | 'cancelled'
+handle.cancel()                                        // true if it had not fired yet
+await sock.unscheduleMessage(jid, key, { scheduleId }) // tell the other side to drop it
+const { content } = encodeScheduledMessage({ text: 'later' }, { at: Date.now() + 60_000 })
+decodeScheduledMessage(content)                        // { scheduleId, scheduledAt, isDue(), content }
+```
+
+The standalone pieces are all exported too — `makeStatusAudienceMetadata`,
+`makeStatusMentionMessage`, `makeStatusQuestionAnswerMessage`,
+`makeStatusStickerInteractionMessage`, `STATUS_AUDIENCE_*`; `withNewsletterStatusAttribution`,
+`buildNewsletterStatusNode`, `makeNewsletterAdminInviteMessage`, `makeNewsletterStatusSender`,
+`makeNewsletterStatusFetcher`; `encodeScheduledMessage`, `decodeScheduledMessage`,
+`buildUnscheduleProtocolMessage`, `SCHEDULED_MSG_*` — so you can build the payload in one
+process and send it in another.
+
+### A2UI / Bloks, declaratively
+
+```js
+import { a2uiSurface, a2uiCard, a2uiColumn, a2uiRow, a2uiText, a2uiButton,
+         bloksWidget, embeddedScreen, sendA2UI } from '@japofc/baileys'
+
+const surface = a2uiSurface([
+    a2uiCard(a2uiColumn([
+        a2uiText('Order #1234', { variant: 'title' }),
+        a2uiText('Out for delivery')
+    ])),
+    a2uiRow([a2uiButton(a2uiText('Track'), { action: { name: 'cta_url', url: 'https://…' } })])
+])
+
+await sendA2UI(sock, jid, surface)       // send it
+bloksWidget(surface)                     // or just the { uuid, data, type } payload
+embeddedScreen(surface, { title: 'Checkout' })   // full-screen embedded surface
+```
+
+The imperative `A2UI` builder and `sendA2UIWidget()` are unchanged — these helpers produce the
+exact same wire format, so the two styles mix freely.
+
+### AI rich extras
+
+```js
+import { chainOfThoughtSection, decodeAIRich, forwardRichResponse,
+         AI_RICH_RESPONSE_TYPE_STANDARD, AI_RICH_SUBMESSAGE_TYPE } from '@japofc/baileys'
+
+await jap(sock, { ...chainOfThoughtSection(['looked it up', 'checked the docs']),
+                  markdown: '# Answer\nYes.' }).send(jid)
+
+decodeAIRich(msg)                        // structured blocks (alias of readRichMessage)
+await forwardRichResponse(sock, otherJid, msg)   // forward a card, intact
+```
+
+`MessageBuilder` / `MB` are aliases of the `JapBaileys` builder hub, for code written against
+that naming.
+
+## 🧾 Polls, money, status & scheduling parity (v2.4.8)
+
+```js
+// Polls & quizzes
+getPollOptionHash('Nasi goreng', 'hex')          // the bucket votes aggregate into
+makePollAddOptionMessage(pollMsg, ['Soto'])      // → { values, optionHashes, content } to re-send
+makeQuestionMessage('Pilih', { answers: ['a', 'b'], allowMultiple: true })
+makeQuestionReplyMessage(questionKey, 'baik')
+makeQuestionResponseMessage(questionKey, 1, { answers: ['a', 'b'] })
+quizQuestion('Ibukota Indonesia?', ['Bandung', 'Jakarta'], { correct: 1 })
+quizSection('Geografi', [q1, q2]); sideBySideSurveyItem('Kopi atau teh?', 'Kopi', 'Teh')
+
+// Money — integers + offset, never floats
+money(25.5, 'USD')              // { value: 25500, offset: 1000, currencyCode: 'USD' }
+money(15000, 'IDR')             // zero-decimal currencies get offset 1
+readMoney(value)                // → { amount, currencyCode, offset }
+const split = buildSplitPayment({ total: 100000, currencyCode: 'IDR', note: 'Dinner',
+                                  participants: [a, b, c] })   // remainder-safe even split
+buildSplitPaymentUpdate(split, { jid: a })      // → status pending → partial → settled
+readSplitPayment(split)                          // who still owes what
+buildPaymentReminder({ jid, amount: 50, currencyCode: 'USD', dueAt })
+quotaUpsellButton('Upgrade', { url, price: 5, currencyCode: 'USD' }); quotaUpsellSection({ buttons })
+
+// Status, the rest of it
+makeStatusQuotedMessage(statusKey, { text: 'nice' })
+makeStatusAddYoursAssociation(content, originalStatusKey)
+makeStatusNotificationMessage(originalKey, responseKey, { type: STATUS_NOTIFICATION_TYPES.STATUS_RESHARE })
+makeGroupStatusAttribution(content, '123@g.us', { subject: 'Squad' })
+makeGroupStatusReactionMessage(statusKey, '🔥', { groupJid })
+StatusFont.BEBASNEUE; StatusLinkType.PREVIEW
+
+// Channel status, the rest of it
+await sock.reactToNewsletterStatus('1234@newsletter', serverId, '👍')
+await sock.revokeNewsletterStatus('1234@newsletter', serverId)
+await sock.fetchNewsletterStatusUpdates('1234@newsletter', { since })   // only what changed
+const serverId = await waitForNewsletterStatusServerId(sock, key.id)
+makeNewsletterFollowerInviteMessage({ newsletterJid, newsletterName })
+buildNewsletterAdminProfileStatusMessage({ newsletterJid, text: 'hi' })
+
+// Scheduling + conditional reveal
+isScheduledTimeValid(when)      // { valid, reason: 'in the past' | 'too soon' | 'too far ahead' | null }
+buildScheduledMsgMetaNode({ scheduleId, scheduledAt })
+const key = generateRevealKey()
+const locked = buildConditionalRevealMessage({ text: 'Surprise!' }, key, { revealAt: tomorrow })
+await sock.sendMessage(jid, locked.content)   // ciphertext only — nothing leaks early
+locked.reveal(key)                            // → { text: 'Surprise!' }
+```
+
+### Silencing the startup banner
+
+```js
+makeWASocket({ ...config, printBanner: false })   // per socket
+setBannerEnabled(false)                            // programmatically
+JAP_NO_BANNER=1 node bot.js                        // or NO_BANNER=1
+```
+
+## 🤖 Verified bots, video feeds & refreshable button names (v2.4.8)
+
+```js
+// VoIP: build the client first, feed video, transcribe the call
+const voip = makeVoipClient({ autoAccept: false })
+await voip.connectWithSocket(sock)
+
+const feeder = new VideoFeeder(640, 480, 15, frame => call.sendVideo(frame), 'lavfi:testsrc')
+feeder.start()                       // I420 frames at 15 fps; black frames when idle
+i420FrameSize(640, 480)              // 460800 — throws on odd dimensions
+feeder.getStats()                    // { framesEmitted, droppedFrames, underflowFrames, … }
+
+const rec = bindVoiceRecognition(call, async pcm => (await transcribeAudio(pcm)).text, {
+    chunkMs: 3000, onText: t => console.log('heard:', t)
+})
+await rec.stop()                     // → the full transcript
+
+// Verify a bot message instead of trusting it
+const root = loadBotSignatureRoot(process.env.BOT_TRUST_ROOT_PEM)
+verifyBotSignature(msg, { root })    // { verified, reason, useCase, version, chainLength }
+readSignedRichResponse(msg, { root })// `rich` is null unless the proof checks out
+verifyRichResponseSignature(msg, { root })
+isParsableCertificateChain(chain)    // structural DER check before any crypto
+```
+
+Without a trust root `verifyBotSignature()` returns `{ verified: false, reason: 'no trust root' }`
+— it never reports an unchecked message as verified.
+
+```js
+// Native-flow button names, refreshable at runtime
+getExports()                          // { buttonNames, source, version, updatedAt }
+isKnownButtonName('quick_reply')      // what the validator accepts right now
+await update(['brand_new_flow'])      // merge a name WhatsApp just started accepting
+await update({ url: 'https://…/nativeflow.json' })
+enableAutoUpdate({ url, intervalMs: 3600_000 })   // unref'd timer
+disableAutoUpdate(); reloadExports()  // back to what this build shipped with
+```
+
+`sendMessage({ interactiveButtons })` validates against that live table, so a new button name
+no longer needs a library release.
+
+```js
+// The rest of the A2UI / AI-rich surface
+a2uiWidget([{ id: 't', component: 'Text', text: 'hi' }])  // free-form components
+decodeBloksWidget(widget)             // → { components, byId, text, surfaceId, … }
+await sendBloksWidget(sock, jid, widget, { body, footer })
+bloksSection('Details', [a2uiText('…')])
+embeddedTabbedContent([embeddedTab('Overview', tree), embeddedTab('Specs', tree2)])
+thinkingSection(['looked it up', 'checked the docs'])
+searchPlannerSection('kopi', [plannerStep('search', { status: 'done' })], { sources })
+multipleResponseSection(['draft A', 'draft B'], { selected: 1 })
+fusedComparisonSection(['Phone A', 'Phone B'], [{ label: 'Price', values: ['$1', '$2'] }], { recommend: 1 })
+```
+
+## 🧰 HTML apps, usernames, stickers & compatibility switches (v2.4.8)
+
+```js
+// HTML apps — a document on any account, a webview card when you host the bundle
+checkHtmlApp(html)                     // { ok, bytes, errors, warnings, hasScript, externalRefs }
+await sock.sendHtmlDocument(jid, html, { fileName: 'invoice.html', caption: 'Your invoice' })
+await sock.sendHtmlApp(jid, html, { url: 'https://you.host/app', title: 'Dashboard' })
+await sock.sendHtmlApp(jid, html)      // no url → { mode: 'document' } instead of a dead card
+await sock.sendHtmlArtifact(jid, csvBuffer, { fileName: 'report.csv', title: 'Report' })
+
+const { html: shared, sessionId } = withHtmlMultiplayer(html, { participants: [a, b], maxPlayers: 4 })
+// the bundle can read window.__JAP_MULTIPLAYER__ — injection is idempotent
+
+htmlSection('Report', html); htmlMedia(pngBuffer, { mimetype: 'image/png', name: 'chart' })
+prepareFileArtifact(buffer, { fileName: 'app.html' })   // { mimetype, fileLength, sha256, document }
+```
+
+```js
+// Soft dependencies, caching, thumbnails
+const sharp = await loadSharp()        // null when not installed — never throws by default
+await loadFfmpeg({ required: true })   // …unless you ask it to
+const cache = new TTLCache({ ttlMs: 60_000, max: 500 })
+await cache.wrap('user:1', () => fetchUser(1))          // memoised + de-duplicated
+await prepareLinkThumbnail(url, { size: 192 })          // cached 10 min, works without sharp
+
+// Usernames
+validateUsername('@ja.p_official')     // { valid, username, reason }  ← says *why* it failed
+displayUsername(value, { fallback: pushName })
+isUsernamePin('123456'); stripUsernamePrefix('628…@s.whatsapp.net')
+
+// Stickers, music, social previews, comments, events, associations
+normalizeStickers([linkSticker(url), locationSticker({ latitude, longitude }), musicSticker({ title })])
+buildMusicMessage({ title, artist, songUri })           // host-checked against MUSIC_ALLOWED_HOSTS
+buildSocialPreview({ url, title }); readSocialPreview(msg)
+makeCommentMessage(targetKey, 'mantap'); makeEventInviteMessage({ eventTitle, startTime })
+makeMessageAssociation(parentKey, { type: MESSAGE_ASSOCIATION_TYPES.MEDIA_ALBUM })
+
+// Card sections
+mapSection([placeItem({ name, latitude, longitude })]); sportsSection({ home, away, status: 'live' })
+reminderSection('Bayar listrik', when); taskSection(['a', { title: 'b', status: 'done' }])
+transparencySection({ sources, model: 'jap-1' })
+
+// Auth extras
+const { state, saveCreds } = await useJAPDBAuth({ file: './auth.json' })   // or { client }
+countAuthFileLocks({ detail: true })   // { count, paths } — watch the mutex table stay bounded
+```
+
+### Compatibility switches
+
+```js
+makeWASocket({ textAsConversation: true })          // plain text goes out as { conversation }
+await sock.sendMessage(jid, { text: 'hi', asConversation: true })   // or per message
+```
+
+Only *plain* text degrades: a link preview, a quote or a font keeps `extendedTextMessage`, so
+nothing is silently dropped. The default is unchanged.
+
+## 🔌 Any logger, bound builders & JAPDB auth (v2.4.8)
+
+```js
+// A logger that is not this build's pino no longer crashes the handshake
+makeWASocket({ logger: console })                 // works
+makeWASocket({ logger: ensureLogger(pinoV8) })    // any pino major
+makeWASocket({ logger: ensureLogger(false) })     // silence
+ensureLogger(myLogger).child({ class: 'ns' })     // child bindings merged pino-style
+```
+
+```js
+// Bind every sender onto the socket (mbuilder-style)
+const unbind = MessageBuilder.bind(sock)          // or MB.bind(sock)
+await sock.sendButtons(jid, { text: 'Hi', buttons })
+await sock.sendRich(jid, { markdown: '# Hi' })
+sock.mb.carousel().addCard(…)
+unbind.skipped                                     // names already on the socket — never shadowed
+unbind()                                           // restores exactly what was there before
+MessageBuilder.bind(sock, { prefix: 'jap' })       // → sock.japSendButtons(…)
+```
+
+```js
+// Key-value auth for simple document stores, or a plain JSON file
+const { state, saveCreds } = await useJAPDBAuth({ file: './auth.json' })
+const { state, saveCreds } = await useJAPDBAuth({ client: db, session: 'bot-1' })
+// `useNekoDBAuth` is kept as a drop-in alias — same storage layout
+```
+
+### pino is optional
+
+```bash
+npm i @japofc/baileys            # no pino pulled in
+npm i @japofc/baileys pino@8     # your pino, your version — no second copy
+```
+
+With pino installed (v8, v9 or v10) it is used exactly as before. Without it, a built-in
+JSON-lines logger takes over, so nothing in the library breaks:
+
+```js
+import logger, { usingPino, createFallbackLogger } from '@japofc/baileys'
+usingPino                                   // false when pino is absent
+createFallbackLogger({ level: 'debug' })    // same shape: levels, child(), level filtering
+```
+
+### Channel posts arrive with their real timestamp — and a server id
+
+```js
+sock.ev.on('newsletter.message', post => {
+    post.server_id      // the handle react/revoke/fetch need (messages.upsert drops it)
+    post.fromMe         // true when the notification says the author is you
+    post.timestamp      // seconds, from the notification (used to be 0 → 1 Jan 1970)
+    post.message        // the decoded Message
+})
+```
+
+### Envelopes we cannot decrypt are visible now
+
+```js
+sock.ev.on('messages.decrypt-failed', failures => {
+    for (const f of failures) {
+        f.error      // 'Unsupported encrypted envelope: msmsg' — used to vanish entirely
+        f.willRetry  // false: retrying something we cannot decrypt would just loop
+    }
+})
+
+makeWASocket({ unsupportedEnvelopeTypes: [] })   // or push them down the normal decrypt path
+```
+
+### Read receipts are validated and batched
+
+```js
+await sock.readMessages(keys)                      // id-less keys skipped, ids de-duplicated
+await sock.readMessages(keys, { batchSize: 25 })   // ...and split into stanzas of 25
+aggregateMessageKeysNotFromMe(keys)                // → [{ jid, participant, messageIds }]
+```
+
+A key without an id used to go out as `<item id=null/>`, which makes WhatsApp drop the whole
+receipt — including the valid ids sitting next to it in the same stanza.
+
+### Group invites stop re-querying the group icon
+
+```js
+sock.groupInviteThumbnailCache          // one per socket, inspect/clear it
+makeWASocket({ groupInviteThumbnailCache: createGroupInviteThumbnailCache({ ttlMs, max }) })
+makeWASocket({ groupInviteThumbnailCache: false })   // opt out entirely
+
+// both spellings work now — the proto-matching ones used to be dropped silently
+await sock.sendMessage(jid, { groupInvite: { jid: group, inviteCode, inviteExpiration, subject, text } })
+await sock.sendMessage(jid, { groupInvite: { jid: group, inviteCode, inviteExpiration, groupName, caption } })
+```
+
+Five invites to the same group now cost **one** profile-picture query instead of five — and a
+group with no icon no longer pays a failing 404 round-trip every single time.
+
+### A failed group send no longer poisons the sender key
+
+```js
+await sock.readSenderKeyMemory(groupJid)          // { [group]: { [deviceJid]: true } }
+await sock.clearSenderKeyMemory(groupJid)         // → { cleared, devices }; next send re-distributes
+await sock.forgetSenderKeyDevices(groupJid, [deviceJid])   // just one stuck participant
+```
+
+The memory is written only after the stanza is actually on the wire, so a send that dies
+mid-flight can no longer leave a group permanently unable to decrypt you.
+
+### Invites credit the right person, and group addressing stops guessing
+
+```js
+// §2.94 — accepting an invite that was forwarded into a group
+await sock.groupAcceptInviteV4(key, inviteMessage)       // admin/participant = key.participant
+await sock.communityAcceptInviteV4(key, inviteMessage)   // (used to be the group jid)
+
+// §2.95 — what addressing mode is this group on?
+resolveGroupAddressingMode(metadata)
+// → { mode: 'pn' | 'lid', source: 'metadata' | 'participants' | 'default', confident }
+isUsableGroupMetadata(cached, { requireAddressingMode: true })
+// → { usable, reason: 'no addressingMode (cache predates LID)' }
+```
+
+A `cachedGroupMetadata` written before `addressingMode` existed used to make every message to
+a **PN** group go out addressed as LID; the mode is now read off the participant jids before
+anything is defaulted, and an unusable cache is re-fetched with the reason logged.
+
+### Fork-parity helpers: JID/LID, native flow, read receipts
+
+```js
+// JID / LID — resolution goes through the session's mapping store, never by guessing
+await lidToJid('111@lid', sock)      // → '628…@s.whatsapp.net' | null  (null = genuinely unknown)
+await jidToLid('628…@s.whatsapp.net', sock)
+normalizeJid('628:12@c.us')          // '628@s.whatsapp.net'
+parseJid(jid); encodeJid('628', 'lid')
+phoneToJid('0812-3456-7890', { defaultCountry: '62' })   // local numbers, opt-in
+isJidLid(jid); isJidMetaAi(jid); isJidUserLike(jid)
+
+// Reading any message shape
+getTextFromMessage(msg)        // caption, button reply, list reply, poll name, event title…
+getInteractiveResponse(msg)    // { type: 'button'|'template'|'list'|'native_flow', id, text, params }
+getStatusMediaType(msg)        // 'text' | 'image' | 'video' | 'audio' | null
+getSenderJid(msg); getSenderLid(msg); getSenderPn(msg)
+
+// Native-flow buttons
+checkNativeFlowButtons(buttons)          // { ok, errors, warnings: ['… does not render on WhatsApp Web'] }
+validateAndNormalizeButtons(buttons)     // loose input → [{ name, buttonParamsJson }]
+validateAndNormalizeSections(sections)   // flat rows accepted, ids filled, limits enforced
+
+// Read receipts, locally
+setBlockReadReceipts(true)                             // whole session
+setBlockReadReceipts(true, { chats: [jid] })           // just these chats
+getBlockReadReceipts(); clearBlockReadReceipts()
+```
+
+`sock.readMessages()` consults that switch, so a scraper can run without marking anything
+read — without touching the account's real privacy setting.
+
+### More parity: strict JIDs, member labels, scheduled calls, media helpers
+
+```js
+validateJid('12@s.whatsapp.net')   // { valid: false, reason: 'phone JIDs must be 5–16 digits' }
+assertJid(jid); assertLid(lid); toJid('+62 812…'); jidKind(jid)   // 'group' | 'lid' | 'location' | …
+isJidLocationBroadcast(jid)        // the live-location pseudo-chat
+
+await sock.sendMessage(groupJid, buildMemberLabelMessage('Admin'))      // or '' to clear
+await sock.sendMessage(groupJid, makeScheduledCallCreationMessage({ title: 'Standup', at, callType: 'video' }))
+await sock.sendMessage(groupJid, makeScheduledCallEditMessage(callKey)) // cancel
+readScheduledCall(msg)             // { title, at, callType }
+
+await videoToJpeg('./clip.mp4', { at: '00:00:02' })        // one frame, as a Buffer
+await convertToOpusBuffer('./note.m4a')                    // → { buffer, mimetype, ptt: true }
+```
+
+`processContactAction`, `emitSyncActionResults`, `readTcTokenIndex`, `shouldSendNewTcToken`,
+`isTcTokenExpired` and `toTcTokenSeconds` are exported from the package root now — they
+existed, but nothing re-exported them, so no app could reach them.
 
 ## 📞 Voice & Video Calls
 
 Experimental audio-call support via a bundled WASM call stack + WebRTC relay. Requires the optional `@roamhq/wrtc` peer dependency.
+
+> Since v2.4.8 a missing `@roamhq/wrtc` (or any relay connect failure) is reported through
+> `onTransportError` / your logger instead of escaping as an unhandled promise rejection —
+> which on Node 15+ took the whole bot process down. Pass `logger` to `new VoipClient({ … })`
+> to see those warnings, and inspect the relay with:
+>
+> ```js
+> relay.getStats()            // { sentPackets, receivedPackets, droppedPackets, openConnections, … }
+> relay.getConnectionStats()  // per relay: state, bufferedPackets, bufferedBytes, lastIceRttMs, drops
+> ```
+>
+> `droppedPackets` in `getStats()` genuinely counts drops now; before v2.4.8 it was always `0`.
+>
+> Reconnecting is also safe now: the signaling bridge patches the shared auth state **once**
+> and detaches itself on reconnect and on `voip.disconnect()`. Before v2.4.8 every reconnect
+> left another wrapper (and the whole discarded bridge) attached to `authState.keys.set`
+> forever. `bridge.dispose()` / `bridge.isDisposed` are public if you drive the bridge directly.
 
 ```js
 import { VoipClient } from '@japofc/baileys'
@@ -1174,6 +2254,11 @@ const call = await voip.call('628123456789', { audioSource: './greeting.mp3' })
 call.react('👍')
 call.setHandRaised(true)
 const stopRecording = call.recordToFile('./call.wav') // remote peer → .wav
+
+// or take the inbound audio as a stream (frames are independent copies since v2.4.8):
+const pcm = call.audioStream({ encoding: 'pcm16' })   // 16-bit LE, pipe it anywhere
+pcm.pipe(createWriteStream('./peer.raw'))
+call.audioStream()                                    // objectMode Float32Array frames
 await voip.previewCallLink('call-link-token')
 
 // 🔀 switch what the call plays WITHOUT hanging up (IVR-style flows)
@@ -1316,6 +2401,11 @@ await bot.start()
 ---
 
 ## 🧩 Utility Modules
+
+<details>
+<summary><b>📖 Show the full utility-module reference</b> — 140+ helpers across <code>lib/Utils</code></summary>
+
+<br/>
 
 A sample of the utilities exported from `lib/Utils` beyond the message builders above:
 
@@ -1687,6 +2777,10 @@ await migrateFolderToAuthState('./auth', state, saveCreds)
 // timestamped encrypted backups that prune themselves:
 await backupAuthStateRotating('./auth', './backups', { password, keep: 5 })
 
+// change the auth password (or encrypt a legacy plaintext folder) without losing the session:
+await rotateAuthPassword('./auth', { oldPassword: old, newPassword: next })
+// → { rotated: 112, migratedFromPlaintext: 0, failed: [], skipped: [] }
+
 const shutdown = createShutdownManager({ sock, saveCreds })
 shutdown.register('close db', () => db.close())
 shutdown.attach()                                   // SIGINT/SIGTERM → clean exit
@@ -1775,7 +2869,7 @@ import { AIRich, createCallLog, createCallGuard, createAlwaysOnline,
 // whole AI card from one markdown string (headings/code/tables auto-detected)
 await AIRich.fromMarkdown('# Report\n\n```js\nconst x = 1\n```\n\n| A | B |\n|---|---|\n| 1 | 2 |', sock).send(jid)
 new AIRich(sock).addChecklist([{ text: 'done item', done: true }, 'open item'])
-    .addKeyValue({ Name: 'JAP', Version: '2.5.0' })
+    .addKeyValue({ Name: 'JAP', Version: '2.4.5' })
     .addProgressBar('Download', 70, 100)
 
 const callLog = createCallLog()               // who called, outcome, duration
@@ -1910,7 +3004,7 @@ locks.setMaintenance(true, { message: '🛠️ maintenance' }) // owners still p
 // isForwarded/getForwardInfo · rental.renderList
 //
 // HUNT/UPDATE ROUND (fork ecosystem fully swept — 0 gaps left):
-// WA version → live 2.3000.1048638736 · flow backWords ('kembali' rewinds) ·
+// WA version → live 2.3000.1048680055 · flow backWords ('kembali' rewinds) ·
 // url-watcher ETag/304 conditional polling · health probe timeouts ·
 // crash-guard alert throttling · webhook body caps · wa.me/message/CODE
 // business links · formatParticipantChanges(➕➖⬆️⬇️) · boxText('MENU') ╔═╗ ·
@@ -1932,6 +3026,204 @@ flows.define('order', [{ id: 'size', prompt: 'Size:', choices: ['S', 'M', 'L'] }
 // quota.setLimit live, tiers.getExpiring(3d) renewal crons,
 // reminders.snooze(id, 10m), todos.setDue + getOverdue (⏰ in render)
 ```
+
+#### Group / community metadata helpers (v2.4.7)
+
+```js
+import { extractLIDPNPairs, GROUP_PARTICIPANTS_CHUNK_SIZE } from '@japofc/baileys'
+
+// Every LID↔PN pair a metadata fetch already carries — normalized + deduplicated.
+// The socket now stores these automatically on groupMetadata() /
+// groupFetchAllParticipating() / communityMetadata(), so getLIDForPN() and
+// getPNForLID() resolve group members without extra USync round-trips.
+const meta = await sock.groupMetadata(jid)
+extractLIDPNPairs(meta)        // [{ lid: '999@lid', pn: '628…@s.whatsapp.net' }, …]
+extractLIDPNPairs(cachedMeta)  // pure + null-safe — works on cached metadata too
+
+GROUP_PARTICIPANTS_CHUNK_SIZE  // 25 — participant arrays are chunked at this size
+```
+
+> Also fixed in v2.4.7: group metadata no longer returns `NaN` for `subjectTime` /
+> `creation` / `descTime` when WhatsApp omits them (they're `undefined` now, so they
+> don't persist as `null`), and community metadata finally reports `addressingMode`
+> and honours the server's `size` attribute — both previously diverged from the
+> group parser on identical payloads.
+
+#### `w:gp2` group-notification helpers (v2.4.7)
+
+```js
+import { resolveNotificationActors, extractNotificationLIDPNPairs,
+         parseNotificationParticipants } from '@japofc/baileys'
+
+// Who did it, and to whom — resolved as a UNIT. Before v2.4.7 the two halves fell
+// back independently, so a join request could report the requester's LID next to
+// the admin's phone number.
+const actors = resolveNotificationActors(notificationNode, actionChild)
+// { actingLid, actingPn, actingUsername, affectedLid, affectedPn, affectedIsActor }
+
+parseNotificationParticipants(actionChild)        // messageStubParameters shape
+extractNotificationLIDPNPairs(node, actionChild)  // [{ lid, pn }] — consistent pairs only
+
+// The socket now stores those pairs automatically on every group notification, and a
+// stale pair can be dropped after a change-number event:
+await sock.signalRepository.lidMapping.removeMapping('628…@s.whatsapp.net')
+```
+
+#### App-state sync diagnostics (v2.4.8)
+
+```js
+await sock.appStateSyncStatus()
+// [ { name: 'critical_block', version: 0,  synced: false, mutations: 0 },
+//   { name: 'regular_high',   version: 41, synced: true,  mutations: 183 }, … ]
+
+await sock.appStateSyncStatus('regular_high')   // one collection
+await sock.resyncAppState(['regular_high'], false)
+```
+
+`version` is what the next resync would ask the server to continue from, `synced` says whether
+we hold any state for that collection at all, and `mutations` is how many index entries the
+LT-hash is tracking — the three numbers you actually need when chat state (mute/archive/pin)
+stops following your phone. Unknown collection names fail with a 400 instead of returning
+nothing.
+
+#### Partial media downloads (v2.4.8)
+
+```js
+// Sniff the real file type before committing to a 50 MB download
+const head = await sock.downloadMediaHeader(msg, 32)          // first 32 plaintext bytes
+const isMp4 = head.subarray(4, 8).toString() === 'ftyp'
+
+// Any slice you like: { start, end } (end exclusive) or { start, length }
+const slice = await sock.downloadMediaRange(msg, { start: 1_000_000, length: 65_536 })
+
+// Resume an interrupted transfer — everything from byte N onwards
+const rest = await sock.downloadMediaRange(msg, { start: bytesAlreadyOnDisk })
+```
+
+Both go through the same expired-media recovery as `sock.downloadMedia()` (a 410/404 asks the
+phone to re-upload and retries once); pass `{ disableRetry: true }` to skip it. The standalone
+functions `downloadMediaRange()` / `downloadMediaHeader()` are exported too. Ranges are
+validated up front — a negative `start`, an empty window, or passing both `end` and `length`
+fails with a 400 instead of a confusing stream error. (Before v2.4.8 a `startByte`-only range
+resolved with **zero bytes**; see BUGREPORT 2.77.)
+
+#### Media-connection and device-list helpers (v2.4.7)
+
+```js
+import { parseMediaConnNode, isMediaConnExpired, MEDIA_CONN_DEFAULT_TTL,
+         dedupeJidsByUser, dedupeDeviceList } from '@japofc/baileys'
+
+// The <media_conn> handshake, parsed safely. Before v2.4.7 a missing/non-numeric
+// `ttl` became NaN, and `now - fetchDate > NaN * 1000` is false forever — so the
+// upload connection was never refreshed again and kept using a stale auth token.
+const media = parseMediaConnNode(mediaConnNode)
+// { hosts, auth, ttl, fetchDate } — ttl is never NaN; falls back to 300s
+MEDIA_CONN_DEFAULT_TTL              // 300
+
+isMediaConnExpired(media)           // false while fresh
+isMediaConnExpired({ ttl: NaN })    // true — anything unusable counts as expired
+
+// Order-preserving dedup, as used by the USync device fan-out. Messaging your own
+// number used to enumerate (and encrypt to) every one of your devices twice.
+dedupeJidsByUser([{ jid: a }, { jid: a }, { jid: b }])   // → [a, b]
+dedupeDeviceList(devices)  // keyed on user + device index; `u@s` === `u:0@s`
+```
+
+#### Reading USync errors (v2.4.7)
+
+```js
+import { extractUSyncErrors, hasUSyncQueryError, USyncQuery, USyncUser } from '@japofc/baileys'
+
+const result = await sock.executeUSyncQuery(
+    new USyncQuery().withContactProtocol().withUsers(
+        new USyncUser().withPhone('+628111'),
+        new USyncUser().withPhone('+628222')
+    )
+)
+
+// Before v2.4.7 a refused query ("rate overlimit") parsed into an empty list that looked
+// exactly like "nobody matched". The server's errors are now on the result.
+result.errors            // [{ code: 479, text: 'rate overlimit' }]
+hasUSyncQueryError(result.errors)   // true -> the whole query failed, don't trust `list`
+                                    // false -> only individual users failed (entries carry `jid`)
+
+extractUSyncErrors(rawIqNode)       // same extraction, standalone and null-safe
+
+// onWhatsApp() now also accepts @lid arguments for real (they used to be dropped
+// silently), always resolves to an array, and tells you which LID an entry came from:
+await sock.onWhatsApp('628111@s.whatsapp.net', '99887766@lid')
+// [{ jid: '628111@s.whatsapp.net', exists: true, lid: undefined }, …]
+```
+
+#### Store dictionary and participant-list helpers (v2.4.7)
+
+```js
+import { makeOrderedDictionary } from '@japofc/baileys'
+import { upsertParticipants, removeParticipants, setParticipantsAdmin } from '@japofc/baileys'
+
+// Restoring a snapshot used to replace the array but not the id index, so every
+// message came back invisible to get() and re-upserting one appended a duplicate.
+const dict = makeOrderedDictionary(m => m.key.id)
+dict.fromJSON(JSON.parse(snapshot))
+dict.get('AAA')          // the restored message, not undefined
+dict.update(newVersion)  // true when it really updated (was always false)
+dict.has('AAA')          // new in v2.4.7
+dict.size()              // new in v2.4.7
+
+// Participant-list mutations: order-preserving, non-mutating, and matching a person
+// by `id` OR `phoneNumber` (the two halves of a LID<->PN pair are the same member).
+upsertParticipants(list, [{ id: '2@lid' }])        // merges, never duplicates
+setParticipantsAdmin(list, [{ id: '1@lid' }], null) // demote -> admin: null (not false)
+removeParticipants(list, [{ phoneNumber: '628…@s.whatsapp.net' }])
+```
+
+#### Labels repository round-trip (v2.4.7)
+
+```js
+import { ObjectRepository } from '@japofc/baileys'
+
+// toJSON() emits an array, but the constructor only understood a { id: entity } map, so
+// feeding a snapshot back in produced entries keyed '0', '1', … and lost every label.
+const labels = new ObjectRepository({ L1: { id: 'L1', name: 'Work' } })
+const restored = ObjectRepository.fromJSON(JSON.parse(JSON.stringify(labels)))
+restored.findById('L1')   // { id: 'L1', name: 'Work' } — not undefined
+restored.hasId('L1')      // new in v2.4.7
+restored.load([{ id: 'L2', name: 'Family' }])
+restored.clear()
+```
+
+#### Chat-list classification (v2.4.7)
+
+```js
+import { classifyMessage, isMissedCallMessage, MISSED_CALL_STUB_TYPES } from '@japofc/baileys'
+
+// Before v2.4.7 a missed call could never be a "real" message — the content check was
+// ANDed over the stub-type allowances too — so it never moved its chat up the list.
+classifyMessage(missedCallStub, meId)
+// { isReal: true, isStub: true, isMissedCall: true, isAboutMe: false,
+//   incrementsUnread: false, contentType: undefined }
+
+classifyMessage(textMessage, meId).contentType   // 'conversation'
+isMissedCallMessage(msg)                         // true for the 4 missed-call stubs
+MISSED_CALL_STUB_TYPES                           // the table itself
+```
+
+#### Reading `messageStubParameters` (v2.4.7)
+
+```js
+import { parseStubParticipant, stubParticipantIdentities, stubParticipantsInclude } from '@japofc/baileys'
+
+// Stub parameters are ragged: a JSON pair for some stub types, a plain jid for others.
+parseStubParticipant('{"lid":"1@lid","pn":"2@s.whatsapp.net"}')  // { lid, pn }
+parseStubParticipant('628111@s.whatsapp.net')                    // { phoneNumber }
+stubParticipantIdentities(p)   // every jid this person can be addressed by
+
+// "Is one of these people me?" — checks lid AND pn, so a LID-addressed group matches.
+stubParticipantsInclude(msg.messageStubParameters, sock.user.id, sock.user.lid)
+```
+
+> Invite-link join requests now emit `group.join-request` as well (only the
+> admin-add variant used to), so `createJoinRequestManager()` sees them.
 
 ```js
 // the 20+ round: text tools, reminders, quotas, tiers, todos & more
@@ -1977,6 +3269,10 @@ watcher.start()
 | `doctor` | `checkEnvironment()` / `printEnvironmentReport()` — one-call environment diagnostics |
 
 Every module above ships a matching `.d.ts`, so your editor will show full hover-docs regardless of which ones you import.
+
+</details>
+
+<div align="right"><sub><a href="#top">⬆ back to top</a></sub></div>
 
 ---
 
@@ -2063,8 +3359,8 @@ Since v2.4.3 the banner doubles as a startup health card — gradient wordmark p
    ╚════╝   ╚═╝  ╚═╝  ╚═╝
 
   ╭────────────────────────────────────────────────────────────────╮
-  │ @japofc/baileys v2.4.4   ● typed · extended · battle-tested    │
-  │ WA Web 2.3000.1048638736   node 20.20.2 · linux/x64 · pid 1472 │
+  │ @japofc/baileys v2.4.5   ● typed · extended · battle-tested    │
+  │ WA Web 2.3000.1048680055   node 20.20.2 · linux/x64 · pid 1472 │
   │ ⚡ anti-ban toolkit   🛡️ bug-shield   📚 github.com/JAPofc/baileys │
   ╰────────────────────────────────────────────────────────────────╯
    "from Termux to production."  — Made with 🍃 by J.AP
@@ -2123,7 +3419,16 @@ Use responsibly and follow WhatsApp Terms of Service.
 
 ---
 
-## 📝 v2.4.2 & v2.4.3 Patch Notes
+## 📝 Patch Notes Archive
+
+> The full, current release history lives in **[CHANGELOG.md](./CHANGELOG.md)**. Older per-version summaries are archived below.
+
+<details>
+<summary><b>📜 Show archived patch notes (v2.4.3 → V4)</b></summary>
+
+<br/>
+
+### v2.4.2 & v2.4.3
 
 > Summary — full details in [CHANGELOG.md](./CHANGELOG.md).
 
@@ -2136,7 +3441,7 @@ Use responsibly and follow WhatsApp Terms of Service.
 - **AI groups (experimental, server-gated)**: `addAiBotToGroup` / `createAiGroup` — Meta AI in groups; acceptance depends on Meta's per-account rollout, rejections surface as status codes.
 - **36-upgrade sweep** across the whole toolkit (kv TTL, notes pinning, recurring reminders, economy `work()`/`rob()`/interest, level PRESTIGE ⭐, `revealHint`, temp bans, `waitAndAssert`, watchdog `autoRestart`, sparklines, `ctx.quotedText`, ETag polling, alert throttling, `boxText`, and more) + 9 follow-ups.
 - **Startup banner v2**: framed health card (package + WA Web version, node/platform/pid, daily tagline).
-- WA Web version → live `2.3000.1048638736`; CLI gained `wa` and `sticker` insights.
+- WA Web version → live `2.3000.1048680055`; CLI gained `wa` and `sticker` insights.
 
 ### v2.4.2
 
@@ -2149,7 +3454,7 @@ Use responsibly and follow WhatsApp Terms of Service.
 
 ---
 
-## 📝 v2.1.0 Patch Notes
+### v2.1.0
 
 > Summary — full details in [CHANGELOG.md](./CHANGELOG.md).
 
@@ -2162,7 +3467,7 @@ Use responsibly and follow WhatsApp Terms of Service.
 
 ---
 
-## 📝 V6 Patch Notes
+### V6
 
 - Fixed a `package.json` typo: the version field was mistakenly left at `1.0.1` instead of `2.0.1` after the V5 release — corrected to `2.0.1` so the published package version matches the intended release.
 - Expanded README documentation, especially around `lib/Builders/`:
@@ -2172,7 +3477,7 @@ Use responsibly and follow WhatsApp Terms of Service.
 
 ---
 
-## 📝 V5 Patch Notes
+### V5
 
 - Added [Username Management](#-username-management): `checkUsername`, `checkUsernameMulti`, `setUsername`, `deleteUsername`, `getMyUsername`, `setUsernamePin`, `findUserByUsername`, `fetchContactUsernames`, `getUsernameRecommendations`, layered onto the existing `USyncUsernameProtocol` support.
 - Added the [Bot Framework](#-bot-framework) (`Bot`, `Context`, `SessionManager`, `StatsManager`, `MediaManager`, `SQLiteStore`). Adapted on the way in:
@@ -2184,13 +3489,16 @@ Use responsibly and follow WhatsApp Terms of Service.
 
 ---
 
-## 📝 V4 Patch Notes
+### V4
 
 - Kept the existing J.AP custom MessageBuilder classes and AIRich implementation intact.
 - Added `whatsapp-rust-bridge@0.5.5` as a runtime dependency. The library already dynamically imports this module for LT Hash/app-state and crypto helpers; declaring it prevents accidental missing-module fallbacks in normal installations.
 - Existing guarded fallbacks for platforms where the native bridge cannot load remain in place.
 - ESM-only package metadata is preserved; no CommonJS build is included.
 
+</details>
+
+<div align="right"><sub><a href="#top">⬆ back to top</a></sub></div>
 
 ---
 

@@ -58,7 +58,10 @@ export function extractAddressingContext(stanza: any): {
     senderAlt: any;
     recipientAlt: any;
 };
-export function decryptMessageNode(stanza: any, meId: any, meLid: any, repository: any, logger: any): {
+/** Pick the alternate identity form (LID<->PN) to retry decryption against, from the stanza's own pairing. Baileys#2763. */
+export function getAlternateDecryptionJid(stanza: any, triedJid: string, author: string): string | undefined;
+export function buildDecryptFailureEvent(msg: { key?: any; messageStubType?: any; messageStubParameters?: any[]; category?: string }): { key: any; error: string; willRetry: boolean } | undefined;
+export function decryptMessageNode(stanza: any, meId: any, meLid: any, repository: any, logger: any, options?: { failureTracker?: import('./decrypt-failure-tracker.js').DecryptFailureTracker }): {
     fullMessage: {
         key: {
             server_id?: any;
@@ -80,4 +83,13 @@ export function decryptMessageNode(stanza: any, meId: any, meLid: any, repositor
     category: any;
     author: any;
     decrypt(): Promise<void>;
+};
+
+/** Error text used for an envelope type this build cannot decrypt. */
+export declare const UNSUPPORTED_ENVELOPE_ERROR_TEXT: string;
+/** `<enc type>` values acknowledged and skipped by default (`['msmsg']`). */
+export declare const DEFAULT_UNSUPPORTED_ENVELOPE_TYPES: string[];
+/** Turn an undecryptable envelope into the same `{ key, error, willRetry }` shape a failed decryption produces. */
+export declare function buildUnsupportedEnvelopeEvent(stanza: any, meId: string, meLid: string, type?: string): {
+    key: any; error: string; willRetry: boolean;
 };

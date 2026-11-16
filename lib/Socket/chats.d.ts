@@ -75,6 +75,13 @@ export function makeChatsSocket(config: any): {
         };
     } | undefined>;
     resyncAppState: (...args: any[]) => Promise<any>;
+    /** Per-collection app-state bookkeeping: what version we would resync from, and how much state we hold. */
+    appStateSyncStatus: (collections?: import('../Types/index.js').WAPatchName | import('../Types/index.js').WAPatchName[]) => Promise<Array<{
+        name: import('../Types/index.js').WAPatchName;
+        version: number;
+        synced: boolean;
+        mutations: number;
+    }>>;
     chatModify: (mod: any, jid: any) => Promise<void>;
     cleanDirtyBits: (type: any, fromTimestamp: any) => Promise<void>;
     addOrEditContact: (jid: any, contact: any) => Promise<void>;
@@ -88,6 +95,11 @@ export function makeChatsSocket(config: any): {
     star: (jid: any, messages: any, star: any) => Promise<void>;
     addOrEditQuickReply: (quickReply: any) => Promise<void>;
     removeQuickReply: (timestamp: any) => Promise<void>;
+    getLIDForPN: (pn: string) => Promise<string | null>;
+    getPNForLID: (lid: string) => Promise<string | null>;
+    getLIDsForPNs: (pns: string[]) => Promise<{ lid: string; pn: string }[]>;
+    getPNsForLIDs: (lids: string[]) => Promise<{ lid: string; pn: string }[]>;
+    storeLIDPNMappings: (pairs: { lid: string; pn: string }[]) => Promise<void>;
     type: string;
     ws: import("./Client/websocket.js").WebSocketClient;
     ev: {
