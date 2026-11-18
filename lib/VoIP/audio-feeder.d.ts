@@ -1,0 +1,20 @@
+export declare class AudioFeeder {
+    #private;
+    private readonly sampleRate;
+    private readonly channels;
+    private readonly framesPerChunk;
+    private readonly onChunk;
+    private readonly source;
+    droppedChunks: number;
+    underflowChunks: number;
+    bytesProduced: number;
+    chunksEmitted: number;
+    constructor(sampleRate: number, channels: number, framesPerChunk: number, onChunk: (chunk: Float32Array) => void, source?: string | {
+        data: Buffer;
+        ext?: string;
+    });
+    start: () => void;
+    /** Swap the decode source mid-stream; returns true when the running pipeline was restarted with the new source. */
+    swapSource: (source: string | { data: Buffer; ext?: string }) => boolean;
+    stop: () => void;
+}
