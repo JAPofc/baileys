@@ -1,0 +1,36 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        node: [20, 22, 24]
+    name: Node ${{ matrix.node }}
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: ${{ matrix.node }}
+          cache: npm
+      - run: npm ci
+      # JAP@Add (§2.177): the ffmpeg-dependent tests skip themselves when no binary is
+      # found, which is why a real bug (mjpeg + limited-range YUV on ffmpeg 7) sat unnoticed
+      # behind green runs. `ffmpeg-static` is now a devDependency and is what
+      # requireFfmpegPath() looks for, so `npm ci` is enough -- no apt step, and the same
+      # binary on every runner. Fail the job if it is somehow missing, rather than skipping.
+      - name: Verify ffmpeg is available (media + VoIP tests must not skip)
+        run: node -e "import('./lib/Utils/ffmpeg-path.js').then(m=>m.requireFfmpegPath()).then(p=>console.log('ffmpeg:',p))"
+      - name: Unit tests (incl. .d.ts parity + VoIP shim against real bundle)
+        run: npm test
+      - name: Type-check public API under tsc --strict
+        run: npm run test:types
+      - name: Pack sanity (tarball builds, no stray files)
+        run: npm pack --dry-run
