@@ -1,7 +1,10 @@
 # Code Review & Bug-Check Report — `@japofc/baileys`
 
-**Repo:** github.com/JAPofc/baileys · **Reviewed at commit:** `21bb421` (Initial commit)
-**Date:** 2026-09-29 → **2026-10-06 (v2.4.8 closed)** · **Reviewer:** @japaudit
+**Repo:** github.com/JAPofc/baileys · **Reviewed through:** `ee95870` (v2.5.1, published)
+**Date:** 2026-09-29 → **2026-11-23 (v2.5.1 released)** · **Reviewer:** @japaudit
+
+_The `21bb421` this report used to cite was a local working commit that never existed on
+GitHub; findings through §2.227 are all in the published 2.5.1._
 
 **v2.4.8 close-out:** 97 numbered findings (§2.1–§2.97), all reproduced before being fixed and
 all locked by a regression test. Reproduction scripts live in `scripts/` (`aq-repro.mjs` …

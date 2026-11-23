@@ -9,12 +9,11 @@ _Nothing yet._
 
 ---
 
-## [2.5.1] — belum dirilis / not yet published
+## [2.5.1] — 2026-11-23
 
-Tagged in the repository, **not on npm** — awaiting the maintainer's go-ahead. Unlike earlier
-drafts of this entry, `lib/` *has* changed: the fixes below are runtime behaviour, not
-infrastructure. Tests are not shipped (`files` excludes them), so none of the test-only
-corrections affect installs.
+Published to npm as `@japofc/baileys@2.5.1` and tagged `v2.5.1`. Unlike 2.5.0, this release
+really does contain the four new APIs listed below — the 2.5.0 tarball never did, which is
+why those entries moved here.
 
 ### Added
 
