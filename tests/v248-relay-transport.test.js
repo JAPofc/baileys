@@ -5,6 +5,17 @@ import assert from 'node:assert/strict'
 import { readFileSync } from 'node:fs'
 import { RelayRtcTransport } from '../lib/VoIP/relay-transport.js'
 
+/**
+ * §2.217 (pattern 42): this file used to assert that a relay list produces an error whose
+ * message matches /@roamhq\/wrtc/ -- i.e. it pinned the ABSENCE of the optional package as
+ * the specification. Installing the package turned the suite red while the library got
+ * strictly better. What §2.79 is really about is that a failing connect is reported through
+ * `onTransportError` instead of escaping as an unhandled rejection; that holds either way,
+ * only the message differs. With the driver present the connect still fails here (there is
+ * no relay at 10.0.0.1), which is exactly the path worth exercising.
+ */
+const wrtcInstalled = await import('@roamhq/wrtc').then(() => true, () => false)
+
 const relayList = {
 	relays: [{ relay_id: 7, relay_name: 'edge-1', token_id: 0, addresses: [{ protocol: 0, ipv4: '10.0.0.1', port: 3478 }] }],
 	relay_tokens: ['tok'],
@@ -24,7 +35,7 @@ const withRejectionWatch = async fn => {
 	return seen
 }
 
-test('§2.79 a relay list with @roamhq/wrtc missing reports an error instead of crashing', async () => {
+test('§2.79 a relay list that cannot connect reports an error instead of crashing', async () => {
 	const errors = []
 	const warned = []
 	const transport = new RelayRtcTransport({
@@ -36,7 +47,11 @@ test('§2.79 a relay list with @roamhq/wrtc missing reports an error instead of 
 	assert.deepEqual(rejections, [], 'connect failure escaped as an unhandled rejection')
 	assert.equal(errors.length, 1)
 	assert.ok(errors[0][0] instanceof Error)
-	assert.match(errors[0][0].message, /@roamhq\/wrtc/)
+	assert.match(
+		errors[0][0].message,
+		wrtcInstalled ? /./ : /@roamhq\/wrtc/,
+		'a connect failure must arrive as a real Error, naming the missing package when that is the cause'
+	)
 	assert.equal(errors[0][1].ip, '10.0.0.1')
 	assert.deepEqual(warned, ['relay transport connection failed'])
 	await transport.closeAll()

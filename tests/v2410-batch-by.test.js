@@ -132,7 +132,23 @@ test('§2.146 fetchBuffer still times out when the caller passes its own signal'
  * there is no mismatch check, so throwing is the only thing preventing a patch with a lost
  * mutation from advancing the saved version. This test pins the throw so nobody "fixes" it again.
  */
-test('§2.144 an unparseable index throws — on purpose, see §2.75', async () => {
+/**
+ * JAP@Fix (CI): `whatsapp-rust-bridge` is an optionalDependency, so this test cannot run
+ * on a platform without a prebuilt binary. Probe once and skip with a reason rather than
+ * fail with ERR_MODULE_NOT_FOUND -- the §2.144 contract being pinned here is about
+ * `decodeSyncdMutations`, and it is covered where the bridge exists. The bridge's own
+ * absent-platform behaviour is tested in `v2410-lt-hash.test.js`.
+ */
+const bridgeAvailable = await (async () => {
+	try {
+		await import('whatsapp-rust-bridge');
+		return true;
+	} catch {
+		return false;
+	}
+})();
+
+test('§2.144 an unparseable index throws — on purpose, see §2.75', { skip: !bridgeAvailable && 'whatsapp-rust-bridge has no prebuilt binary here' }, async () => {
 	const { randomBytes } = await import('node:crypto');
 	const { expandAppStateKeys } = await import('whatsapp-rust-bridge');
 	const { proto } = await import('../WAProto/index.js');

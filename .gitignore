@@ -8,3 +8,4 @@ docs-dist/
 captures/
 auth_protocol_capture/
 *.tgz
+does-not-matter.db

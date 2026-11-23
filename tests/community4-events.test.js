@@ -201,9 +201,9 @@ test('text poll: number votes, revoting, tally, tie handling, bars', async () =>
 
 // -------------------------------------------------------- version + exports
 
-test('version is 2.5.0 and barrel exports the round', () => {
+test('version is 2.5.1 and barrel exports the round', () => {
 	const pkg = JSON.parse(readFileSync(new URL('../package.json', import.meta.url), 'utf8'));
-	assert.equal(pkg.version, '2.5.0');
+	assert.equal(pkg.version, '2.5.1');
 
 	const utilsIndex = readFileSync(new URL('../lib/Utils/index.js', import.meta.url), 'utf8');
 	const utilsDts = readFileSync(new URL('../lib/Utils/index.d.ts', import.meta.url), 'utf8');

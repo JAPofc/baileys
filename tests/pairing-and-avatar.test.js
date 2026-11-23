@@ -1,6 +1,21 @@
 import { describe, it } from 'node:test';
 import assert from 'node:assert/strict';
 
+// JAP@Fix (Termux/CI): `sharp` is an optional peer with no android binary. This test
+// previously hard-failed when it was missing -- correct intent (a silent skip hides
+// regressions) but wrong mechanism: it broke every platform that cannot install sharp.
+// The right split: skip here WITH A STATED REASON, and make CI fail if sharp is absent,
+// so the skip can only ever happen on a developer machine, never on CI.
+const needsSharp = await (async () => {
+    try {
+        await import('sharp');
+        return { skip: false };
+    } catch {
+        return { skip: 'sharp is not installed (no prebuilt binary on this platform)' };
+    }
+})();
+
+
 // Tests for the pairing-code input validation + full-size profile picture
 // support added in the fork-parity sweep. All offline.
 
@@ -70,7 +85,7 @@ describe('generateProfilePicture full-size (fit: contain)', () => {
     // JAP@Fix this used to t.skip() when sharp was missing. sharp is a devDependency, so a
     // skip here means the environment is broken, not that the test is inapplicable -- and a
     // test that excuses itself is a test that reports green while covering nothing.
-    it('default stays cover 720x720; contain letterboxes without cropping', async () => {
+    it('default stays cover 720x720; contain letterboxes without cropping', needsSharp, async () => {
         const sharp = (await import('sharp')).default;
         const { generateProfilePicture } = await import('../lib/Utils/messages-media.js');
         const wide = await sharp({ create: { width: 1600, height: 900, channels: 3, background: { r: 200, g: 30, b: 30 } } }).png().toBuffer();

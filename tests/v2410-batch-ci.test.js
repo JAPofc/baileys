@@ -7,13 +7,26 @@
 // §2.192 — anti-delete: clearChat() left the deleted-message records behind.
 import { test, describe } from 'node:test'
 import assert from 'node:assert/strict'
-import sharp from 'sharp'
 import { convertToWebP, _toStickerWebP, isAnimatedWebP, isWebPBuffer } from '../lib/Utils/stickerpack.js'
 import { createGroupMetadataCache } from '../lib/Utils/group-cache.js'
 import { MessageStore, createAntiDeleteUpsertHandler, createMessageStoreHandler } from '../lib/Utils/anti-delete.js'
 import { proto } from '../WAProto/index.js'
 
 const REVOKE = proto.Message.ProtocolMessage.Type.REVOKE
+
+// JAP@Fix (Termux/CI): `sharp` has no prebuilt binary for android, and a static
+// `import sharp from 'sharp'` made this ENTIRE file fail to load there -- taking the group
+// cache and anti-delete suites, which need no image library at all, down with it. Probe
+// once; only the sticker suite depends on it. CI verifies sharp is present, so this skip
+// can never hide a regression there.
+const sharp = await (async () => {
+	try {
+		return (await import('sharp')).default
+	} catch {
+		return null
+	}
+})()
+const needsSharp = { skip: sharp ? false : 'sharp is not installed (no prebuilt binary on this platform)' }
 
 const solid = (w, h, background = '#f00') =>
 	sharp({ create: { width: w, height: h, channels: 3, background } })
@@ -28,7 +41,7 @@ const animatedGif = async () => {
 		.toBuffer()
 }
 
-describe('§2.186/§2.187 sticker conversion', () => {
+describe('§2.186/§2.187 sticker conversion', needsSharp, () => {
 	test('an animated GIF stays animated', async () => {
 		const gif = await animatedGif()
 		assert.equal((await sharp(gif, { animated: true }).metadata()).pages, 3, 'fixture must really be animated')

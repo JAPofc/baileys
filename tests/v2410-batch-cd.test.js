@@ -60,17 +60,49 @@ const fakeDb = (seed = {}) => {
 	};
 };
 
+/**
+ * JAP@Fix (§2.214): these two tests asserted `rejects` because `better-sqlite3` was not
+ * installed -- they pinned the ABSENCE OF A DRIVER as the specification. Install the
+ * optional peer and they fail, not because the adapter broke but because the environment
+ * changed. A test must assert the contract, which here is "a string `database` is a path",
+ * and that contract has two correct outcomes depending on whether the driver is there.
+ */
+const driverInstalled = await (async () => {
+	try {
+		await import('better-sqlite3');
+		return true;
+	} catch {
+		return false;
+	}
+})();
+
 test('§2.163 a string passed as `database` is treated as a path, not crashed on', async () => {
 	// Previously: TypeError: db.pragma is not a function — the exact snippet both
-	// getting-started guides shipped. It must now reach the real driver instead.
-	await assert.rejects(
-		() => useSqliteAuthState({ database: './does-not-matter.db' }),
-		err => {
-			assert.doesNotMatch(err.message, /db\.pragma is not a function/, 'no cryptic TypeError');
-			assert.match(err.message, /better-sqlite3/, 'it reached the driver load, i.e. it was understood as a path');
-			return true;
+	// getting-started guides shipped.
+	const dir = await freshDir();
+	const dbPath = join(dir, 'string-form.db');
+	try {
+		if (driverInstalled) {
+			const auth = await useSqliteAuthState({ database: dbPath });
+			try {
+				assert.ok(auth.state.creds, 'the string was opened as a database path');
+				assert.ok((await stat(dbPath)).isFile(), 'and the file is where the string said');
+			} finally {
+				await auth.close();
+			}
+		} else {
+			await assert.rejects(
+				() => useSqliteAuthState({ database: dbPath }),
+				err => {
+					assert.doesNotMatch(err.message, /db\.pragma is not a function/, 'no cryptic TypeError');
+					assert.match(err.message, /better-sqlite3/, 'it reached the driver load, i.e. it was understood as a path');
+					return true;
+				}
+			);
 		}
-	);
+	} finally {
+		await rm(dir, { recursive: true, force: true });
+	}
 });
 
 test('§2.163 neither option given produces an actionable error', async () => {
@@ -89,8 +121,13 @@ test('§2.164 a nested dbPath has its parent directory created', async () => {
 	const dir = await freshDir();
 	const nested = join(dir, 'deep', 'nested', 'auth.db');
 	try {
-		// the driver is absent, so this rejects — but only after the directory work
-		await assert.rejects(() => useSqliteAuthState({ dbPath: nested }), /better-sqlite3/);
+		// the directory work happens before the driver is loaded, so this holds either way
+		if (driverInstalled) {
+			const auth = await useSqliteAuthState({ dbPath: nested });
+			await auth.close();
+		} else {
+			await assert.rejects(() => useSqliteAuthState({ dbPath: nested }), /better-sqlite3/);
+		}
 		const info = await stat(join(dir, 'deep', 'nested'));
 		assert.ok(info.isDirectory(), 'the parent path was created');
 		assert.equal(info.mode & 0o777, 0o700, 'and it is private, matching useMultiFileAuthState');

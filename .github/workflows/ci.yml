@@ -14,6 +14,48 @@ jobs:
       matrix:
         node: [20, 22, 24]
     name: Node ${{ matrix.node }}
+    # JAP@Add (§2.216): the four networked store adapters are public exports that, until
+    # 2.5.1, had never been run against the databases they target. In-memory doubles were
+    # not enough -- `pg-mem` implements neither LIKE escapes nor the ESCAPE clause, so the
+    # §2.216 escaping bug was invisible there and the correct fix made the double fail.
+    # Real servers, every run.
+    services:
+      postgres:
+        image: postgres:17-alpine
+        env:
+          POSTGRES_USER: wa
+          POSTGRES_PASSWORD: wa
+          POSTGRES_DB: wa
+        ports: ['5432:5432']
+        options: >-
+          --health-cmd "pg_isready -U wa" --health-interval 5s
+          --health-timeout 5s --health-retries 20
+      mysql:
+        image: mysql:8
+        env:
+          MYSQL_ALLOW_EMPTY_PASSWORD: 'yes'
+          MYSQL_DATABASE: wa
+        ports: ['3306:3306']
+        options: >-
+          --health-cmd "mysqladmin ping -h 127.0.0.1" --health-interval 5s
+          --health-timeout 5s --health-retries 30
+      redis:
+        image: redis:7-alpine
+        ports: ['6379:6379']
+        options: >-
+          --health-cmd "redis-cli ping" --health-interval 5s
+          --health-timeout 5s --health-retries 20
+      mongo:
+        image: mongo:8
+        ports: ['27017:27017']
+        options: >-
+          --health-cmd "mongosh --quiet --eval 'db.runCommand({ping:1}).ok'"
+          --health-interval 5s --health-timeout 5s --health-retries 30
+    env:
+      JAP_TEST_POSTGRES_URL: postgres://wa:wa@127.0.0.1:5432/wa
+      JAP_TEST_MYSQL_URL: mysql://root@127.0.0.1:3306/wa
+      JAP_TEST_REDIS_URL: redis://127.0.0.1:6379
+      JAP_TEST_MONGO_URL: mongodb://127.0.0.1:27017
     steps:
       - uses: actions/checkout@v7
       - uses: actions/setup-node@v7
@@ -28,6 +70,34 @@ jobs:
       # binary on every runner. Fail the job if it is somehow missing, rather than skipping.
       - name: Verify ffmpeg is available (media + VoIP tests must not skip)
         run: node -e "import('./lib/Utils/ffmpeg-path.js').then(m=>m.requireFfmpegPath()).then(p=>console.log('ffmpeg:',p))"
+      # JAP@Fix (CI Node 24): `sharp` was only an OPTIONAL peerDependency, so whether
+      # `npm ci` installed it depended on npm's resolution -- on the runner it did not, and
+      # two suites that import it died with ERR_MODULE_NOT_FOUND. It is a real
+      # devDependency now. Verify it the same way as ffmpeg: a missing image library must
+      # fail the job, not quietly un-run the image tests.
+      # JAP@Fix (pattern 38/40): an optional backend that is not installed is code no test
+      # ever runs. Three output bugs (§2.209, §2.212, §2.213) and a cryptic-error bug
+      # (§2.215) hid exactly there. These are devDependencies now; fail the job if any is
+      # missing rather than let its suites skip themselves into a green run.
+      - name: Verify optional backends are installed (their suites must not skip)
+        run: |
+          node -e "import('sharp').then(m=>console.log('sharp:', m.default.versions.vips))"
+          node -e "import('@napi-rs/image').then(()=>console.log('napi-rs/image: ok'))"
+          node -e "import('better-sqlite3').then(m=>console.log('better-sqlite3:', new m.default(':memory:').open))"
+          node -e "import('fluent-ffmpeg').then(()=>console.log('fluent-ffmpeg: ok'))"
+          node -e "import('@roamhq/wrtc').then(m=>console.log('@roamhq/wrtc:', typeof m.default?.RTCPeerConnection ?? typeof m.RTCPeerConnection))"
+      # The live-server suite skips itself when these URLs are absent, which is right for a
+      # laptop and wrong for CI. Assert the URLs are set BEFORE the tests run, so a service
+      # container that silently disappears turns the job red instead of turning six
+      # integration tests into skips nobody reads.
+      - name: Verify live databases are reachable (store adapter suite must not skip)
+        run: |
+          node -e "
+            const need = ['POSTGRES','MYSQL','REDIS','MONGO'].map(n=>'JAP_TEST_'+n+'_URL');
+            const missing = need.filter(k=>!process.env[k]);
+            if (missing.length) { console.error('missing:', missing.join(', ')); process.exit(1); }
+            console.log('live DB urls set:', need.length);
+          "
       - name: Unit tests (incl. .d.ts parity + VoIP shim against real bundle)
         run: npm test
       - name: Type-check public API under tsc --strict

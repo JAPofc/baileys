@@ -41,6 +41,17 @@ export function makeNewsletterSocket(config: any): {
     newsletterChangeOwner: (jid: any, newOwnerJid: any) => Promise<void>;
     newsletterDemote: (jid: any, userJid: any) => Promise<void>;
     newsletterDelete: (jid: any) => Promise<void>;
+    /**
+     * JAP@Add (§2.219): run a membership/notification action chosen at runtime. Dispatches
+     * only over query ids this library already ships; an unknown action throws a Boom 400
+     * locally rather than reaching the server.
+     */
+    newsletterAction: (jid: string, action: 'FOLLOW' | 'UNFOLLOW' | 'MUTE' | 'UNMUTE') => Promise<any>;
+    /**
+     * JAP@Add (§2.219): set who may react to posts in a channel. Rides the existing
+     * UPDATE_METADATA mutation; an unknown mode throws a Boom 400 locally.
+     */
+    newsletterReactionMode: (jid: string, mode: 'ALL' | 'BASIC' | 'NONE') => Promise<any>;
     groupQuery: (jid: any, type: any, content: any) => Promise<any>;
     groupMetadata: (jid: any) => Promise<{
         id: any;

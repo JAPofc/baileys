@@ -9,6 +9,109 @@ _Nothing yet._
 
 ---
 
+## [2.5.1] — belum dirilis / not yet published
+
+Tagged in the repository, **not on npm** — awaiting the maintainer's go-ahead. Unlike earlier
+drafts of this entry, `lib/` *has* changed: the fixes below are runtime behaviour, not
+infrastructure. Tests are not shipped (`files` excludes them), so none of the test-only
+corrections affect installs.
+
+### Added
+
+> Moved here from the 2.5.0 entry, where they were listed by mistake. Verified against the
+> published tarball: `@japofc/baileys@2.5.0` on npm contains none of these files. If you
+> installed 2.5.0 expecting them, they are not there.
+
+- **`estimateMessageSize()` — how big is this message, actually (§2.221).** Nothing in this library, or in any fork of it I could find, could answer that before a send. The content is built through the library's own `generateWAMessageContent()` and run through the real protobuf encoder, so the number is a measurement rather than a guess, and `heaviest` names the single largest field so you know what to cut. It never performs network I/O: remote media (`{ url }`, a stream) is reported as unmeasurable instead of being fetched, and an unknown media size is `undefined`, never `0`. `excludes` states plainly what the count leaves out (Signal encryption overhead, WebSocket framing, the media file body).
+
+- **`createSendPacer()` / `SendPacer` — spread sends over time (§2.222).** Minimum spacing, bounded jitter, rolling per-minute and per-hour quotas, optional typing-time scaling, a bounded queue, and strict release ordering. Deliberately **not** called "anti-ban": nobody outside WhatsApp knows their enforcement rules, and a library that promises to prevent bans invites the exact risk-taking it claims to prevent. It is a queue with a clock, and the stats it returns say nothing about account safety. Every time source (`now`, `sleep`, `random`) is injectable, so pacing behaviour is tested to the millisecond with no real timers.
+
+- **`preflightMessage()` — check a message before you send it (§2.220).** Every limit WhatsApp enforces was already encoded in this library, but only as a throw at send time, which means a bot learns its payload is invalid while a user is waiting. `preflightMessage(content, { jid })` runs the same checks offline and returns structured findings (`ok`, `errors`, `warnings`, each with a stable `code`) instead of throwing — including poll option counts, quiz-polls-outside-channels, caption length counted in code points, button/list/album/sticker-pack caps, malformed mention jids, and unresolvable media. It never throws, whatever it is handed; a validator that crashes is the failure it exists to prevent. A clean result means "nothing locally detectable is wrong", never "this will be delivered", and the result says so in `checked`. Also exported: `PREFLIGHT_LIMITS` and `formatPreflight()`.
+
+- **`sock.newsletterAction(jid, action)` and `sock.newsletterReactionMode(jid, mode)` (§2.219).** Ported from community forks: a runtime-chosen channel action for bots driven by a config table, and control over who may react to channel posts. `newsletterAction` dispatches only over query ids this library already ships (FOLLOW/UNFOLLOW/MUTE/UNMUTE) — no invented protocol ids — and an unknown action or mode is rejected locally as a Boom 400 instead of failing opaquely at the server.
+
+### Fixed
+
+- **§2.225 `makeStatusMentionMessage({ attributionType })` now actually sends the attribution.** It was returned as a top-level `contextInfo`, a field `proto.Message` does not have, so protobufjs discarded it silently and every reshare went out unattributed. It is now placed on the quoted content's own `contextInfo`; the input object is not mutated and an existing `contextInfo` is preserved.
+- **§2.226 passing a key with an explicit `remoteJid: undefined` no longer erases the `status@broadcast` default.** Object spread copies present-but-undefined keys, so `{ id, remoteJid }` lifted from a message without a `remoteJid` produced a key pointing nowhere. Fixed in all four status builders that compose a key; a real override still wins.
+- **§2.227 `makeGroupStatusReactionMessage` no longer attaches a `contextInfo.parentGroupJid` that cannot be transmitted.** `ReactionMessage` has no `contextInfo` field; the group is identified by `key.remoteJid`. The field was removed rather than relocated, since the protocol offers no valid home for it.
+- **§2.223 `useSingleFileAuthState().saveCreds()` now actually saves before it resolves.** It queued a debounced write and returned immediately, so a process that exited within three seconds of pairing lost its session and had to scan a new QR code — while `useMultiFileAuthState().saveCreds()` had always written synchronously. New `flush()` and `close()` methods force pending key writes, and the debounce timer no longer holds the event loop open.
+- **§2.224 the single-file credential store is created 0600.** It was created with the default umask (0644 on most systems) while every later write used 0600, leaving the session world-readable on a shared host until the first flush.
+- **§2.219 `newsletterUpdate()` could not send a settings-level change.** `settings` was hardcoded to `null`, correct for name/description/picture edits but silently dropping anything else. Callers may now pass `settings` explicitly; omitting it keeps the previous wire shape exactly.
+- **A moderate `minimatch` advisory (GHSA-g3hv-75wg-m249) is resolved.** `npm audit fix` proposed *downgrading* typedoc from 0.28.20 to 0.23.25; the real fix is an override to `minimatch@^11.0.9`, which the already-current typedoc accepts. `npm audit` now reports 0 vulnerabilities at every level.
+- **§2.218 `RelayRtcTransport.closeAll()` could leave a WebRTC peer connection open.**
+  A connect started just before the call built its peer after `closeAll()` had already
+  swept the map, and an unclosed `RTCPeerConnection` keeps libuv handles alive — so a
+  process that had hung up its last call never exited. `closeAll()` now latches the
+  transport shut and in-flight connects refuse to build on it.
+- **§2.216 `listDomains(prefix)` escaped LIKE patterns differently on each SQL backend.**
+  A prefix ending in a backslash swallowed the wildcard on MySQL and Postgres, turning
+  "every domain starting with X" into "the one domain named X" — verified against real
+  Postgres and MySQL servers, where the old code returns the domain `back%` for the
+  prefix `back\`. All three now share one escaping helper and state `ESCAPE` explicitly.
+- **§2.215 a store adapter used before `init()` now says so.** `createSqliteStoreAdapter()`
+  and `createMongoStoreAdapter()` threw `Cannot read properties of undefined (reading
+  'get')`; they now throw an error naming the adapter and the missing call.
+  `makePersistentStore()` was never affected — it calls `init()` for you.
+- **§2.214 two SQLite tests pinned the absence of `better-sqlite3` as the spec** and went
+  red the moment the optional peer was installed. They now assert the real contract and
+  branch on driver presence.
+- **§2.212 `generateProfilePicture()` reported a size it had not produced.** On the
+  `@napi-rs/image` backend, `cover` returned a 300x300 image from a 600x300 source while
+  the return value claimed `{ width: 720, height: 720 }` (napi never upscales), and
+  `contain` handed back the original picture — not square, never letterboxed. All three
+  backends now produce an exact `w x h` square and agree with each other.
+- **§2.213 stickers were cropped instead of fitted without sharp.** The `@napi-rs/image`
+  branch of `_toStickerWebP()` used the default `ResizeFit.Cover`, which crops to fill the
+  512 square; a 600x300 sticker lost a third of its content. It now uses `Inside`, matching
+  the sharp branch, with `jimp` covering the enlargement napi refuses to do.
+- **CI (Node 24): `sharp` missing broke two suites, and the first fix was half right.**
+  `sharp` was declared only as an optional peer, so `npm ci` never installed it and
+  `tests/pairing-and-avatar.test.js` + `tests/v2410-batch-ci.test.js` died with
+  `ERR_MODULE_NOT_FOUND`. It is a devDependency now **and** both suites probe for it and
+  skip with a stated reason instead of hard-failing — because `sharp` has no Android
+  binary, so a hard requirement breaks Termux. CI fails loudly if `sharp` or `ffmpeg` is
+  absent, so a skip can only happen on a developer machine, never on CI.
+- **A static `import sharp` took down tests that do not need it.**
+  `v2410-batch-ci.test.js` imports `sharp` at the top, so on a platform without it the
+  whole FILE failed to load, including the group-cache and anti-delete suites that touch
+  no image code at all. The import is now a probe scoped to the sticker suite.
+- **Termux/Android install documented and scripted** (`docs/faq.md`): `npm run
+  install:termux` (`--ignore-scripts`) plus `pkg install ffmpeg`. `requireFfmpegPath()`
+  already falls back to a system `ffmpeg` on `PATH`, and image work falls back to `jimp`,
+  so nothing is lost — this just stops `npm ci` from failing halfway and leaving a broken
+  `node_modules`.
+- **A skip that lied: two ffmpeg tests never ran anywhere.** `v2410-voip-video-controls.test.js`
+  probed for a bare `ffmpeg` on `PATH`, but the library resolves ffmpeg via
+  `requireFfmpegPath()` (the `ffmpeg-static` devDependency). On CI and any dev machine
+  without a system ffmpeg, the §2.174 I420 frame tests reported "ffmpeg not installed" and
+  were skipped — green, untested. They now use the same resolver as the code and pass.
+- **`v2410-batch-by.test.js` would have died on a platform without `whatsapp-rust-bridge`**
+  (an optionalDependency), by static import. It now probes and skips with a stated reason;
+  the bridge's absent-platform contract is covered in `v2410-lt-hash.test.js`.
+
+### Changed
+
+- **New test hook `_setImageProcessingLibrary()`.** `getImageProcessingLibrary()` caches
+  the first backend it finds (sharp > @napi-rs/image > jimp), which made the other two
+  branches unreachable for tests — that is how §2.212 and §2.213 survived a green suite.
+  The hook pins a backend, or resets with `null`. Underscore-prefixed: a test seam, not
+  part of the supported surface.
+- **`better-sqlite3`, `fluent-ffmpeg`, `@napi-rs/image`, `@roamhq/wrtc`, `pg`, `mysql2`, `ioredis`, `mongodb` and the in-memory doubles `pg-mem` / `ioredis-mock` are devDependencies now.** Both are optional peers
+  used by `lib/`, and none was installed in development, so their code paths were never
+  executed by anything. That is pattern 38, and it has now produced four bugs (§2.209,
+  §2.212, §2.213, §2.215) plus a broken test pair (§2.214). CI verifies all four are
+  present so their suites cannot skip themselves green.
+- **`sharp` is a real devDependency now** (was an optional peer only). CI's `npm ci` did
+  not install it, so two suites that import it died with `ERR_MODULE_NOT_FOUND` on Node 24
+  instead of running. It remains an *optional peer at runtime* — nothing changes for your
+  install; this only guarantees the image tests actually execute. CI verifies its presence
+  the same way it verifies ffmpeg.
+- **Internal release notes are no longer packaged.** `PASTE-LIST-*.md` and `ANNOUNCE-*.txt`
+  were working notes sitting under `docs/`, which `files` ships wholesale. They now live
+  outside the repository. Tarball: 713 → 711 files. The published 2.5.0 predates them and
+  is clean.
+
 ## [2.5.0] — 2026-10-01
 
 > **Why 2.5.0 and not 2.4.10.** This round changes observable behaviour in public API, so a
@@ -19,6 +122,10 @@ _Nothing yet._
 > patch. See **Changed** for the full list.
 
 ### Added
+
+
+
+- **The four networked store adapters are tested against real databases.** `createPostgresStoreAdapter`, `createMysqlStoreAdapter`, `createRedisStoreAdapter` and `createMongoStoreAdapter` are public exports that had never been run against the servers they target. CI now starts Postgres, MySQL, Redis and MongoDB as service containers and fails if any is unreachable, so the suite cannot skip itself into a green run. Locally, set `JAP_TEST_POSTGRES_URL`, `JAP_TEST_MYSQL_URL`, `JAP_TEST_REDIS_URL` and `JAP_TEST_MONGO_URL` to opt in.
 
 - **New: `Digest` (`docs/digest.md`).** Collect many small events and post one summary per
   window instead of a message each. Bounded buffer that keeps counting past the cap,

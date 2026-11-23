@@ -82,7 +82,15 @@ test('§2.83 status interaction messages carry the right keys and encode', () =>
 	const mention = makeStatusMentionMessage({ message: { conversation: 'hi' } })
 	assert.ok(mention.statusMentionMessage.message.conversation)
 	assert.ok(mention.messageContextInfo.statusMentionMessageInfo.quotedStatus)
-	assert.equal(mention.contextInfo.statusAttributionType, proto.ContextInfo.StatusAttributionType.RESHARED_FROM_MENTION)
+	// §2.225: the attribution now lives inside the quoted content's contextInfo, because
+	// proto.Message has no top-level contextInfo field (protobufjs dropped it silently).
+	// A bare `conversation` string has nowhere to carry it, so it is left untouched.
+	assert.equal(mention.contextInfo, undefined)
+	const mentionRich = makeStatusMentionMessage({ message: { extendedTextMessage: { text: 'hi' } } })
+	assert.equal(
+		mentionRich.statusMentionMessage.message.extendedTextMessage.contextInfo.statusAttributionType,
+		proto.ContextInfo.StatusAttributionType.RESHARED_FROM_MENTION
+	)
 	assert.ok(makeStatusMentionMessage({ conversation: 'hi' }, { group: true }).groupStatusMentionMessage)
 	// round-trips through the proto
 	const encoded = proto.Message.encode(proto.Message.fromObject(answer)).finish()

@@ -2560,6 +2560,221 @@ had to duplicate the whole thing.
 
 ---
 
+### 2.223 [HIGH] useSingleFileAuthState().saveCreds() did not save the credentials
+
+`saveCreds()` queued a debounced write and resolved immediately. Every caller awaits it,
+so the contract it implied was "the session is safe now" — and it was not. A process that
+exited within three seconds of pairing lost its credentials entirely, and the next run
+asked for a fresh QR code. Nothing logged, nothing threw: the data was simply never
+written.
+
+The sibling API makes this worse rather than better. `useMultiFileAuthState().saveCreds()`
+has always written synchronously. Two functions doing the same job, with the same name,
+disagreeing about whether awaiting them means anything.
+
+Fixed: `saveCreds()` now performs the write and awaits it, and errors reach the caller
+instead of only the logger. Added `flush()` and `close()` so pending *key* writes can be
+forced too. The debounce timer is now `unref`'d — it used to hold the event loop open, so
+a script that had finished its work still sat idle for up to three seconds.
+
+Proven by a child process that pairs, saves and exits immediately; before the fix it wrote
+nothing. Six mutations of the fix were each checked to make the suite fail.
+
+### 2.224 [MEDIUM] the credential file was created world-readable
+
+The initial `writeFile(fileName, '{}')` used the default umask — 0644 on most systems —
+while every subsequent flush wrote 0600. On a shared host the file holding the session was
+readable by other users until the first flush replaced it, and a session that never
+flushed stayed that way. `useMultiFileAuthState` has always used 0600 (and 0700 for its
+directory); these two are siblings and now agree.
+
+### 2.225 [MEDIUM] makeStatusMentionMessage({ attributionType }) was an option that did nothing
+
+The builder returned the attribution as a **top-level** `contextInfo` on the message object.
+`proto.Message` has no `contextInfo` field — `ContextInfo` only exists nested inside concrete
+content messages — so protobufjs dropped the whole branch while encoding, without an error.
+Every status reshare built with this helper went out with no attribution at all, and a unit
+test that inspected the returned object would have passed: the field was there, it just never
+left the process.
+
+Fixed with a `withStatusAttribution(quoted, type)` helper that places
+`statusAttributionType` in the `contextInfo` of the first concrete content of the quoted
+message. The input is not mutated, an existing `contextInfo` is preserved, and a quote that
+has nowhere to carry it (a bare `conversation` string) is returned unchanged rather than
+wrapped into something the caller did not ask for.
+
+Proven through the real path, `generateWAMessageFromContent('status@broadcast', …)` followed
+by encode/decode: image `true`, text `true`, where both were `false` before.
+
+### 2.226 [MEDIUM] an explicit `remoteJid: undefined` deleted the status@broadcast default
+
+Four builders composed their key as `{ remoteJid: STATUS_BROADCAST_JID, ...statusKey }`.
+Object spread copies keys that exist with an `undefined` value, so an entirely reasonable
+caller — `{ id: k.id, remoteJid: k.remoteJid }` taken from a message that had no `remoteJid`
+— erased the default it was supposed to fall back on, and the key went out pointing nowhere.
+
+A `withStatusKeyDefaults(statusKey)` helper now merges while skipping `undefined`, applied in
+`makeStatusQuestionAnswerMessage`, `makeStatusStickerInteractionMessage`,
+`makeStatusQuotedMessage` (the `originalStatusId` path) and `makeGroupStatusReactionMessage`.
+A genuine `remoteJid` override still wins.
+
+### 2.227 [LOW] makeGroupStatusReactionMessage sent a parentGroupJid that could never arrive
+
+The builder attached `contextInfo.parentGroupJid` to a `ReactionMessage`. `ReactionMessage`
+has no `contextInfo` field, and neither does `Message`; `parentGroupJid` only lives on
+`ContextInfo`. There was no legal place for it on this message, so it was **removed rather
+than relocated** — inventing a wrapper to carry it would be guessing at a wire format. The
+group is still identified where it belongs, in `key.remoteJid` (falling back to
+`status@broadcast` when no group is given).
+
+Note what was deliberately *not* changed: `makeGroupStatusAttribution` also uses a top-level
+`contextInfo`, and there it is correct. That helper returns **pre-generate** content which
+`sendMessage` merges into the message it builds, and the field was measured arriving intact
+(`true`), unlike the raw node path (`false`). A guard test now pins that difference so a
+later tidy-up for symmetry cannot break it.
+
+`makeStatusAudienceMetadata` was audited across 13 cases (contacts/denylist/allowlist,
+rejecting `only`+`contacts`, dedup, truncation after filtering, empty audience, group jids,
+invalid jids, limit 0, no arguments) and is clean — no finding.
+
+Regression lock: `tests/v251-status-extras.test.js`, 30 cases, including encode/decode
+round-trips for six builders. Five mutations of the three fixes were each checked to make the
+suite fail.
+
+### 2.219 [LOW] newsletterUpdate() hardcoded settings to null
+
+Every settings-level channel mutation was unsendable: `newsletterUpdate()` spread the
+caller's updates and then forced `settings: null`, so a `reaction_codes` passed alongside
+`name` went out as a sibling of `name` and was dropped. The bug had no visible symptom
+while no caller needed settings — it surfaced the moment one did, which is the honest
+way to describe it: this was found by adding the feature, not by auditing the old code.
+
+`settings` is now destructured with a `null` default, so existing callers send a
+byte-identical payload.
+
+### 2.218 [MEDIUM] closeAll() leaked a peer connection, so the host process never exited
+
+`#connect()` awaits the `@roamhq/wrtc` import before it constructs anything. `closeAll()`
+closed the connections present in the map at that instant — so a connect started moments
+earlier built its `RTCPeerConnection` *after* closeAll had already walked past it,
+attaching a live native peer to an object nobody holds any more.
+
+An unclosed RTCPeerConnection keeps libuv handles open. The symptom is therefore not a
+failing assertion but a hang: a CLI that hung up a call still hung on shutdown, and the
+test suite itself stopped terminating the moment the optional package was really
+installed. That is how this was found — `node --test` simply never returned.
+
+Fix: `closeAll()` sets a latch, and `#connect()` re-checks it after the await and refuses
+to build a peer on a closed transport.
+
+**What was removed from the fix, and why.** The first version also awaited in-flight
+connect promises and swept a set of every peer ever constructed, guarding the window
+between `new RTCPeerConnection()` and its assignment. Three separate mutations proved that
+neither could be made to bite at any delay from 0ms to 200ms, while deleting the latch
+fails the suite instantly. Both were deleted. Untested code that looks like safety is not
+safety — it is unreviewed complexity wearing a seatbelt.
+
+### 2.217 [TEST] the relay suite pinned the absence of @roamhq/wrtc as its specification
+
+`tests/v248-relay-transport.test.js` asserted that a relay list yields an error matching
+`/@roamhq\/wrtc/`. That only holds while the optional package is missing; installing it
+turned the suite red while the library got strictly better. This is pattern 42 for the
+second time, in a second subsystem.
+
+What §2.79 actually guarantees — a failing connect is reported through `onTransportError`
+rather than escaping as an unhandled rejection — holds either way. Only the message
+differs, so only the message branches now.
+
+### 2.216 [LOW] the three SQL store adapters escaped LIKE prefixes differently
+
+`listDomains(prefix)` builds a `LIKE` pattern. sqlite escaped backslash, `%` and `_`, and
+said `ESCAPE '\'` in the statement. mysql and postgres escaped only `%` and `_`, and left
+the escape character implicit.
+
+The consequence is not theoretical: with a prefix ending in a backslash, the pattern we
+append our own `%` wildcard to becomes `...\%` — an ESCAPED percent. The wildcard is eaten,
+and the query looks for one literal domain instead of every domain with that prefix. Same
+public function, same argument, two of three backends wrong.
+
+Fixed with one `likePrefixPattern()` helper used by all three, and an explicit `ESCAPE`
+clause in every statement (`'\\'` for MySQL, `'\'` for Postgres — the literal differs, the
+meaning does not).
+
+Verified against real servers. Postgres 17, MySQL/MariaDB, Redis 8 and MongoDB 8 were
+installed and run locally, and all four adapters were driven through the full contract.
+The pre-fix code answers `listDomains('back\\')` with the domain **`back%`** on both
+Postgres and MySQL — not a near miss, a different row.
+
+This is also where the in-memory doubles proved dangerous rather than merely limited.
+`pg-mem` returns `false` for `'a%b' LIKE 'a\%%'`, which real Postgres matches, and it
+cannot parse the `ESCAPE` clause at all — so the *correct* fix made the double fail. Had
+the doubles been the only evidence, the honest-looking move would have been to delete the
+`ESCAPE` clause and ship the bug. `tests/v251-store-adapters-live.test.js` now runs the
+four adapters against live databases (CI provides them as service containers), and that
+reasoning is written into the file so nobody later "fixes" the adapter to please a mock.
+
+### 2.215 [LOW] a public store adapter crashed cryptically before init()
+
+`createSqliteStoreAdapter()` and `createMongoStoreAdapter()` prepare their statements and
+collection handles inside `init()`, leaving them `undefined` until then. `makePersistentStore()`
+always calls `init()`, so the supported path is fine — but all five factories are public
+exports, and a caller using one directly got `Cannot read properties of undefined (reading
+'get')` from deep inside the adapter, with nothing pointing at the missing call. They now
+throw a Boom naming the adapter and the fix. (mysql, postgres and redis build their handles
+in the factory, so they were never affected.)
+
+### 2.214 [TEST] two SQLite tests pinned the ABSENCE of a driver as the specification
+
+`v2410-batch-cd.test.js` asserted `rejects(..., /better-sqlite3/)` for the `{ database:
+'./x.db' }` and nested-`dbPath` cases. That passes only while the optional peer is NOT
+installed: the moment `better-sqlite3` appears, the adapter succeeds and the tests fail
+with "Missing expected rejection" — a red suite caused by a *better* environment. The
+contract under test is "a string is treated as a path" and "the parent directory is
+created with 0700", both of which hold either way; the tests now assert that, and branch on
+driver presence only for the final outcome.
+
+Worth stating plainly: the adapter itself was **correct**. Driving the real driver through
+creds/keys round-trips, app-state-sync protobuf restoration, null-deletes, twenty parallel
+writes, 0600 file mode and caller-owned handles found **no** adapter bug. The fake handle
+had not been hiding one — but nobody could have known that, because nothing had ever run it.
+
+### 2.213 [MEDIUM] stickers were cropped, not fitted, when sharp was absent
+
+`_toStickerWebP()` has two backends. The sharp branch asks for `resize(512, 512, { fit:
+'inside' })` — aspect ratio kept, whole picture survives. The `@napi-rs/image` branch
+called `resize(512, 512)`, whose default is `ResizeFit.Cover`: it CROPS to fill the square.
+A 600x300 sticker lost a third of its content on any machine without sharp, and nobody
+noticed because every CI machine has sharp, so that branch was never executed by a test.
+
+Fixed by passing `ResizeFit.Inside` explicitly. A second difference surfaced while
+verifying: `@napi-rs/image` never upscales (proven against Cover, Fill, Inside, Outside and
+`fastResize`), while sharp's `inside` does enlarge a small sticker to the 512 box — so the
+small-input case now goes through `jimp`, which is a hard dependency. Parity is now pinned
+by a test that runs both backends over four shapes and demands identical output.
+
+### 2.212 [MEDIUM] generateProfilePicture() returned a size it did not produce
+
+Same root cause, worse symptom. On the `@napi-rs/image` backend:
+
+- **cover**: `crop(size)` then `resize(720, 720, Nearest)`. Since napi never upscales, a
+  600x300 source came out **300x300** — while the function returned `{ width: 720, height:
+  720 }`. The caller was handed metadata that did not describe the bytes.
+- **contain**: `scale = Math.min(w / width, h / height, 1)` clamps to 1 for any source
+  smaller than the canvas, so the image was returned **untouched** — 600x300, not square,
+  never letterboxed, which is the entire point of the option.
+
+Fixed: cover crops square then forces the exact canvas, falling back to `jimp` for the
+upscale napi refuses; contain builds a real letterbox from an opaque black canvas
+(`Transformer.fromRgbaPixels`) with the scaled image composited at the centre via
+`overlay()`. All three backends now return an exact square and agree with each other.
+
+**Pattern 40 — a cached backend picker hides every branch but one.**
+`getImageProcessingLibrary()` caches the first library it finds, so on a machine with
+sharp the other two branches are unreachable code as far as the test suite is concerned.
+Both bugs here changed the *output*, not merely the path. Any "pick the best available
+implementation" helper needs a test hook that pins each one; `_setImageProcessingLibrary()`
+is that hook.
+
 ### 2.211 [MEDIUM] link preview checked the first URL hard and every later one softly
 Same shape as §2.207, found by sweeping for it deliberately rather than by accident.
 

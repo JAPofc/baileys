@@ -95,3 +95,53 @@ Since v2.4.3 the banner doubles as a startup health card — gradient wordmark p
 </details>
 
 ---
+
+## Termux / Android: `npm ci` gagal, dan apa yang harus dipakai
+
+`sharp` dan `ffmpeg-static` **tidak punya binary prebuilt untuk Android**. Keduanya
+devDependency (dipakai test), jadi `npm ci` mencoba menjalankan install script-nya dan
+gagal di tengah jalan — yang sering menyisakan `node_modules` setengah jadi, sehingga
+`npm ls ffmpeg-static` pun kosong.
+
+Pasang begini:
+
+```bash
+npm run install:termux     # = npm install --ignore-scripts --no-audit --no-fund
+pkg install ffmpeg         # ffmpeg asli Termux
+```
+
+`--ignore-scripts` membuat npm tidak mencoba mengunduh/membangun binary yang memang tidak
+ada untuk Android. Paket lain tetap terpasang normal.
+
+### Apakah fiturnya hilang?
+
+Tidak, selama ffmpeg sistem ada:
+
+- **ffmpeg** — `requireFfmpegPath()` mencari berurutan: `setFfmpegPath()` → `FFMPEG_PATH`
+  → `ffmpeg-static` → `@ffmpeg-installer/ffmpeg` → **`ffmpeg` di `PATH`**. Jadi
+  `pkg install ffmpeg` sudah cukup, tanpa konfigurasi.
+- **gambar** — kalau `sharp` tidak ada, pemrosesan gambar jatuh ke **`jimp`**, yang murni
+  JavaScript dan jalan di Termux. Lebih lambat, tapi berfungsi.
+
+### Menjalankan test di Termux
+
+```bash
+npm run test:termux
+```
+
+Test yang benar-benar butuh `sharp` akan **di-skip dengan alasan tertulis**, bukan gagal:
+
+```
+ok 6 - §2.186/§2.187 sticker conversion # SKIP sharp is not installed (no prebuilt binary on this platform)
+```
+
+Jumlah test yang lulus akan lebih sedikit daripada di CI. Itu wajar — **bukan** tanda ada
+yang rusak. CI (Ubuntu) memverifikasi `sharp` dan `ffmpeg` benar-benar ada dan **gagal
+keras** kalau tidak, jadi skip di Termux tidak bisa menyembunyikan regresi dari siapa pun.
+
+### Kenapa `ffmpeg-static` tidak dihapus saja dari devDependencies?
+
+Karena ia yang membuat test media jalan **deterministik** di CI dan di mesin dev tanpa
+ffmpeg sistem — tanpa itu, test media diam-diam ter-skip di mana-mana dan bug ffmpeg nyata
+pernah lolos karenanya (§2.177). Di runtime ia tetap **optional peer**: pemakai paketmu
+tidak pernah dipaksa memasangnya.

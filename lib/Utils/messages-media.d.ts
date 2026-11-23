@@ -83,6 +83,8 @@ export function resolveSafeRedirectUrl(url: string | URL, options?: any): Promis
  * A `fetch`-compatible client that connects to the exact IP the SSRF guard validated,
  * closing the DNS-rebinding window between check and request. Never follows redirects.
  */
+/** Test hook: pin the image backend (`{ sharp }` | `{ image }` | `{ jimp }`) or reset with null. */
+export function _setImageProcessingLibrary(library?: any): void;
 export function createPinnedFetch(pinOptions?: {
     allowPrivate?: boolean;
     allowHosts?: string[];

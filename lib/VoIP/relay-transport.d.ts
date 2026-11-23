@@ -69,6 +69,11 @@ export declare class RelayRtcTransport {
     getStats: () => RelayTransportStats;
     /** Per-connection counters, buffer depth, state and last ICE RTT. */
     getConnectionStats: () => RelayConnectionStats[];
+    /**
+     * Close every relay connection and latch the transport shut. §2.218: a connect started
+     * just before this call will not build a peer afterwards, so the host process is free
+     * to exit -- an unclosed RTCPeerConnection keeps libuv handles alive.
+     */
     closeAll: () => Promise<void>;
 }
 export {};

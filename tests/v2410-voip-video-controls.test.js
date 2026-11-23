@@ -21,12 +21,24 @@ import { execFileSync } from 'node:child_process'
 
 import { VoipClient, ActiveCall, i420FrameSize, VideoFeeder } from '../lib/VoIP/index.js'
 
-const hasFfmpeg = (() => {
+// JAP@Fix (CI): this probed a bare `ffmpeg` on PATH, but the project resolves ffmpeg
+// through `requireFfmpegPath()` (which finds the `ffmpeg-static` devDependency). On a
+// machine with ffmpeg-static installed and no system ffmpeg -- i.e. CI, and this sandbox
+// -- the probe said "not installed" and skipped two real tests that would have run fine.
+// A skip that lies is worse than no test: it reads green. Ask the same resolver the code
+// under test asks.
+const hasFfmpeg = await (async () => {
 	try {
-		execFileSync('ffmpeg', ['-version'], { stdio: 'ignore' })
+		const { requireFfmpegPath } = await import('../lib/Utils/ffmpeg-path.js')
+		await requireFfmpegPath()
 		return true
 	} catch {
-		return false
+		try {
+			execFileSync('ffmpeg', ['-version'], { stdio: 'ignore' })
+			return true
+		} catch {
+			return false
+		}
 	}
 })()
 
