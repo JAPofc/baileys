@@ -13,8 +13,8 @@
 <!-- identity -->
 <p>
 <a href="https://www.npmjs.com/package/@japofc/baileys"><img src="https://img.shields.io/npm/v/@japofc/baileys?color=25D366&label=npm&logo=npm&logoColor=white&style=for-the-badge" alt="npm version" /></a>
-<a href="https://www.npmjs.com/package/@japofc/baileys"><img src="https://img.shields.io/npm/dt/@japofc/baileys?color=128C7E&label=downloads&logo=npm&logoColor=white&style=for-the-badge" alt="npm downloads" /></a>
-<a href="./LICENSE"><img src="https://img.shields.io/badge/license-GPL--3.0--or--later-555?style=for-the-badge" alt="GPL-3.0-or-later license" /></a>
+<a href="https://www.npmjs.com/package/@japofc/baileys"><img src="https://img.shields.io/npm/d18m/@japofc/baileys?color=128C7E&label=downloads&logo=npm&logoColor=white&style=for-the-badge" alt="npm downloads" /></a>
+<a href="./LICENSE"><img src="https://img.shields.io/badge/license-GPL--3.0--or--later-555?style=for-the-badge&logo=gnu&logoColor=white" alt="GPL-3.0-or-later license" /></a>
 </p>
 
 <!-- quality -->

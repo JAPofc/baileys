@@ -13,8 +13,8 @@
 <!-- identitas -->
 <p>
 <a href="https://www.npmjs.com/package/@japofc/baileys"><img src="https://img.shields.io/npm/v/@japofc/baileys?color=25D366&label=npm&logo=npm&logoColor=white&style=for-the-badge" alt="versi npm" /></a>
-<a href="https://www.npmjs.com/package/@japofc/baileys"><img src="https://img.shields.io/npm/dt/@japofc/baileys?color=128C7E&label=unduhan&logo=npm&logoColor=white&style=for-the-badge" alt="unduhan npm" /></a>
-<a href="./LICENSE"><img src="https://img.shields.io/badge/lisensi-GPL--3.0--atau--lebih--baru-555?style=for-the-badge" alt="lisensi GPL-3.0-or-later" /></a>
+<a href="https://www.npmjs.com/package/@japofc/baileys"><img src="https://img.shields.io/npm/d18m/@japofc/baileys?color=128C7E&label=unduhan&logo=npm&logoColor=white&style=for-the-badge" alt="unduhan npm" /></a>
+<a href="./LICENSE"><img src="https://img.shields.io/badge/lisensi-GPL--3.0--atau--lebih--baru-555?style=for-the-badge&logo=gnu&logoColor=white" alt="lisensi GPL-3.0-or-later" /></a>
 </p>
 
 <!-- kualitas -->
