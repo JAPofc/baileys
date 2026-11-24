@@ -5,21 +5,21 @@ Format follows [Keep a Changelog](https://keepachangelog.com/); versioning follo
 
 ## [Unreleased]
 
-### [2.5.2] — not released
-
-Version bumped in the repository only. **Nothing in `lib/` has changed since 2.5.1**, so
-installing this would give you a byte-identical runtime. It stays unpublished until a real
-fix or feature earns the release.
+_Nothing yet._
 
 - README: the test badge said 1973 (it is 2574), the audit badge claimed "0 vulnerabilities"
-  (a plain `npm audit` reports 2 moderate, dev-only — see the 2.5.1 note), and the defect
-  count said 135 (it is 227).
+  (a plain `npm audit` reports 2 moderate, dev-only — see 2.5.1), and the defect count said
+  135 (it is 227).
 - README: the comparison table advertised an "Anti-ban toolkit". This project refuses that
   claim for `SendPacer` and has a test enforcing it, so the row was renamed to what the code
   actually does — send pacing and rate limiting.
 - README: documented the four APIs added in 2.5.1, which it had never mentioned. The sample
-  code was executed before being committed; the finding code in the comment was wrong
-  (`POLL_TOO_FEW_OPTIONS`) and is now the real one (`poll-option-count`).
+  code was executed before being committed.
+- README: the npm downloads badge pointed at the retired `npm/dt` endpoint, which now 301s
+  to `npm/d18m`; GitHub's image proxy does not follow redirects, so it rendered broken.
+
+These are documentation-only and ship under the released 2.5.1 version — no bump, because
+nothing in `lib/` changed.
 
 ---
 
