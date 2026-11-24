@@ -22,8 +22,8 @@
 <img src="https://img.shields.io/badge/node-%E2%89%A5%2020-3C873A?style=flat-square&logo=node.js&logoColor=white" alt="Node >=20" />
 <img src="https://img.shields.io/badge/module-ESM-F7DF1E?style=flat-square&logo=javascript&logoColor=black" alt="ESM only" />
 <img src="https://img.shields.io/badge/types-bundled%20.d.ts-3178C6?style=flat-square&logo=typescript&logoColor=white" alt="TypeScript types" />
-<img src="https://img.shields.io/badge/tests-1973%20passing-2ecc71?style=flat-square&logo=nodedotjs&logoColor=white" alt="tests passing" />
-<img src="https://img.shields.io/badge/audit-0%20vulnerabilities-2ecc71?style=flat-square&logo=npm&logoColor=white" alt="npm audit clean" />
+<img src="https://img.shields.io/badge/tests-2574%20passing-2ecc71?style=flat-square&logo=nodedotjs&logoColor=white" alt="tests passing" />
+<img src="https://img.shields.io/badge/audit-high%3A%20clean-2ecc71?style=flat-square&logo=npm&logoColor=white" alt="npm audit clean" />
 </p>
 
 <p>
@@ -64,6 +64,37 @@ sock.ev.on('messages.upsert', async ({ messages }) => {
 
 Scan the QR and the bot replies `pong`. Runnable programs live in [`examples/`](./examples).
 
+## New in 2.5.1
+
+Four APIs that did not exist here — or, as far as I could find, in any Baileys fork — before
+this release:
+
+```js
+import { estimateMessageSize, createSendPacer, preflightMessage } from '@japofc/baileys'
+
+// How big is this message, actually? Measured with the real protobuf encoder.
+const { bytes, heaviest, excludes } = await estimateMessageSize({ image: buf, caption: 'hi' })
+
+// Is it even valid? Checked offline, returns findings instead of throwing at send time.
+const pre = await preflightMessage({ poll: { name: 'q', values: ['a'] } }, { jid })
+if (!pre.ok) console.log(pre.errors)       // [{ code: 'poll-option-count', ... }]
+
+// Spread sends over time: minimum spacing, jitter, rolling per-minute/per-hour quotas.
+const pacer = createSendPacer({ perMinute: 20 })
+await pacer.schedule(() => sock.sendMessage(jid, { text: 'hello' }))
+```
+
+`estimateMessageSize()` never performs network I/O — remote media is reported as
+`unmeasurable` rather than fetched, and an unknown size is `undefined`, never `0`.
+`preflightMessage()` never throws, whatever you hand it; a clean result means "nothing
+locally detectable is wrong", never "this will be delivered".
+
+`SendPacer` is **not** called an anti-ban tool, and `getStats()` deliberately returns nothing
+about account safety. Nobody outside WhatsApp knows their enforcement rules — it is a queue
+with a clock, and that is all it claims to be.
+
+Also new: `sock.newsletterAction(jid, action)` and `sock.newsletterReactionMode(jid, mode)`.
+
 ## What it is
 
 A maintained WhatsApp Web library for people running bots in production. The priorities, in
@@ -99,7 +130,7 @@ Also: [CHANGELOG](./CHANGELOG.md) · [BUGREPORT](./BUGREPORT.md) · [MIGRATION](
 ## Why this fork
 
 Most Baileys forks are a rebase plus a few helpers. This one is primarily an **audit**:
-135 documented defects, each with a severity, a reproduction script and a regression test
+227 documented defects, each with a severity, a reproduction script and a regression test
 locking the behaviour. A sample of what that has turned up:
 
 | Bug | Symptom before the fix |
@@ -131,7 +162,7 @@ How `@japofc/baileys` stacks up against other Baileys libraries:
 | Built-in QR render (terminal/SVG/PNG, zero deps) | ✅ | ❌ needs `qrcode-terminal` |
 | Auto WA Web version resolution | ✅ | ❌ hardcoded |
 | Status mentions (notify users/groups of your status) | ✅ | ❌ |
-| Anti-ban toolkit (warmup ramps, group-op ceilings, disconnect classifier, Gaussian jitter) | ✅ | ❌ |
+| Send pacing &amp; rate limiting (`SendPacer`, warmup ramps, group-op ceilings, disconnect classifier) | ✅ | ⚠️ marketed as "anti-ban" |
 | Crash-message shield (mention bombs, zalgo, RTLO spoofing) | ✅ | ❌ |
 | Session doctor + portable/encrypted session strings | ✅ | ❌ |
 | Community/bot modules (economy, games, rental, moderation — 140+ utils) | ✅ | ❌ |
@@ -140,8 +171,6 @@ How `@japofc/baileys` stacks up against other Baileys libraries:
 | Credential-redacting logger | ✅ | ❌ |
 
 > This table describes package-level features, not performance benchmarks. PRs to update or correct it are welcome via [Contributing](#-contributing).
-
----
 
 ---
 
@@ -192,7 +221,6 @@ Full details and license terms per component: see [`NOTICE.md`](./NOTICE.md).
 This project is an independent fork.
 Use responsibly and follow WhatsApp Terms of Service.
 
----
 ---
 
 <div align="center">

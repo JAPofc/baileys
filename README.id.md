@@ -22,8 +22,8 @@
 <img src="https://img.shields.io/badge/node-%E2%89%A5%2020-3C873A?style=flat-square&logo=node.js&logoColor=white" alt="Node >=20" />
 <img src="https://img.shields.io/badge/module-ESM-F7DF1E?style=flat-square&logo=javascript&logoColor=black" alt="ESM only" />
 <img src="https://img.shields.io/badge/types-bundled%20.d.ts-3178C6?style=flat-square&logo=typescript&logoColor=white" alt="tipe TypeScript" />
-<img src="https://img.shields.io/badge/tes-1973%20lulus-2ecc71?style=flat-square&logo=nodedotjs&logoColor=white" alt="tes lulus" />
-<img src="https://img.shields.io/badge/audit-0%20kerentanan-2ecc71?style=flat-square&logo=npm&logoColor=white" alt="audit bersih" />
+<img src="https://img.shields.io/badge/tes-2574%20lulus-2ecc71?style=flat-square&logo=nodedotjs&logoColor=white" alt="tes lulus" />
+<img src="https://img.shields.io/badge/audit-high%3A%20bersih-2ecc71?style=flat-square&logo=npm&logoColor=white" alt="audit bersih" />
 </p>
 
 <p>
@@ -64,6 +64,37 @@ sock.ev.on('messages.upsert', async ({ messages }) => {
 
 Scan QR-nya, bot membalas `pong`. Program yang bisa langsung dijalankan ada di [`examples/`](./examples).
 
+## Baru di 2.5.1
+
+Empat API yang sebelumnya belum ada di sini — dan, sejauh yang saya temukan, belum ada juga
+di fork Baileys mana pun:
+
+```js
+import { estimateMessageSize, createSendPacer, preflightMessage } from '@japofc/baileys'
+
+// Sebesar apa sih pesan ini? Diukur pakai encoder protobuf asli.
+const { bytes, heaviest, excludes } = await estimateMessageSize({ image: buf, caption: 'hi' })
+
+// Valid nggak? Dicek offline, hasilnya temuan terstruktur, bukan throw saat kirim.
+const pre = await preflightMessage({ poll: { name: 'q', values: ['a'] } }, { jid })
+if (!pre.ok) console.log(pre.errors)       // [{ code: 'poll-option-count', ... }]
+
+// Sebar kiriman sepanjang waktu: jeda minimum, jitter, kuota per menit/per jam.
+const pacer = createSendPacer({ perMinute: 20 })
+await pacer.schedule(() => sock.sendMessage(jid, { text: 'halo' }))
+```
+
+`estimateMessageSize()` tidak pernah menyentuh jaringan — media remote dilaporkan
+`unmeasurable`, bukan diam-diam diunduh, dan ukuran yang tak diketahui bernilai `undefined`,
+bukan `0`. `preflightMessage()` tidak pernah melempar, dikasih apa pun; hasil bersih berarti
+"tidak ada yang salah secara lokal", bukan "pasti terkirim".
+
+`SendPacer` **sengaja tidak** disebut alat anti-ban, dan `getStats()` tidak mengembalikan
+apa pun soal keamanan akun. Tidak ada orang di luar WhatsApp yang tahu aturan penegakan
+mereka — ini antrean dengan jam, dan cuma itu yang diklaimnya.
+
+Juga baru: `sock.newsletterAction(jid, action)` dan `sock.newsletterReactionMode(jid, mode)`.
+
 ## Apa ini
 
 Library WhatsApp Web yang dirawat, untuk yang menjalankan bot di produksi. Prioritasnya,
@@ -99,7 +130,7 @@ Juga: [CHANGELOG](./CHANGELOG.md) · [BUGREPORT](./BUGREPORT.md) · [MIGRATION](
 ## Kenapa fork ini
 
 Kebanyakan fork Baileys cuma rebase plus beberapa helper. Yang ini pada dasarnya sebuah
-**audit**: 135 cacat terdokumentasi, masing-masing dengan tingkat keparahan, script repro,
+**audit**: 227 cacat terdokumentasi, masing-masing dengan tingkat keparahan, script repro,
 dan test regresi yang mengunci perilakunya. Contohnya:
 
 | Bug | Gejala sebelum diperbaiki |
@@ -131,7 +162,7 @@ Posisi `@japofc/baileys` dibanding library Baileys lain:
 | Render QR bawaan (terminal/SVG/PNG, nol deps) | ✅ | ❌ butuh `qrcode-terminal` |
 | Resolusi versi WA Web otomatis | ✅ | ❌ hardcoded |
 | Mention di status (notifikasi user/grup) | ✅ | ❌ |
-| Toolkit anti-ban (ramp pemanasan, batas aksi grup, klasifikasi disconnect, jitter Gaussian) | ✅ | ❌ |
+| Pacing kiriman &amp; rate limit (`SendPacer`, ramp pemanasan, batas aksi grup, klasifikasi disconnect) | ✅ | ⚠️ dijual sebagai "anti-ban" |
 | Perisai pesan crash (bom mention, zalgo, spoof RTLO) | ✅ | ❌ |
 | Dokter sesi + string sesi portabel/terenkripsi | ✅ | ❌ |
 | Modul komunitas/bot (economy, game, sewa, moderasi — 140+ utils) | ✅ | ❌ |
@@ -140,8 +171,6 @@ Posisi `@japofc/baileys` dibanding library Baileys lain:
 | Logger dengan redaksi kredensial | ✅ | ❌ |
 
 > Tabel ini menggambarkan fitur di level package, bukan benchmark performa. PR untuk memperbarui/mengoreksi tabel ini dipersilakan lewat [Kontribusi](#-kontribusi).
-
----
 
 ---
 
